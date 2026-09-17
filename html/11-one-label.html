@@ -1,0 +1,566 @@
+<title>One Label</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part III — The Fabric</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="ch-number" aria-hidden="true">11</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 11: </span>One Label</h1>
+    <blockquote class="epigraph"><p><em>Marking a Service global is the ENTIRE cross-cluster config.</em></p>
+<p>— <code>07-istio-advanced/act3-multicluster/03-global-service.yaml</code></p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
+      <dt>Length</dt>
+      <dd>About 3,000 words · about 13 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Monday in September · the platform team's room</p>
+<p>Vikram had cleared the whiteboard of the old diagram and written two words where it used to be: <em>one label</em>.</p>
+<p>"That's the replacement," he said. "No fixed addresses, no hand-written proxy, no address book. We mark a service as global, and the mesh in each site learns where the copies in the other site are. If a site loses its copies, calls go to the other one."</p>
+<p>Anita had the confessions list from the week before in her hand. "The last design had a demo that worked too."</p>
+<p>"This one is different. Every step ends in a check that reads the answer back from the system. Not a screenshot."</p>
+<p>"Good. Then show me one of those checks going red."</p>
+<p>"Red?"</p>
+<p>"Take the service down in both sites. Nowhere left to fail over to. If the check is real, it fails." She put the list down. "I've been shown plenty of green. I want to see what red looks like before I believe the green."</p>
+<hr class="scene-break" />
+<h2 id="decisions-you-can-only-make-once">Decisions you can only make once</h2>
+<p class="dateline dateline-record">Build log · 21 August 2026</p>
+<p>The replacement arrived as <code>07-istio-advanced/</code>: five acts, each of which, in its README's words, <em>"ends with assertions, not screenshots."</em> This chapter covers the first three. Acts 4 and 5 are Chapter 12.</p>
+<p>Before any act, the README opens with a section called <em>"Order is not optional."</em> It is the most important page for a board, because it is about decisions that can only be taken on the first day.</p>
+<p>Joining two clusters into one mesh needs four things fixed when the mesh is installed: a mesh name, a name for each cluster, a network name for each, and a flag that switches on the multi-network design. It also needs both clusters to trust one <strong>root certificate</strong> — the single authority from which every workload's identity is issued. Istio reads that root only when it starts. The install script says what happens if it starts without one:</p>
+<blockquote>
+<p><em>if istiod starts without it, it self-signs its own root, and the only repair is to reinstall, which reissues every workload certificate in the mesh.</em></p>
+</blockquote>
+<p>So the root is generated first, and both meshes are installed ready for two clusters, even though the second cluster isn't demonstrated until Act 3. The root is created locally, with no outside certificate authority involved: <em>"that is the sovereign-cloud story, and it also means the demo works air-gapped."</em></p>
+<p>For a CxO the point is general. Some architecture choices are cheap on day one and a full rebuild on day four hundred. Whether you will ever run more than one site is one of them. On 17 September both clusters still reported the same root fingerprint, and each control plane reported its peer as <code>synced</code>.</p>
+<h2 id="the-first-refusal">The first refusal</h2>
+<p>Act 1 puts a front door on cluster1 using the Kubernetes <strong>Gateway API</strong>. The door is declared as a single object, a <code>Gateway</code>. There is no installer and no hand-built proxy. Istio reads the object and creates the proxy Deployment and its Service itself. On 17 September both existed, as <code>edge-istio</code>, serving <code>172.18.255.201</code>.</p>
+<p>The act's real subject is <em>who may do what</em>. Three namespaces play three roles. <code>gateway-infra</code> belongs to the platform team, which owns the Gateway and its certificate. <code>demo-apps</code> belongs to an application team, which owns the routes that send traffic to its services. <code>rogue-tenant</code> is labelled untrusted. The Gateway accepts routes only from namespaces labelled as applications.</p>
+<p>Then the rogue tenant tries to take over the application team's hostname. It writes a route claiming <code>echo.demo.istio.local</code> and pointing it at a service of its choosing. The Kubernetes API accepts the object: the tenant is allowed to write objects in its own namespace. The Gateway refuses to attach it. This is the route's status, read back from the cluster on 17 September:</p>
+<pre><code>Accepted=False  NotAllowedByListeners: hostnames matched parent hostname
+&quot;*.demo.istio.local&quot;, but namespace &quot;rogue-tenant&quot; is not allowed by the parent
+</code></pre>
+<p>Traffic to the hostname carried on reaching the application team's service.</p>
+<p>That is governance in the platform, not in a wiki page. Permission to write configuration is not permission to receive traffic, and the refusal is written down where anyone can read it. The rest of Act 1 is ordinary good practice, and it was verified again on 17 September: HTTPS with a locally rooted certificate, <code>200</code>; a 90/10 canary release, which measured 8% on 60 requests; and a header that pins internal users to the new version, which held on 10 of 10 requests.</p>
+<h2 id="the-second-refusal">The second refusal</h2>
+<p>Act 1 has one more beat, and it did not appear in the August commit's list of verified results.</p>
+<p>A <strong>ListenerSet</strong> lets an application team add its own entrance to the platform team's Gateway — here, a listener for <code>tenant-a.demo.istio.local</code> on port 8443 — without editing the Gateway itself. The act's ListenerSet borrows the platform team's certificate, which lives in <code>gateway-infra</code>. On 17 September its status read:</p>
+<pre><code>Accepted=False  certificateRef echo-tls/gateway-infra not accessible to a Gateway
+in namespace &quot;demo-apps&quot; (missing a ReferenceGrant?)
+</code></pre>
+<p>The Gateway had refused the demo's own tenant, for the same reason it refused the rogue one. Borrowing something from another team's namespace requires that team to sign a permission slip first, a <code>ReferenceGrant</code>. Nothing in the repository contains one.</p>
+<p>The refusal is correct; the demo is what's wrong. And nobody noticed, because this step prints a status instead of asserting one. It then prints <em>"Gateway now reports attached ListenerSets in its status"</em>, followed by the Gateway's listener names — <code>http https</code>, with nothing attached — and moves on. The verification script does not check it. Both refusals come from the same rule. Only one of them was ever checked.</p>
+<h2 id="identity-not-address">Identity, not address</h2>
+<p>Act 2 is the fix for the policy in Chapter 10 that nothing enforced.</p>
+<p>In ambient mode, the component on each node (ztunnel) works with connections, not HTTP requests. For request-level rules, Act 2 adds a <strong>waypoint</strong>: one proxy per namespace, declared, like the front door, as a Gateway object. No proxy is placed inside any application pod. On 17 September each echo pod ran exactly one container, <code>echo</code>.</p>
+<p>Two client deployments are identical in every respect except their Kubernetes service account, <code>trusted</code> or <code>untrusted</code>. The mesh turns that account into a cryptographic identity: <code>spiffe://cluster.local/ns/demo-apps/sa/trusted</code>. The policy names identities, paths and methods, not IP addresses. Measured on 17 September:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Caller</th>
+<th>Request</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>trusted</code></td>
+<td><code>GET /secure</code></td>
+<td><code>200</code></td>
+</tr>
+<tr>
+<td><code>untrusted</code></td>
+<td><code>GET /secure</code></td>
+<td><code>403</code> — <em>"RBAC: access denied"</em></td>
+</tr>
+<tr>
+<td><code>trusted</code></td>
+<td><code>POST /secure</code></td>
+<td><code>403</code></td>
+</tr>
+<tr>
+<td><code>untrusted</code></td>
+<td><code>GET /public</code></td>
+<td><code>200</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>The application behind the waypoint also learned who was calling, without doing any cryptography itself. It received a header naming both the waypoint and the original caller:</p>
+<pre><code>x-forwarded-client-cert=By=spiffe://cluster.local/ns/demo-apps/sa/waypoint;URI=spiffe://cluster.local/ns/demo-apps/sa/trusted
+</code></pre>
+<p>The act also switches the trusted client's service account to <code>untrusted</code>, and access drops to <code>403</code> with no change to the policy and no restart of the application. That beat was not re-run for this chapter.</p>
+<p>The README flags the one mistake that undoes all of this. If the policy is attached to the workloads rather than to the waypoint, it is enforced by ztunnel, which cannot see paths or methods — and it <em>"will silently ignore HTTP path and method rules."</em> That is the same shape of failure as Chapter 10's circuit breaker: a rule that looks enforced and isn't.</p>
+<p>For a board, this is the counterpart to Chapter 10's plaintext link between clusters. Access is decided by a verifiable identity for the caller, not by where the caller happens to sit on the network. And it can be revoked without touching the application.</p>
+<h2 id="one-label">One label</h2>
+<p>Act 3 joins cluster1 and cluster2. It needs only three things, because the hard decisions were taken at install time.</p>
+<ul>
+<li><strong>An east-west gateway on each side</strong> — the doorway through which one cluster's mesh reaches the other's, over the mesh's encrypted tunnel on port 15008. cluster1's is at <code>172.18.255.202</code>; cluster2's is at <code>.221</code>, because <code>.216</code> still belongs to Chapter 10.</li>
+<li><strong>A credential each way</strong>, so each control plane can read the other cluster's list of services. The README records a trap here: on this setup, unless the command is told the real API server address, the credential embeds <code>127.0.0.1</code>, and <em>"the peer cluster then sits at <code>STATUS=timeout</code> while everything else looks healthy."</em> The act waits for both directions to report <code>synced</code> before it continues.</li>
+<li><strong>One label</strong> on the Service, in both clusters:</li>
+</ul>
+<pre><code class="language-yaml">metadata:
+  name: echo
+  labels:
+    istio.io/global: &quot;true&quot;
+</code></pre>
+<p>Set that against Chapter 10: a ServiceEntry in each direction, a MetalLB address typed into an annotation, a proxy Service with a pod address written in by hand, and a NodePort on every node. All of it, replaced by one line.</p>
+<p>Then comes the moment the act calls <em>"THE MONEY SHOT."</em> Every copy of echo in cluster1 is scaled to zero, with no configuration change anywhere. The same service name is called twenty more times, and the act prints the tally.</p>
+<h2 id="morning-and-evening">Morning and evening</h2>
+<p class="dateline dateline-record">Build log · 21 August 2026</p>
+<p>The commit that added the acts landed at 06:36 and reported the tally: <em>"Act 3 success=20 failed=0 — cluster1 scaled to zero, traffic failed over to cluster2 with no config change."</em> The verification script: 22 passed, 0 failed.</p>
+<p>At 18:34 the same day, a second commit recorded a problem. Act 2 enrols the whole namespace in its waypoint. A waypoint, it said, resolves only <em>local</em> endpoints, so once the namespace is enrolled, scaling the local copies to zero gives <em>"503 on every request with the waypoint in path."</em> The evidence was the waypoint's own endpoint list, which held only cluster1's pod addresses. The fix was to take the global service out of the waypoint's path during failover. The console's failover button was built to do exactly that, and to put it back afterwards.</p>
+<p>Put those two commits side by side. The morning's run came straight after Act 2, with the namespace already enrolled. The evening says that configuration fails every request. Both cannot be describing working failover — unless the morning's tally was measuring something other than success.</p>
+<h2 id="what-the-counter-counted">What the counter counted</h2>
+<p class="dateline dateline-record">Build log · 17 September 2026</p>
+<p>Here is how Act 3 decides that a call succeeded:</p>
+<pre><code class="language-bash">call() { $K1 exec -n &quot;$NS_APPS&quot; deploy/client-trusted -c curl -- \
+         curl -s --max-time 10 http://echo/ 2&gt;/dev/null || true; }
+...
+b=$(call)
+if [[ -n &quot;$b&quot; ]]; then okc=$((okc+1)); else failc=$((failc+1)); fi
+</code></pre>
+<p>A call counts as a success if it returns <em>any text at all</em>. The HTTP status is never examined.</p>
+<p>On 17 September Anita's test was run for real. Echo was scaled to zero in <strong>both</strong> clusters, leaving nothing anywhere to fail over to, and the service was called twenty times. Every call returned <code>503</code>, with a nineteen-byte body: <em>"no healthy upstream."</em> Under Act 3's rule, nineteen bytes count as success. The act would have printed:</p>
+<pre><code>success=20 failed=0
+</code></pre>
+<p>— the same line, character for character, that it prints for a perfect failover. The check could not go red.</p>
+<p>The verification script didn't cover the gap either. Its Act 3 section asserts four things: that both east-west gateways are programmed, that a credential is present, and that the label is present. It checks that the label <em>exists</em>, not that it <em>does</em> anything. None of its twenty-two checks sends a request to a scaled-down service.</p>
+<p>A correct counter did exist. The console's failover action, written that evening, counts only status <code>200</code>, and it measures how long convergence takes instead of assuming it. It is in a different file, and <code>run.sh</code> was never updated to match.</p>
+<p>What the morning's twenty calls actually returned cannot be recovered now. The evening's measurement says <code>503</code>; the morning's counter would have printed the same line either way.</p>
+<h2 id="what-is-actually-true">What is actually true</h2>
+<p>Measured on 17 September by HTTP status, on Istio 1.31 and Kubernetes 1.37, with every change put back afterwards:</p>
+<p><strong>Failover works — even with the waypoint in the path.</strong> The namespace was left enrolled in the waypoint, exactly as the acts leave it, with no opt-out label. cluster1's copies of echo were scaled to zero. All 30 of the next calls returned <code>200</code>, and every one was answered by a pod in cluster2. The first call after the last local pod disappeared was already one of them. The waypoint's endpoint list explains why. In August it held only local pod addresses. Now it also holds cluster2's east-west gateway:</p>
+<pre><code>envoy://inner_connect_originate/172.18.255.221:15008   HEALTHY   inbound-vip|80|http|echo.demo-apps.svc.cluster.local
+</code></pre>
+<p>The problem recorded that August evening no longer reproduces. The opt-out the console applies is now unnecessary, though harmless. What changed is not established. The Istio upgrade of Chapter 17 is the obvious candidate.</p>
+<p><strong>The other August gotcha still reproduces.</strong> Act 2 also leaves a route that splits in-mesh traffic between the <code>echo-v1</code> and <code>echo-v2</code> Services — and those Services are not global. With that route re-applied and cluster1's copies scaled to zero, 20 of 20 calls returned <code>503</code>. After the route was deleted, the second call returned <code>200</code>, 0.15 seconds later, and the next 20 all did. A route that points at local-only services overrides global routing. Act 3 deletes the route for exactly this reason.</p>
+<p><strong>Healthy traffic does not prefer home.</strong> The Service's manifest says <em>"Local endpoints are preferred; remote ones are used when no healthy local endpoint exists."</em> After its baseline calls, the act prints <em>"traffic served (locality-aware routing prefers in-cluster endpoints)"</em> — without comparing any numbers. Measured with everything healthy, 60 calls split exactly <strong>30 to cluster1 and 30 to cluster2</strong>. The act's own local-or-remote classifier recognises only one of cluster2's three pod names. That day every remote call happened to land on a different one, so the act would have counted all of them as local.</p>
+<p>On one laptop, the price of that split is a fraction of a millisecond: 2.67 ms mean for calls served locally, 2.96 ms for calls served across. Between two real sites, it is a network hop for half of every service's traffic, on a day when nothing is wrong. That is a latency and data-transfer bill, set by a default nobody chose.</p>
+<h2 id="what-one-label-bought">What one label bought</h2>
+<p>It is worth being precise about the verdict, because both halves are true.</p>
+<p>The label is real. One line replaced every piece of Chapter 10's plumbing. Failover works and was measured by status code, and the connection between clusters carries identities through an encrypted tunnel. The front door refuses tenants it should refuse — including, by accident, the demo's own.</p>
+<p>But the simpler the configuration became, the more the risk moved into the checks. Chapter 10's demo could not fail because its steps didn't depend on each other. This one could not fail because its counter could not tell a response from an error page. The replacement was far better engineering, and it inherited the older demo's habit of printing green.</p>
+<p>One more limit carries over from Chapter 10 unchanged. Act 3 joins the two Kind clusters. The target cluster — the virtual-machine clusters this book is about — is not in the mesh, for the reasons given there.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-fiction">Meridian · two weeks later</p>
+<p>Vikram put two terminal screenshots side by side on the wall screen. Both ended with the same line: <code>success=20 failed=0</code>.</p>
+<p>"The left one is failover working," he said. "The right one is both sites down."</p>
+<p>Anita looked for a long time. "So the check I asked to see go red can't."</p>
+<p>"It couldn't. It counts replies, and an error page is a reply. The failover itself works — we measured it properly. Every one of thirty calls came back from the other site."</p>
+<p>"And when nothing is broken?"</p>
+<p>"Half our traffic crosses to the other site anyway. Nobody set that. It's the default."</p>
+<p>"That one isn't an engineering question," Anita said. "That's a bill." She took a pen to the list from the week before and added a line at the bottom. "New rule. No check goes on a dashboard of mine until someone has watched it fail on purpose. And the traffic split comes to me with a cost attached, and we choose it."</p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<ul>
+<li><strong>Built (21 August 2026):</strong> a Gateway API front door with a team ownership split; request-level authorization on cryptographic identity, with no proxy in any application pod; one mesh across two clusters under a single local root certificate; a cross-cluster service declared with one label.</li>
+<li><strong>Re-verified (17 September; Istio 1.31.0, Kubernetes 1.37):</strong> verification script 22 passed, 0 failed. Rogue route refused. Identity rules 200 / 403 / 403 / 200. Caller identity delivered to the application.</li>
+<li><strong>Measured by HTTP status:</strong> cluster1 scaled to zero → 30 of 30 <code>200</code>, all from cluster2. Both clusters at zero → 20 of 20 <code>503</code>, which Act 3's counter reports as <code>success=20 failed=0</code>.</li>
+<li><strong>Found:</strong> the ListenerSet beat refused for a missing <code>ReferenceGrant</code>, and never asserted; healthy traffic split 30/30 across clusters, despite the manifest's comment; a local/remote classifier that sees one of three remote pods; a verification section that checks configuration, not behaviour; one August gotcha that no longer reproduces, and one that still does.</li>
+<li><strong>Corrected elsewhere:</strong> Chapter 17 had cited <code>success=20 failed=0</code> as proof of failover. It now cites the status-code measurement.</li>
+<li><strong>Cleaned up:</strong> every replica count, label and route changed for measurement was put back, and checked.</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>When did we last watch this check fail — deliberately?</strong></li>
+<li><strong>If our primary site and our backup were both down, which of our dashboards would still be green?</strong></li>
+<li><strong>How much of our traffic crosses between sites when nothing is wrong, and who decided that?</strong></li>
+</ol>
+<h2 id="open-the-repo">Open the repo</h2>
+<ul>
+<li><code>07-istio-advanced/README.md</code> — the before/after table, "Order is not optional", and "Gotchas found while building this".</li>
+<li><code>07-istio-advanced/01-install/gen-mesh-ca.sh</code> and <code>istio-values-cluster1.yaml</code> — the day-one decisions.</li>
+<li><code>07-istio-advanced/act1-gateway/03-gateway.yaml</code>, <code>05-rogue-route.yaml</code>, <code>06-listenerset.yaml</code> — both refusals.</li>
+<li><code>07-istio-advanced/act2-waypoint/01-authz.yaml</code> — the identity policy, and the comment about attaching it to the waypoint.</li>
+<li><code>07-istio-advanced/act3-multicluster/run.sh</code> — <code>call()</code> and the tally; <code>03-global-service.yaml</code> — the label.</li>
+<li><code>ui/backend/handlers/istio_actions.go</code> — <code>HandleIstioFailover</code>: the counter that checks for <code>200</code>, with convergence measured.</li>
+<li><code>07-istio-advanced/verify.sh</code>, section 5 — what the Act 3 checks do and do not assert.</li>
+<li><code>istioctl proxy-config endpoints deploy/waypoint.demo-apps --context kind-cluster1 | grep echo</code> — whether the waypoint can see the other cluster.</li>
+</ul>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>Three measurements on 17 September</strong>, each with a restore-on-exit trap (scratchpad <code>ch11-failover.sh</code>, <code>ch11-outage.sh</code>, <code>ch11-route.sh</code>, with <code>.log</code> files). Temporary changes were limited to <code>demo-apps</code>: echo replicas scaled to zero (cluster1 three times, cluster2 once), the <code>istio.io/use-waypoint=none</code> label on Service <code>echo</code>, and a re-applied <code>echo-internal-split</code> route. Afterwards: 2/1 replicas on both clusters, the original two routes, the original labels. <code>verify.sh</code> ran between the second and third scripts: 22/22.</li>
+<li><strong>The August morning inference is not proven.</strong> It rests on the order in which the acts ran, the evening commit's 503 measurement, and a demonstration that the counter prints the same line for a total outage. Say "cannot be recovered", not "was 503".</li>
+<li><strong>Why the waypoint gotcha stopped reproducing is not established.</strong> 1.30.3 is no longer installed to compare against. Check the Istio 1.31 release notes before naming a cause.</li>
+<li><strong>The even split.</strong> 60 of 60 calls were <code>200</code>; per pod: three cluster1 pods at 10 each, and all 30 remote calls on one cluster2 pod (<code>x8dph</code>). Hypotheses, not verified: the east-west endpoint is weighted by the remote pod count (3 + 3), and one pooled tunnel connection pins remote calls to one pod. Whether <code>spec.trafficDistribution: PreferClose</code> changes the split was not tested.</li>
+<li><strong>Latency numbers</strong> are curl <code>time_total</code> inside the client pod, on one laptop: local means little about a real WAN.</li>
+<li><strong>Not re-run on 17 September:</strong> the identity-swap revocation beat, request mirroring, the 301 redirect, and XFCC after a waypoint restart (the header was present, but the restart itself wasn't repeated).</li>
+<li><strong>Canary figures differ across runs:</strong> 89/11 (August, 100 requests), 93/7 (16 September, from Chapter 17), 8% (17 September, 60 requests). All are within the act's accepted band.</li>
+<li><strong>ListenerSet.</strong> Whether it ever worked in August is unknown; the August commit does not list it among verified results. There is no <code>ReferenceGrant</code> anywhere in the repository.</li>
+<li><strong>Unsupported combination.</strong> Istio 1.31 on Kubernetes 1.37 is outside Istio's tested range (Chapter 17).</li>
+<li><strong>Repo fixes not made:</strong> count status codes in <code>run.sh</code>; assert (or remove) the locality claim; add a <code>ReferenceGrant</code> or drop the ListenerSet beat; update README gotcha 2 and the console's handler comment for 1.31; add a behavioural failover check to <code>verify.sh</code>.</li>
+<li><strong>Figures.</strong> 11.1: the Chapter 10 plumbing next to the one label. 11.2: the two refusal status lines. 11.3: the two identical <code>success=20 failed=0</code> screens — failover and total outage. 11.4: the 60-call distribution.</li>
+<li><strong>The Meridian scenes are fiction.</strong> The outage test and its output are real.</li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
+</ul></aside>
+</article>

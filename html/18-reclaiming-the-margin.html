@@ -1,0 +1,676 @@
+<title>Reclaiming the Margin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part V — The Dividend</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="ch-number" aria-hidden="true">18</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 18: </span>Reclaiming the Margin</h1>
+    <blockquote class="epigraph"><p><em>The question is no longer whether you can afford to become your own cloud provider, but whether you can afford not to.</em></p>
+<p>— <em>Reclaiming Margins with Sovereign Cloud</em>, strategic briefing, February 2026</p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository. <span class="legend-public">Public record</span> and <span class="legend-public">Briefing</span> sections quote named sources — published reports, or the strategy deck behind this book.</dd>
+      <dt>Length</dt>
+      <dd>About 3,100 words · about 13 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Friday in September 2026 · the CFO's office</p>
+<p>The chief financial officer had a single slide on his screen, and he had clearly been waiting all week to show it to someone.</p>
+<p>Two columns. <em>Managed Cloud (5-Year): $12.5M — escalating costs, no equity.</em> <em>Sovereign Cloud (5-Year): $8.2M — predictable costs, asset value.</em> And across the bottom, in green: <em>Net Savings: $4.3M (34% reduction) + owned infrastructure assets.</em></p>
+<p>"A consultant sent it," he said. "It's the number I asked you for a year ago. Which parts of the bill are rent. I want it in the board pack."</p>
+<p>Anita read it twice. "Whose twelve and a half million?"</p>
+<p>"An enterprise like ours, apparently."</p>
+<p>"Then it isn't ours." She sat down. "I'm not saying it's wrong. I'm saying I can't defend it, because I can't find any of it on our invoice. Can we take it apart before the board does?"</p>
+<p>The CFO looked at the green line for a moment, then closed the slide and opened a blank spreadsheet. "Line by line," he said. "Go on, then."</p>
+<hr class="scene-break" />
+<h2 id="the-slide">The slide</h2>
+<p class="dateline dateline-public">Briefing · February 2026</p>
+<p>The slide is the fifth and last chapter of the strategy deck behind this book, and it is the most quoted. It compares five-year total cost of ownership — the full cost of an option over its life, not just its first invoice — for a managed cloud and a self-managed sovereign cloud:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Five-year cost</th>
+<th>The deck's description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Managed cloud</td>
+<td><strong>$12.5M</strong></td>
+<td><em>"Escalating costs, no equity"</em></td>
+</tr>
+<tr>
+<td>Sovereign cloud</td>
+<td><strong>$8.2M</strong></td>
+<td><em>"Predictable costs, asset value"</em></td>
+</tr>
+<tr>
+<td>Net saving</td>
+<td><strong>$4.3M (34%)</strong></td>
+<td><em>"+ owned infrastructure assets"</em></td>
+</tr>
+</tbody>
+</table></div>
+<p>It explains the saving with four <em>"Cost Elimination Factors"</em>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Factor</th>
+<th>Saving</th>
+<th>The deck's description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Success Tax elimination</td>
+<td>−$1.8M</td>
+<td><em>"No more exponential scaling fees"</em></td>
+</tr>
+<tr>
+<td>Innovation Tax removal</td>
+<td>−$1.2M</td>
+<td><em>"Stop paying premium for stagnation"</em></td>
+</tr>
+<tr>
+<td>Vendor licensing savings</td>
+<td>−$900K</td>
+<td><em>"Open-source alternatives"</em></td>
+</tr>
+<tr>
+<td>Infrastructure optimization</td>
+<td>−$400K</td>
+<td><em>"Right-sized for actual workloads"</em></td>
+</tr>
+</tbody>
+</table></div>
+<p>Elsewhere, the deck adds the numbers a board will ask about next: <em>"20–35% Cost Reduction"</em>, a <em>"5–7yr Payback Period"</em>, <em>"12–18 months to full production readiness"</em>, an <em>"Initial Investment: $2–5M for mid-size enterprise deployment"</em>, and a <em>"3–5 Year Timeline"</em> for the whole transformation.</p>
+<p>None of these figures has a source. They describe an illustrative enterprise, not a measured one. That doesn't make the slide useless. It means the slide has to be read the way a CFO reads any model: by asking whether it holds together.</p>
+<h2 id="three-questions-for-any-tco-slide">Three questions for any TCO slide</h2>
+<h3 id="do-the-parts-add-up">Do the parts add up?</h3>
+<p>They do, exactly. $1.8M + $1.2M + $0.9M + $0.4M is $4.3M, which is $12.5M minus $8.2M, which is a 34.4% reduction.</p>
+<p>That exactness is the problem. All four lines are <em>savings</em>. There is no line for anything owning <em>adds</em>. Yet the deck's own previous chapter lists what a self-managed platform requires: hardware; data-centre facilities; a platform engineering team of <em>"Kubernetes experts, DevOps, SRE specialists"</em>; automation and tooling; operational processes. The migration itself costs money, and so does the period of paying for both the old estate and the new one. If the four savings add up exactly to the net figure, every one of those costs is either hidden inside the four lines or missing from the model.</p>
+<h3 id="can-you-find-the-lines-on-an-invoice">Can you find the lines on an invoice?</h3>
+<p>Two of the four, yes. Licences are an invoice line, and so is infrastructure you can right-size.</p>
+<p>The other two are not. <em>"Success Tax elimination"</em> and <em>"Innovation Tax removal"</em> are the deck's names for two ideas from Chapter 1: that costs grow with success, and that money spent standing still is money not spent building. Both are real ideas. Neither is an account. Together they are <strong>$3.0M of the $4.3M — about 70% of the saving</strong> — sitting in lines no finance system records.</p>
+<h3 id="do-the-slides-agree-with-each-other">Do the slides agree with each other?</h3>
+<p>A 34% saving over five years, and a payback of five to seven years, are hard to hold at the same time. Payback is how long it takes the savings to repay the initial investment. If the model saves money within five years, it has paid back within five years.</p>
+<p>The two agree only under assumptions the deck doesn't state. Take the deck's own initial investment of $2–5 million, and suppose the $8.2 million <em>leaves it out</em>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Initial investment</th>
+<th>Five-year cost of owning</th>
+<th>Five-year saving</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$2.0M</td>
+<td>$10.2M</td>
+<td><strong>+$2.3M (18%)</strong></td>
+</tr>
+<tr>
+<td>$3.5M</td>
+<td>$11.7M</td>
+<td><strong>+$0.8M (6%)</strong></td>
+</tr>
+<tr>
+<td>$5.0M</td>
+<td>$13.2M</td>
+<td><strong>−$0.7M (−6%)</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>Or suppose the $4.3 million is a steady saving of $0.86 million a year: then a $2 million investment pays back in <strong>2.3 years</strong>, and a $5 million one in <strong>5.8 years</strong>. The deck's five-to-seven-year payback fits only at the expensive end of its own range — where the five-year saving shrinks toward nothing, or turns negative.</p>
+<p>None of this means the slide is wrong about the direction. It means the slide is a <em>shape</em>, not a number. Its real value is the list of lines. The amounts have to come from somewhere else.</p>
+<h2 id="an-asset-that-wears-out">An asset that wears out</h2>
+<p class="dateline dateline-public">Public record · 2022–2025</p>
+<p>The slide's right-hand column claims <em>"asset value"</em>, and an earlier slide lists <em>"Asset value appreciation"</em> and gives the asset value as <em>"∞"</em>. Servers do not appreciate. They wear out, and they become obsolete, and accounting says how fast.</p>
+<p>The clearest evidence comes from the landlords themselves. Microsoft, in its 2022 fiscal year, and Alphabet, in 2023, lengthened the accounting life of their servers and network equipment from four years to six, which reduced their reported depreciation by billions. In February 2025, Amazon went the other way for part of its fleet, shortening it from six years to five from the start of that year, and citing <em>"the increased pace of technology development, particularly in the area of artificial intelligence and machine learning."</em></p>
+<p>The three largest owners of servers in the world disagree about how long a server lasts. A TCO for a sovereign platform should not assume they last forever. Plan a hardware refresh inside, or just after, a five-year model — and expect AI hardware to age faster than the rest.</p>
+<h2 id="what-the-platform-can-put-on-the-worksheet">What the platform can put on the worksheet</h2>
+<p class="dateline dateline-record">Build log · 17 September 2026</p>
+<p>The platform in this book cannot supply Meridian's numbers. It can supply something the slide lacks: inputs that were measured. Four of them matter for a TCO.</p>
+<p><strong>Speed.</strong> A two-machine Kubernetes cluster is built from its declaration to both machines ready in a median of 33.7 seconds, and torn down in 18.9 (Chapter 7). For steady workloads, "we rent because renting is faster" is no longer a line that has to be paid for.</p>
+<p><strong>Reservation versus use.</strong> Waste is not only a cloud problem. On the management cluster that afternoon:</p>
+<ul>
+<li>Its 59 running pods had <strong>reserved 22.42 GiB</strong> of memory. Of that, 14.57 GiB was held by the two virtual machines of the target cluster.</li>
+<li>The whole management cluster was <strong>actually using 7.45 GiB</strong> — about a third of what it had reserved.</li>
+<li>The target cluster's control-plane machine had been given 4 cores and 8 GiB. It was using <strong>59 millicores — 1% of its processor allowance — and 1,114 MiB of memory.</strong></li>
+<li>The node had reserved 4.59 processor cores. At the moment it was sampled, it was using well under half of one.</li>
+</ul>
+<p>On owned hardware, capacity is set by what is <strong>reserved</strong>, not what is used. On this host, a second target cluster would not fit — its machines could not reserve the memory — even though two-thirds of the memory already reserved sat idle. That is the deck's <em>"overprovisioning"</em>, on hardware you own. It is the owner's margin to reclaim or waste, and right-sizing reservations is where it lives.</p>
+<p><strong>The energy cost of AI.</strong> The model most of the platform's agents use, <code>qwen2.5:7b</code>, was measured on the laptop's GPU. With the model loaded and idle, the GPU drew <strong>6.4 W</strong>. While generating text it drew <strong>38–42 W</strong>, at <strong>34–37 tokens per second</strong>. That comes to <strong>1.19 joules per generated token — 0.33 kWh per million tokens</strong>, for the GPU alone.</p>
+<p>Multiply that by any electricity price between 10 and 50 cents a kilowatt-hour, and the power for a million generated tokens costs roughly <strong>3 to 17 cents</strong>. The lesson is not that local AI is nearly free. It is that for local AI, the electricity is a rounding error. The cost is the hardware — which, on this GPU, holds one model at a time (Chapter 9) — and the people who run and check it.</p>
+<p><strong>The people.</strong> The repository behind this book holds 81 commits, from 11 February to 9 September 2026, from <strong>a single committer</strong>. <strong>63 of those 81 commits</strong> carry an AI coding assistant as co-author. The platform's operating notes run to 612 lines, including 23 entries in a list of pitfalls — most of them a failure that looked like success.</p>
+<p>Read that carefully, because it is the easiest number in this book to misuse. It describes a lab: no on-call rota, no service-level agreement, no production users, no auditors. It says nothing about the cost of <em>operating</em> a sovereign platform at Meridian's scale. What it does suggest is narrower, and still worth a line in the model: in 2026, the effort to <em>build</em> such a platform is not the effort a 2021 estimate would assume. And the cost that never appears on a TCO slide is the one those 23 pitfalls describe: the continuous work of knowing what is true.</p>
+<p>One more fact belongs on the worksheet. The platform's cost-analysis agent — the persona written in April to find idle virtual machines and propose stopping them — cannot currently be installed; it was written for a resource type the agent platform no longer ships (Chapter 16). The tool meant to measure the owner's waste is itself waiting to be fixed.</p>
+<h2 id="the-worksheet">The worksheet</h2>
+<p>Put the slide's shape and the platform's measurements together, and the chapter's real deliverable is a worksheet: the lines a sovereign-cloud TCO must contain, and what this book can say about each. The amounts come from your own invoice.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Line</th>
+<th>Renting</th>
+<th>Owning</th>
+<th>What this book measured</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Capacity</td>
+<td>On the invoice</td>
+<td>Hardware, amortized over its refresh cycle (4–6 years, per the public record)</td>
+<td>22.42 GiB reserved against 7.45 GiB used</td>
+</tr>
+<tr>
+<td>Speed to capacity</td>
+<td>Minutes</td>
+<td>The factory's build time</td>
+<td>33.7 s to a two-machine cluster; 18.9 s to remove one</td>
+</tr>
+<tr>
+<td>Software</td>
+<td>Managed-service fees and licences</td>
+<td>Open source, plus optional support</td>
+<td>The whole stack is open source (Chapters 3–4)</td>
+</tr>
+<tr>
+<td>Leaving</td>
+<td>Switching fees (banned in the EU from 2027) and rebuilding proprietary services</td>
+<td>Migration project, and paying for both during it</td>
+<td>No migration tooling in the repository (Chapter 4)</td>
+</tr>
+<tr>
+<td>Power and facilities</td>
+<td>Inside the rent</td>
+<td>Power, cooling, space</td>
+<td>0.33 kWh per million generated tokens, GPU only</td>
+</tr>
+<tr>
+<td>AI inference</td>
+<td>Per token, hosted</td>
+<td>Hardware sized for the models</td>
+<td>34–37 tokens/s; one model at a time on a 6 GB GPU</td>
+</tr>
+<tr>
+<td>People</td>
+<td>The supplier's staff</td>
+<td>Platform team, on-call, training</td>
+<td>A lab: one committer, 63 of 81 commits AI-co-authored</td>
+</tr>
+<tr>
+<td>Upgrades</td>
+<td>A button and a maintenance window</td>
+<td>Yours</td>
+<td>A week, for one major upgrade (Chapter 17)</td>
+</tr>
+<tr>
+<td>Knowing what's true</td>
+<td>The supplier's status page</td>
+<td>Your own checks</td>
+<td>Gauges found wrong in Chapters 4, 5, 11 and 12</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="the-journey">The journey</h2>
+<p class="dateline dateline-public">Briefing · February 2026</p>
+<p>The deck's last recommendations slide is a seven-step <em>"Sovereign Cloud Journey"</em>. It holds up better than its TCO slide, because each step is an action, not a number. Here are the steps, with where each one shows up in this book:</p>
+<ol>
+<li><strong>Assess current state</strong> — <em>"Audit cloud spend, identify lock-in points, catalog proprietary service dependencies."</em> Meridian's workload spreadsheet, and its dependency table (Chapters 1 and 2).</li>
+<li><strong>Evaluate workload portability</strong> — which workloads move easily, and which need rework. The steady ones first (Chapter 1).</li>
+<li><strong>Start with non-critical workloads</strong> — <em>"Build expertise on development, testing, or low-risk production systems."</em> The pilot, and Parts II to IV.</li>
+<li><strong>Invest in CAPI &amp; Kubernetes</strong> — the factory (Chapter 4 and Part II).</li>
+<li><strong>Consider hybrid approaches</strong> — <em>"Maintain some managed services during transition to reduce risk."</em> Meridian is still renting, on purpose.</li>
+<li><strong>Build platform engineering</strong> — the blank fourth column of Vikram's table in Chapter 2: who could fix the boiler.</li>
+<li><strong>Plan a 3–5 year timeline</strong> — <em>"Full transformation requires patience but delivers lasting value."</em></li>
+</ol>
+<p>The deck lists four <em>"Key Success Factors"</em>: executive sponsorship, adequate budget, skills development and hiring, and incremental delivery. This book would add a fifth, ahead of the others: <strong>measurement before savings.</strong> Nothing in steps 1 to 7 produces a saving until someone has metered the same workload both ways.</p>
+<h2 id="a-cloud-owning-culture">A cloud owning culture</h2>
+<p>The campaign flyer promises <em>"Save $Millions"</em> and names the means: <em>"Creating a Cloud Owning Culture."</em> The book agrees with the second half, and has spent eighteen chapters finding out what it means.</p>
+<p>Owning a cloud is not owning servers. It is owning the work a landlord used to do out of sight: knowing what is true about the platform, and being able to show someone else how you know. At Meridian that took the form of rules, each written after a measurement proved an assumption wrong:</p>
+<ul>
+<li>Don't say <em>ready</em>; say <em>working</em>, and only once something has worked (Chapter 5).</li>
+<li>Anything we keep warm, we exercise (Chapter 9).</li>
+<li>Keep the before picture, and label it (Chapter 10).</li>
+<li>No check goes on a dashboard until someone has watched it fail on purpose (Chapter 11).</li>
+<li>A model gets what every service gets: an identity, a lock, and a meter (Chapter 12).</li>
+<li>An agent may advise; it may not act — until it has earned it, in writing (Chapters 15 and 16).</li>
+</ul>
+<p>None of those rules appears on a TCO slide. All of them are part of the cost of owning, and all of them are where the margin is actually kept.</p>
+<h2 id="what-to-ask-your-vendors-including-the-one-you-become">What to ask your vendors — including the one you become</h2>
+<p>When a sovereign-cloud programme starts, the organization becomes a supplier to itself. The same questions apply to both.</p>
+<ol>
+<li><strong>Price.</strong> How much notice do we get before a price change, and is there a cap?</li>
+<li><strong>Leaving.</strong> What does it cost to leave, in fees and in rebuilding, and in what format do we get our data back?</li>
+<li><strong>Control.</strong> Which settings we need can we <em>not</em> change, and who decides when that list changes?</li>
+<li><strong>Jurisdiction.</strong> Where are our data, our logs and our AI prompts processed — and under whose law?</li>
+<li><strong>Metering.</strong> Can we see tokens used, by model and by team, every month?</li>
+<li><strong>Truth.</strong> When your status page says <em>healthy</em>, what did you check, and how would we check it ourselves?</li>
+</ol>
+<p>A platform team that cannot answer those six for its own platform has rebuilt the landlord, and moved it indoors.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-fiction">Meridian · the same Friday, two hours later</p>
+<p>The spreadsheet had nine rows, the same nine as the worksheet, and three columns: <em>renting today</em>, <em>owning, estimated</em>, and <em>owning, measured</em>. The first column was nearly full; the finance team had the invoices. The second was full of ranges. The third was empty except for three cells Vikram had sent over: a build time, a reservation figure, and an energy number.</p>
+<p>"So what goes in the board pack?" the CFO said. "They asked for a saving."</p>
+<p>"They'll get one," Anita said. "Not from a consultant. From us." She pointed at the first row of the workload spreadsheet from January — the steadiest system Meridian had. "We run that on the pilot platform for a quarter, in parallel. We meter both sides — the invoice on one, and hardware, power and hours on the other. People's time goes in the model, not in a footnote. At the end of the quarter we have one number we can defend, for one workload."</p>
+<p>"One workload isn't four point three million."</p>
+<p>"No. It's the first line of it that's true." She closed the consultant's slide. "The board has been shown a lot of green this year. I'd like the first number we give them about the money to be one we measured."</p>
+<p>The CFO typed the board-pack line himself. <em>Sovereign cloud: no savings claimed. One workload metered in parallel, Q4; first measured result in January.</em></p>
+<p>He read it back. "It's a very boring sentence."</p>
+<p>"Good," Anita said. "Boring sentences are the ones that turn out to be true."</p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<ul>
+<li><strong>The deck's model (briefing):</strong> $12.5M rented against $8.2M owned over five years; a $4.3M (34.4%) saving that is exactly the sum of four savings lines, with no line for anything owning adds. About 70% of the saving ($3.0M) is in two lines no invoice records. The 5–7 year payback agrees with the five-year saving only at the expensive end of the deck's own $2–5M investment range.</li>
+<li><strong>Depreciation (public record):</strong> Microsoft (FY2022) and Alphabet (2023) moved servers from four- to six-year lives; Amazon moved part of its fleet from six to five years from January 2025, citing AI.</li>
+<li><strong>Owned waste (build log, 17 September 2026):</strong> 22.42 GiB reserved against 7.45 GiB used on the management cluster; a control-plane VM using 1% of its CPU and 14% of its memory.</li>
+<li><strong>AI energy (build log):</strong> <code>qwen2.5:7b</code> on an RTX 4050 laptop GPU at 6.4 W idle and 38–42 W generating; 34–37 tokens/s; 1.19 J per token; 0.33 kWh per million generated tokens, GPU only.</li>
+<li><strong>Effort (build log):</strong> 81 commits from one committer over seven months, 63 of them co-authored with an AI coding assistant — a lab, not an operation.</li>
+<li><strong>Not claimed:</strong> any saving for Meridian.</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>For our biggest workload, what would it cost to meter it both ways, in parallel, for one quarter?</strong></li>
+<li><strong>In any savings model we have been shown, which lines appear on an invoice — and which lines for new costs are missing?</strong></li>
+<li><strong>What do we reserve against what we actually use — in the cloud, and on the hardware we already own?</strong></li>
+</ol>
+<h2 id="open-the-repo">Open the repo</h2>
+<ul>
+<li><code>kubectl --context kind-cluster2 describe node cluster2-control-plane</code> — reserved against allocatable, under <em>Allocated resources</em>.</li>
+<li><code>docker stats --no-stream</code> — what the clusters actually use.</li>
+<li><code>kubectl --kubeconfig target-cluster-kubeconfig top nodes</code> — what a target-cluster machine uses of what it was given.</li>
+<li><code>nvidia-smi --query-gpu=power.draw --format=csv -lms 200</code>, alongside <code>ollama</code>'s <code>eval_count</code> and <code>eval_duration</code> — energy per token.</li>
+<li><code>git log --format='%B' | grep -c 'Co-Authored-By'</code> and <code>git shortlog -sn</code> — how the platform was built.</li>
+<li><code>06-sympozium/cost-analyzer.yaml</code> — the FinOps agent, and why it does not install (Chapter 16).</li>
+<li><code>~/marketing/Reclaiming Margins with Sovereign Cloud.pptx</code>, slides 16, 18 and 19; <code>~/marketing/SovereignCloud_Flyer_v2.pdf</code>.</li>
+</ul>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>This chapter has no Meridian figures.</strong> The author was asked for real cost inputs; none were available, so the chapter uses the deck's model, clearly labelled, and proposes the parallel-metering test instead. If real figures become available, the worksheet table is where they go.</li>
+<li><strong>Deck arithmetic</strong> was computed in a scratch script: 4.3/12.5 = 34.4%; (1.8+1.2)/4.3 = 69.8%; the investment and payback scenarios are as tabled. The deck does not say whether $8.2M includes the initial investment. The chapter tests both readings rather than choosing one.</li>
+<li><strong>Depreciation sources</strong> are secondary (search results summarizing filings): Microsoft Q4 FY2022; Alphabet January 2023; Amazon's 7 February 2025 disclosure, effective 1 January 2025, quoting "increased pace of technology development, particularly in the area of artificial intelligence and machine learning." Cite the 10-K/10-Q text directly before publication, and confirm the "billions" wording (the coverage cites about $3.7B for Microsoft's FY2023).</li>
+<li><strong>Reservation figures.</strong> Memory requests were summed over Running/Pending pods from <code>kubectl get pods -A -o json</code>. That gives 22.42 GiB; <code>describe node</code> reported 24,192,159,232 bytes (≈22.5 GiB). "Used" is <code>docker stats</code> for the <code>cluster2-control-plane</code> container (7.453 GiB), a single sample. CPU use is the same sample (41.46% of one core). The target VM figures are <code>kubectl top nodes</code> inside the target cluster; the worker reported <code>&lt;unknown&gt;</code>, consistent with Chapter 5's tainted worker.</li>
+<li><strong>"A second target cluster would not fit"</strong> is arithmetic on memory requests (about 7.5 GiB unreserved, against 14.57 GiB for a target cluster's VMs). It was not tested by scheduling one. The platform also enforces one target cluster at a time by design.</li>
+<li><strong>Energy.</strong> Scratchpad <code>ch18-energy.sh</code> / <code>.log</code>:</li>
+<li>Five runs of 400 generated tokens, temperature 0, with the model already loaded (0.13–0.17 s load time); <code>nvidia-smi</code> sampled every 200 ms.</li>
+<li>The first run's mean was lower (38.3 W), likely ramp-up. Throughput drifted from 37.1 to 33.9 tokens/s across runs, possibly thermal.</li>
+<li>GPU-board power only: not CPU, memory, the rest of the laptop, or cooling. The laptop was on AC power.</li>
+<li>Chapter 15's "11.0 tokens per second" is a different metric: whole agent runs, including prompt processing and tool calls.</li>
+<li>The 3–17 cents range is illustrative arithmetic at 10–50 cents per kWh, not a measured price.</li>
+<li><strong>The effort figures</strong> are <code>git rev-list --count HEAD</code> (81), <code>git shortlog -sne</code> (1 author) and a count of commit messages containing "Co-Authored-By: Claude" (63). The last commit is 9 September. 28 working-tree changes (including this book and the September upgrade) were uncommitted at the time of writing. The author should decide whether to name the committer, and how to describe the AI assistance.</li>
+<li><strong>The Meridian scenes are fiction.</strong> The board-pack sentence sets up the epilogue, where savings are still "not yet measured".</li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
+</ul></aside>
+</article>

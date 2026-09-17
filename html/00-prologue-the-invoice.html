@@ -1,0 +1,458 @@
+<title>The Invoice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Before Part I</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="bookend-label">Prologue</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Prologue: </span>The Invoice</h1>
+    <blockquote class="epigraph"><p><em>Is moving to the cloud actually saving you money, or are you just swapping one landlord for another?</em></p>
+<p>— <em>Reclaiming Margins with Sovereign Cloud</em>, strategic briefing, February 2026</p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository. <span class="legend-public">Public record</span> and <span class="legend-public">Briefing</span> sections quote named sources — published reports, or the strategy deck behind this book.</dd>
+      <dt>Length</dt>
+      <dd>About 900 words · about 4 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Monday in September 2025 · the CTO's office</p>
+<p>The invoice came on the first working day of the month, as it always did, and Anita Rao read it the way she had read it every month for four years: not the total, but the slope.</p>
+<p>The total told her what Meridian had spent. The slope told her what Meridian was becoming. For the sixth quarter running, the cloud bill had grown faster than revenue. Nobody had made a bad decision. The migration had worked; the teams shipped faster than they ever had on the old virtualization estate; the auditors were satisfied. The bill simply grew — with every new service, every successful launch, every environment someone created on a Friday and never deleted.</p>
+<p>The FinOps team had attached their monthly tagging report. The last page listed resources that no team would admit to owning. It was a long page.</p>
+<p>She called Vikram Iyer, who ran the platform team, and asked him a question she had been saving.</p>
+<p>"If we stopped paying tomorrow," she said, "what would we still own?"</p>
+<p>He thought about it properly, which was why she had asked him. "The code. The data, if we could get it out in time. The people who know how it all fits together."</p>
+<p>"Machines?"</p>
+<p>"Not one. The data centre went in the migration. The virtualization estate is still there for the old systems, but we license that too."</p>
+<p>"So we are tenants," Anita said. "Everywhere."</p>
+<p>"Good tenants. We pay on time."</p>
+<p>She did not smile. She wrote a single line at the top of the invoice, above the total, and underlined it: <em>What would it take to own this instead of rent it?</em></p>
+<hr class="scene-break" />
+<h2 id="four-numbers-and-a-fifth">Four numbers, and a fifth</h2>
+<p class="dateline dateline-public">Briefing · February 2026</p>
+<p>The strategy deck behind this book makes the case against renting in four numbers. It calls them <em>"Cloud Waste Reality"</em>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>The deck's category</th>
+<th>The deck's figure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Overprovisioning</td>
+<td><strong>35%</strong> — <em>"Resources provisioned but unused"</em></td>
+</tr>
+<tr>
+<td>Idle resources</td>
+<td><strong>28%</strong> — <em>"Running 24/7 with no workload"</em></td>
+</tr>
+<tr>
+<td>Orphaned resources</td>
+<td><strong>18%</strong> — <em>"Forgotten but still billing"</em></td>
+</tr>
+<tr>
+<td>Premium service markup</td>
+<td><strong>40%</strong> — <em>"Above open-source alternatives"</em></td>
+</tr>
+</tbody>
+</table></div>
+<p>They are vivid, and they are exactly the kind of number this book will not repeat without checking. The deck names no source for any of them. And they cannot all be shares of the same bill: the first three alone add up to 81%, which would leave one dollar in five doing useful work, before the markup.</p>
+<p class="dateline dateline-public">Public record · March 2026</p>
+<p>The nearest published figure is smaller, and more modest in how it was obtained. Flexera's <em>2026 State of the Cloud Report</em>, a survey of more than 750 cloud decision-makers and users, found that respondents estimate <strong>29%</strong> of their cloud spend is wasted — up from 27% the year before, the first increase in five years. Managing cloud spend remained a top challenge, named by 85%.</p>
+<p>Twenty-nine percent is a self-estimate, not a measurement. It is still roughly three dollars in every ten. And it is the kind of number a CTO can test: not against an industry survey, but against her own invoice.</p>
+<h2 id="how-this-book-keeps-score">How this book keeps score</h2>
+<p>Meridian is not a real company. It is a composite of the enterprises this book is written for: an organization with a long virtualization history, a cloud bill growing faster than its revenue, and a board asking whether it has a choice. Its two recurring characters — Anita Rao, the CTO, and Vikram Iyer, who leads the platform team — are fiction. Scenes set at Meridian are marked with its name.</p>
+<p>Everything else is not fiction, and the book marks that too.</p>
+<p><strong>Build log</strong> sections come from a real repository: a working sovereign-cloud platform, built from open-source parts, beginning on 11 February 2026. It has a management cluster that manufactures Kubernetes clusters whose machines are virtual machines; a service mesh joining two clusters; and AI agents that run on models on hardware in the room. Every number in a build log was measured on that platform, most of them again on 17 September 2026, while this book was being written. When a measurement contradicted the repository's own documentation, the book reports the measurement and says so.</p>
+<p><strong>Public record</strong> and <strong>Briefing</strong> sections quote named sources: published reports, or the strategy deck. When a source gives no evidence for a number, the book says that too.</p>
+<p>The platform runs on a single laptop — an AMD Ryzen AI 9 HX 370 with 29 GiB of memory and an NVIDIA RTX 4050 laptop GPU with 6 GB of video memory. That is not a data centre, and the book never pretends it is. What transfers from a laptop to a data centre is not scale. It is the pattern, the measurements, and — more often than the vendor brochures would suggest — the failures.</p>
+<p>Every chapter ends the same way:</p>
+<ul>
+<li><strong>The ledger</strong> — what was built, measured, or found, in numbers only where something was measured.</li>
+<li><strong>Ask your team</strong> — three questions a CxO can put to their own organization the next morning.</li>
+<li><strong>Open the repo</strong> — the files and commands that let an engineer check the chapter for themselves.</li>
+</ul>
+<p>The book is in five parts. <strong>The Bill</strong> is why. <strong>The Factory</strong> is how clusters get made. <strong>The Fabric</strong> is how they talk to each other. <strong>The Brain</strong> is what AI can safely do with them. <strong>The Dividend</strong> comes back to the money.</p>
+<p>It starts where Anita did: with an invoice, and a question written above the total.</p>
+<aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>The deck's four numbers</strong> are on slide 9 of <code>~/marketing/Reclaiming Margins with Sovereign Cloud.pptx</code> (dated February 2026). Neither the slide text nor the notes carry a source. If a source exists, add it and soften the paragraph; if not, keep the check as written.</li>
+<li><strong>Flexera figures.</strong> The 2026 press release (18 March 2026) gives 29% waste, "the first time in five years" it rose, and 85% naming cost management a top challenge, from 750+ respondents: https://www.flexera.com/about-us/press-center/flexera-finds-cloud-value-is-rising-while-ai-waste-grows. The 2025 figures (27%, 84%) are from https://www.flexera.com/about-us/press-center/new-flexera-report-finds-84-percent-of-organizations-struggle-to-manage-cloud-spend. The 2025 release called cost management the top challenge for "the third year in a row". The 2026 release says only that it "remains a top challenge", so the chapter says that.</li>
+<li><strong>Meridian's financials are deliberately unquantified.</strong> Every earlier chapter promises that figures in Meridian scenes were measured, and nothing here was. Keep the invoice qualitative, or clearly mark any invented figure.</li>
+<li><strong>Timeline.</strong> The prologue is September 2025, so the epilogue ("twelve months later") lands in September 2026, the book's present. This is consistent with Chapter 5 (pilot funded in February 2026) and the repository's first commit (11 February 2026).</li>
+<li><strong>Hardware</strong> was read on 17 September (<code>lscpu</code>, <code>free -g</code>, <code>nvidia-smi</code>); it matches Chapter 16.</li>
+<li><strong>Flyers.</strong> One of the three flyers in the marketing folder carries a real company's branding. The book quotes only the unbranded flyer.</li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
+</ul></aside>
+</article>

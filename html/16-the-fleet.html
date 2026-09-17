@@ -1,0 +1,572 @@
+<title>The Fleet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part IV — The Brain</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="ch-number" aria-hidden="true">16</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 16: </span>The Fleet</h1>
+    <blockquote class="epigraph"><p><em>Execute Phase 0–1 well and you have a credible demo. Execute Phase 2–3 well and you have a product.</em></p>
+<p>— <code>Sovereign_Cloud_Agentic_Strategy.md</code>, §7</p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
+      <dt>Length</dt>
+      <dd>About 2,800 words · about 12 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Tuesday in September · the CTO's office</p>
+<p>The catalog ran to eleven pages, and Anita Rao had read it the way she read a hiring plan: job titles down the left margin, and a question mark next to most of them.</p>
+<p><em>VM Lifecycle Warden. Golden Image Curator. MetalLB IP-Space Accountant. Workload Onboarder. Chaos &amp; Resilience Tester. RBAC Auditor. Idle VM Reaper. Right-Sizer. Incident Postmortem Drafter.</em></p>
+<p>"Twenty-nine," she said. "Twenty-nine agents."</p>
+<p>"Grouped by where they work," Vikram said. "Three planes — the management cluster, the tenant clusters, the mesh between them — and four shared teams: security, cost, developer experience, observability. The roadmap says most of them are a day or two of configuration and prompt writing each."</p>
+<p>"Nobody I hire is productive in a day or two." She turned to the last page. "How many of these work today?"</p>
+<p>"Three. Sort of."</p>
+<p>"Sort of?"</p>
+<p>"They answer questions. None of them acts on anything."</p>
+<p>Anita capped her pen. "Then before we talk about twenty-nine, tell me what it would take for one of them to be allowed to act. Not what it does. What it has to prove before it gets the job."</p>
+<hr class="scene-break" />
+<p class="dateline dateline-record">Build log · April–September 2026</p>
+<h2 id="twenty-nine-job-titles">Twenty-nine job titles</h2>
+<p>The strategy document organizes its agents the way the platform is organized. An <em>infrastructure plane</em> on the management cluster: virtual machines, disk images, cluster provisioning, load-balancer addresses. A <em>tenant plane</em> inside the target clusters: workloads and their health. A <em>mesh plane</em> across clusters: service discovery, mutual TLS, traffic. Over all three sits a <em>control tower</em> — the UI's AI mode, drawn as <em>"Orchestrator + chat surface + approval gate"</em> — and beneath them a shared layer for security and compliance, cost, developer experience, and observability.</p>
+<p>Counted section by section, the catalog lists twenty-nine personas: five infrastructure agents, four tenant agents, three mesh agents, five for security, four for cost, five for developer experience, and three for observability. Each entry reads like a job description — what it does, which tools it needs, what triggers it, a sample task, and the value it delivers. The first one sets the tone:</p>
+<blockquote>
+<p><em>"Find all VMIs not in <code>Running</code> phase. For each, check: DataVolume ready? CPU/memory pressure on node? virt-launcher pod scheduled? Report root cause and, if safe and idle &gt; 10 min, restart the VMI."</em></p>
+</blockquote>
+<p>Read the catalog for its verbs and a pattern appears. The VM warden <em>restarts</em>. The cluster provisioner <em>drives the rollout</em>. The idle-VM reaper <em>proposes a stop</em>. The onboarder deploys; the ServiceEntry generator generates; the CVE watcher <em>opens issues</em>. The value the catalog promises comes overwhelmingly from agents that change things.</p>
+<p>Two sentences set the catalog's technical assumptions. The first: <em>"Every agent is one <code>SympoziumInstance</code>; every persona pack bundles the instances that belong together."</em> The second, from the build-versus-reuse section: <em>"build three custom skill packs (<code>kubevirt-ops</code>, <code>capi-ops</code>, <code>istio-ops</code>) and maybe 15–20 bespoke prompts. Everything else you can reuse."</em></p>
+<p>Chapter 13 has already told what happened to the first noun: <code>SympoziumInstance</code> was never reconciled, and the chart no longer ships it. The second never existed; the document's own April status note records that <em>"there is no <code>PersonaPack</code> CRD."</em> The three custom tool packs were never built.</p>
+<h2 id="what-exists-on-17-september">What exists on 17 September</h2>
+<p>Checked against the running platform on 17 September:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Closest catalog persona</th>
+<th>What exists</th>
+<th>State on 17 September</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Infrastructure-plane agents (VM warden, disk-image custodian, and others)</td>
+<td><code>cluster2-agent</code>, a generalist</td>
+<td>Serving; read-only outside its namespace</td>
+</tr>
+<tr>
+<td>Target-Cluster SRE</td>
+<td><code>target-cluster-agent</code></td>
+<td>Serving; its tools use the target cluster's administrator credential — read-only only by instruction</td>
+</tr>
+<tr>
+<td>Service-Mesh Diagnostician</td>
+<td><code>mesh-sre-agent</code> (August)</td>
+<td>Serving; read-only; no path to metrics</td>
+</tr>
+<tr>
+<td>Idle VM Reaper</td>
+<td><code>cost-analyzer</code> (April demo)</td>
+<td>Cannot be applied: written for a resource type the chart no longer ships</td>
+</tr>
+<tr>
+<td>Incident responder</td>
+<td><code>incident-responder</code> (April demo)</td>
+<td>Cannot be applied: same reason</td>
+</tr>
+<tr>
+<td>Security and policy agents</td>
+<td>An IaC security agent (March) — a separate Go service with policy rules and a local model, not a Sympozium agent</td>
+<td>Not redeployed after the September rebuild</td>
+</tr>
+<tr>
+<td>The warm-up "keep-alive agent"</td>
+<td>The <code>ollama-warm</code> schedule</td>
+<td>Stopped firing (Chapter 14)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Asked to validate the two April personas without creating anything, the cluster refused both outright: <em>"no matches for kind 'SympoziumInstance'."</em> They were the first agents on the platform designed to <em>act</em> — one to stop an idle virtual machine on request, the other to diagnose and remediate a stopped worker — and they are now documents describing something that cannot be installed.</p>
+<p>One more row belongs in the table, because the strategy document's reuse plan depends on it. The document recommends starting from Sympozium's <code>platform-team</code> bundle for the SRE and security personas. That bundle is installed. So are seven other example teams that ship with the chart, one of them seven personas strong. All eight are listed as ensembles in the agents' namespace, and all eight are switched off.</p>
+<p>Three agents are running. Each is closest to one entry in the catalog but broader than it, and none is designed to act. Two are held to reading outside their own namespace by the permissions Chapter 14 examined. The third deserves a sentence of its own: <code>target-cluster-agent</code> reaches its cluster through the kubeconfig stored for it, and that kubeconfig belongs to <code>target-cluster-admin</code>. On the tenant cluster, the only thing keeping that agent read-only is its briefing.</p>
+<h2 id="the-roadmap-against-the-calendar">The roadmap against the calendar</h2>
+<p>The roadmap was written with a status snapshot dated 24 April, and it gave its phases durations: one week for Phase 0, two to three for Phase 1, two for Phase 2, two to three for Phase 3. Phases 0 through 3 — the credible demo and the product, in the epigraph's terms — came to seven to nine weeks.</p>
+<p>On 17 September, twenty-one weeks later:</p>
+<ul>
+<li><strong>Phase 0 — tighten the foundation.</strong> Delivered on paper. The manifests are bundled into one install. The two network policies ship — and, as Chapter 14 found, the sandbox policy selects no pods. The warm-up schedule ships, and has stopped.</li>
+<li><strong>Phase 1 — infrastructure-plane personas.</strong> Not built as personas; <code>cluster2-agent</code> covers the plane as a read-only generalist.</li>
+<li><strong>Phase 2 — mesh plane.</strong> The Diagnostician exists, since August. The ServiceEntry generator does not, and neither does the planned hook that would run a diagnosis when someone clicks an edge in the mesh view.</li>
+<li><strong>Phase 3 — tenant plane and cost.</strong> <code>target-cluster-agent</code> exists. The onboarder, the generalized reaper, the right-sizer, and the per-persona model selector do not.</li>
+<li><strong>Phase 4 — security and developer experience.</strong> Not built as agents.</li>
+<li><strong>Phase 5 — the orchestrator.</strong> Not built. The mechanism it would stand on works, as the next section shows.</li>
+</ul>
+<p>It would be easy to call this a slipped roadmap and move on. The repository's own history says something more useful about where the weeks went. The Sympozium labs in July discovered that the persona object had no controller, that tools did not reach runs, and that policy guardrails were weaker than their schema implied. The agent platform was upgraded three times — to 0.10.47, 0.10.57, and 0.10.75 — and each upgrade broke something that had to be diagnosed. The cluster speed investigation ran in June and again in September. The five-act service-mesh demonstration was built in August. And in September the whole platform was rebuilt on new Kubernetes versions.</p>
+<p>None of that was on the roadmap. All of it was underneath it. A persona that takes <em>"~1–2 days of YAML + prompt engineering"</em> takes one or two days only on a platform that behaves the way its documentation says — and on this platform, finding out how it actually behaved was most of the work.</p>
+<h2 id="a-pipeline-of-two">A pipeline of two</h2>
+<p>Phase 5 imagines <em>"a 'planner' persona whose tools are the other agents"</em>: one chat window, a whole fleet behind it. Sympozium's closest building block is the <code>Ensemble</code>, which lets agents hand work to one another. Lab 06 builds the smallest useful version: an analyst answers a question, and a reviewer receives the analyst's answer with instructions to <em>"verify claims, flag anything unsupported, and produce the final improved answer."</em> The analyst runs on <code>qwen2.5:7b</code>, the reviewer on <code>llama3.2</code>.</p>
+<p>It was run again on 17 September, on the current release, and the mechanics worked exactly as designed. Applying one object created two new <code>Agent</code> objects, each with its own memory Deployment. The kickoff prompt was delivered to the analyst. When the analyst's run finished, the reviewer's run started on its own, with the analyst's output passed along. About a hundred seconds from start to finish, with nothing triggered by hand.</p>
+<p>The work did not go as well.</p>
+<p>The analyst ran for 25.5 seconds, used 3,091 input and 859 output tokens, and called no tools. It produced a tidy, sectioned comparison of k3s clusters in KubeVirt VMs against bare Kind clusters — and one of its central claims was wrong. It described Kind clusters as <em>"leveraging the hypervisor's direct hardware access for containers."</em> Kind runs Kubernetes nodes as ordinary containers on the host. There is no hypervisor involved.</p>
+<p>That is exactly what a reviewer is for. The reviewer ran for 6.8 seconds, used 5,877 input and 126 output tokens, and made one tool call. Its entire output was a heading, <em>"Tool Usage,"</em> a sentence saying it would search the workflow's memory, and a short block of Python calling a memory-search function. No verdict. No correction. No final answer.</p>
+<p>The lab had recorded the same outcome in July, on an earlier release: the reviewer <em>"ended with 'Please proceed with breaking down the key trade-offs...' — a hand-back instead of a refined final answer."</em> Its conclusion holds word for word two releases later: <em>"the orchestration is deterministic, the output quality is not … don't assume the last persona in a pipeline produces the polished deliverable every time."</em></p>
+<p>Chapter 15 argued that an agent's answer is a claim, not evidence. A reviewer agent does not change that. Its output is another claim, from another small model, and a pipeline of agents adds each model's unreliability to the chain rather than a check on it. The planner in Phase 5 would be a longer chain.</p>
+<h2 id="a-model-for-each-job-on-hardware-you-own">A model for each job, on hardware you own</h2>
+<p>A sovereign fleet runs on the hardware the organization owns, so the size of the fleet is bounded by that hardware rather than by an invoice. Lab 07 asks the platform's model-fit service what fits.</p>
+<p>On 17 September it described the host as an AMD Ryzen AI 9 HX 370 with an NVIDIA RTX 4050 laptop GPU — 6 GB of video memory — and about 30 GB of system memory, and it scored 1,365 candidate models against that hardware. Its top picks were 30- to 36-billion-parameter mixture-of-experts models, rated a <em>"Good"</em> fit at an estimated 26 to 32 tokens per second.</p>
+<p>The two models the fleet actually uses are more revealing:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Model family, as rated</th>
+<th>Fit on this host</th>
+<th>Estimated speed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Llama 3.2, 3B Instruct (llama.cpp)</td>
+<td>Perfect</td>
+<td>~60 tokens/s</td>
+</tr>
+<tr>
+<td>Qwen 2.5, 7B Instruct (llama.cpp)</td>
+<td>Marginal</td>
+<td>~36 tokens/s</td>
+</tr>
+</tbody>
+</table></div>
+<p>The model this hardware suits best is <code>llama3.2</code>: the one that invented a list of nodes in Chapter 15, and the reviewer that handed back instead of reviewing above. The model that used its tools more reliably in lab 09, <code>qwen2.5:7b</code>, is the one rated a marginal fit. On this platform, the best fit for the hardware is not the best fit for the job, and a fleet chosen by a fit score alone would get worse.</p>
+<p>The host has fourteen models downloaded. The fleet uses two. The per-persona model selector the roadmap planned for Phase 3 was never built, and every persona that needs a different model will compete for the same six gigabytes.</p>
+<h2 id="the-auditors-job-descriptions">The auditors' job descriptions</h2>
+<p>Two entries in the catalog deserve a closer reading, because they are the agents a CxO would reasonably want first: the ones that watch the others.</p>
+<p>The <strong>RBAC Auditor</strong> <em>"scans every <code>ClusterRoleBinding</code> + <code>RoleBinding</code> across both clusters. Flags wildcards, flags service accounts bound to <code>cluster-admin</code>, proposes least-privilege replacements."</em> The <strong>Secret Hygiene Bot</strong> <em>"flags in-cluster secrets older than 90 days, secrets mounted by more pods than necessary, and literal credentials in ConfigMaps."</em></p>
+<p>Now hold them against the most serious finding in this part of the book. Chapter 14 found that every run of <code>cluster2-agent</code> holds permission to read every Secret in its namespace — including an administrator credential for the target cluster. The role that grants it lists its resources and verbs explicitly: no wildcards. No agent is bound to <code>cluster-admin</code>. The Secret is not old, and it is mounted only by the agent it belongs to.</p>
+<p>As written, the auditor's flagging rules would not have raised it, and neither would the hygiene bot's. Both job descriptions came from general best practice — sensible, and blind to the platform's actual risk.</p>
+<p>The lesson generalizes. Write an auditor's job description against the incidents you have already had, then score it the way Chapter 15 scored the triage agent: plant a copy of the real finding, fix a strict pass rule, run it several times, and record what it costs. An auditor that cannot find the problem you already know about will not find the one you don't.</p>
+<h2 id="what-a-persona-needs-before-it-joins">What a persona needs before it joins</h2>
+<p>Anita's question — what an agent has to prove before it gets the job — has an answer, and it is the rest of Part IV compressed into a checklist. The catalog's <em>one or two days of configuration and prompt writing</em> is only the first line.</p>
+<ol>
+<li><strong>A job narrow enough to score.</strong> A planted fault, a strict pass rule, several runs (Chapter 15).</li>
+<li><strong>A model chosen for the job's behavior on this hardware</strong> — not by fit score alone, and not by reputation (lab 07, lab 09).</li>
+<li><strong>Tools delivered as named sidecars, with permissions checked against a live run's identity</strong> — not against the documentation (Chapters 13 and 14).</li>
+<li><strong>Every "must not" enforced below the model</strong>, or explicitly declared unenforceable and verified instead (Chapter 14).</li>
+<li><strong>Evidence attached to every claim that drives a decision</strong> (Chapter 15).</li>
+<li><strong>A known cost per task</strong>: tokens, seconds, and the model it keeps loaded (Chapters 14 and 15).</li>
+<li><strong>A record that outlives the cluster</strong> (Chapter 13).</li>
+<li><strong>For any agent that acts: an approval step between its decision and the change.</strong> The strategy document draws one in its control tower. The platform's only working version today is a one-entry allowlist in the UI's backend.</li>
+</ol>
+<p>Twenty-nine personas times eight requirements is a program, not a sprint — and it is the honest size of the fleet the catalog describes.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-fiction">Meridian · the following Monday</p>
+<p>Anita's decision fit on one line of the catalog's cover page, written across the title.</p>
+<p><em>Three, not twenty-nine.</em></p>
+<p>Underneath, smaller: <em>Keep the three. Next two are the auditors — after their job descriptions include the finding from Chapter 14, and after each of them catches a planted copy of it, three times out of three. Nothing that acts until the approval step exists.</em></p>
+<p>Vikram read it. "The auditors first. Not the ones that save money?"</p>
+<p>"The ones that save money need permission to change things," she said. "Before anything gets that permission, I want something watching the permissions." She handed the catalog back. "Hire the auditors first. Then check that they'd have caught what we already know."</p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<ul>
+<li><strong>Designed:</strong> 29 personas across three planes and four shared groups; a six-phase roadmap; three custom tool packs.</li>
+<li><strong>Running on 17 September:</strong> three agents — generalists, one per plane, none designed to act. Two are read-only outside their namespace by permission; the third holds an administrator credential for the tenant cluster and is read-only only by instruction.</li>
+<li><strong>Stranded:</strong> two April personas written for a resource type the chart no longer ships; a March security service not redeployed after the rebuild; eight example ensembles installed and switched off.</li>
+<li><strong>Built of the three custom tool packs:</strong> none.</li>
+<li><strong>Measured on 17 September:</strong> a two-agent pipeline that orchestrated flawlessly in about 100 seconds (analyst 3,950 tokens, reviewer 6,003) and whose reviewer produced no review; hardware-fit ratings that favor the less reliable of the fleet's two models.</li>
+<li><strong>Roadmap:</strong> Phases 0–3 estimated at seven to nine weeks from 24 April; at twenty-one weeks, Phase 0 delivered on paper and one persona from Phase 2 running.</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>For each AI agent we plan to add, what fault would we plant to score it, and what counts as a pass?</strong></li>
+<li><strong>Which of our planned agents act rather than report — and what stands between an agent's decision and the change?</strong></li>
+<li><strong>Would our planned auditors have caught the last real incident we had?</strong></li>
+</ol>
+<h2 id="open-the-repo">Open the repo</h2>
+<ul>
+<li><code>Sovereign_Cloud_Agentic_Strategy.md</code> — §2 (the three planes), §3 (the catalog), §5 (the roadmap), §6 (build versus reuse).</li>
+<li><code>06-sympozium/labs/06-ensemble/</code> — the two-agent pipeline, and its note on run-to-run variance.</li>
+<li><code>06-sympozium/labs/07-model-fit/run.sh</code> — what fits this hardware.</li>
+<li><code>06-sympozium/cost-analyzer.yaml</code>, <code>06-sympozium/incident-responder.yaml</code>, and <code>docs/superpowers/specs/2026-04-21-sympozium-sample-agents-design.md</code> — the April personas.</li>
+<li><code>docs/superpowers/specs/2026-03-29-iac-security-agent-design.md</code> and <code>make security-deploy</code> — the security service.</li>
+<li><code>kubectl get ensembles -n sympozium-system</code> — the chart's example teams, installed and switched off.</li>
+</ul>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>Re-verified on 17 September</strong> (Sympozium 0.10.75, Kubernetes 1.37): the ensemble lab, run end to end and cleaned up (both runs and all created objects deleted); the model-fit service; the April personas (server dry run, nothing created); the installed ensembles and skill packs; the security service's absence.</li>
+<li><strong>Persona count.</strong> 29 is the number of persona headings under §3.1–3.7 of the strategy document.</li>
+<li><strong>The analyst's error.</strong> The chapter states that Kind runs Kubernetes nodes as containers with no hypervisor involved; have a technical reviewer confirm the wording.</li>
+<li><strong>Model-fit caveat.</strong> The ratings are for model variants in the fit service's catalog, matched by family name — not the exact quantized builds Ollama serves (<code>qwen2.5:7b</code>, <code>llama3.2</code>). Lab 07 already warns to read each entry's notes rather than its label.</li>
+<li><strong>Model names omitted on purpose.</strong> The fit service's top picks are community fine-tunes whose names include other vendors' product names; the chapter describes them by size and architecture instead.</li>
+<li><strong>"Where the weeks went"</strong> is reconstructed from commit history and the repository's operating notes, not from time tracking.</li>
+<li><strong>The strategy document is stale</strong> in the places this chapter quotes: "every agent is one <code>SympoziumInstance</code>", the persona-pack assumption, and the April status snapshot.</li>
+<li><strong>Figures.</strong> 16.1: the catalog as 29 marks across the planes, with three lit. 16.2: the two-agent pipeline with its token counts, and the analyst's wrong claim passing through the reviewer unchanged.</li>
+<li><strong>Target-cluster agent's credential.</strong> Verified on 17 September: the <code>target-k8s-ops</code> tool pack sets <code>KUBECONFIG</code> to the mounted <code>target-cluster-kubeconfig</code> Secret, whose user is <code>target-cluster-admin</code>. Add this to Chapter 14's scorecard (rule 7) and to the fixes list — a read-only service account for the target cluster would move that rule below the model.</li>
+<li><strong>No <code>cluster-admin</code> bindings</strong> for any identity in <code>sympozium-system</code> (checked 17 September), which is why the RBAC Auditor as specified would not have flagged Chapter 14's finding.</li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
+</ul></aside>
+</article>

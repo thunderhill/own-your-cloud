@@ -1,0 +1,506 @@
+<title>Ten Minutes Becomes Two</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part II — The Factory</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="ch-number" aria-hidden="true">6</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 6: </span>Ten Minutes Becomes Two</h1>
+    <blockquote class="epigraph"><p><em>The golden image pre-bakes k3s binary, airgap images, CA certificates, and kernel modules into a DataVolume, reducing cluster spin-up from ~10 minutes to ~2 minutes.</em></p>
+<p>— <code>README.md</code></p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
+      <dt>Length</dt>
+      <dd>About 2,200 words · about 10 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Wednesday in September · the CTO's office</p>
+<p>The supply-chain questionnaire from the regulator had forty questions, and Anita Rao had flagged one.</p>
+<p><em>For each new compute environment you create: where does its software come from, and when was it obtained?</em></p>
+<p>"Walk me through a new cluster," she said.</p>
+<p>"Nothing is downloaded when a cluster is created," Vikram said. "Everything it needs — Kubernetes, its container images, its system settings — was downloaded once, when we baked the golden image. Every cluster boots from a copy of that image. No internet at boot."</p>
+<p>"That's a good answer for a sovereign platform." She wrote it down. "Second half. When was the image baked?"</p>
+<p>"The one we deploy from, yesterday. The one the standby cluster uses —" He checked. "The third of March."</p>
+<p>Anita stopped writing. "So some of the clusters we create today are six months old the moment they're born."</p>
+<p>"In their software, yes."</p>
+<p>"Then an image isn't a file," she said. "It's a decision someone made on the day it was baked, copied into every cluster after. I want to know what's inside each one, and when it was decided."</p>
+<hr class="scene-break" />
+<p class="dateline dateline-record">Build log · February–September 2026</p>
+<h2 id="why-a-cluster-took-ten-minutes">Why a cluster took ten minutes</h2>
+<p>A virtual machine has to get its software from somewhere. In the platform's earliest form, each VM booted a stock Ubuntu cloud image and then set itself up: fetched k3s and the container images it needs, and prepared itself to run a cluster — over the network, on every boot, for every node.</p>
+<p>On 28 February 2026 the repository gained two scripts that changed that: <code>bake-golden-image.sh</code> and <code>build-containerdisk.sh</code>, committed together as <em>"optimized images for cdi and container images."</em> The README states the result in one line — cluster spin-up <em>"from ~10 minutes to ~2 minutes"</em> — and the same pair of numbers appears in the developer guide and the strategy document. The user guide is more cautious: <em>"~2-5 minutes (with golden image) or ~10 minutes (without)."</em></p>
+<p>Those figures deserve the same honesty as the rest of Part II. They are stated in four documents, and no run log or script output in the repository records the measurements behind them. They date from before the platform had an instrument (Chapter 7 tells that story). What is not in doubt is the direction, and the reason: the slowest thing a new machine can do is download its own software.</p>
+<h2 id="baking">Baking</h2>
+<p>Baking a golden image is a four-step job run by <code>bake-common.sh</code>, and on 16 September it was run from scratch during the rebuild in Chapter 17.</p>
+<ol>
+<li><strong>Clone the base image.</strong> A stock Ubuntu Noble cloud image, already imported into the cluster as a DataVolume by the Containerized Data Importer, is cloned into a new volume. On 16 September: about 50 seconds.</li>
+<li><strong>Boot a bake VM</strong> from the clone, with a cloud-init script that does the real work.</li>
+<li><strong>Wait for the VM to finish and power itself off.</strong> On 16 September: 160 seconds.</li>
+<li><strong>Delete the VM and keep the disk.</strong></li>
+</ol>
+<p>Inside the VM, the script's own log lines tell the recipe. It installs the k3s binary. It downloads k3s's air-gapped container images. It writes the systemd units k3s will run under. It pre-loads kernel modules and sets kernel parameters. It masks services that slow a boot down and are useless here — <code>snapd</code>, <code>multipathd</code>, the automatic <code>apt</code> timers, <code>motd-news</code>, unattended upgrades. Depending on the image variant, it starts k3s once to warm its datastore, then stops it. It creates the login user and an air-gapped install script. And finally it resets cloud-init's state and the machine ID, so that every VM booted from this disk believes it is a new machine, and powers off.</p>
+<p>That last step is worth noticing for what it does <em>not</em> reset. It wipes the operating system's memory of the bake VM, not k3s's. The warm image's datastore still contains a Node object for the machine it was baked on — the ghost that, in Chapter 7, fooled a stopwatch into stopping early.</p>
+<p>The sovereignty consequence is the one Vikram gave the regulator. The internet is touched during the bake — k3s from its install endpoint, the air-gapped images from the project's release page — and never again. The cluster manifests declare <code>airGapped: true</code>, and every cluster after that boots from what the image already holds. The dependency on the outside world moves from every boot of every node to one event, on one day, that can be reviewed.</p>
+<h2 id="a-disk-that-ships-like-a-container">A disk that ships like a container</h2>
+<p>A baked disk still has to reach each new VM. The first approach cloned the golden DataVolume for every virtual machine — a full copy of a 20 GiB volume per node. <code>build-containerdisk.sh</code> replaced that with a KubeVirt <em>containerDisk</em>: the VM's disk packaged as an ordinary container image.</p>
+<p>The script does it in four steps. A helper pod mounts the baked volume and converts the disk to a compressed <code>qcow2</code> file. The file is copied out. A two-line container image is built around it:</p>
+<pre><code>FROM scratch
+ADD --chown=107:107 disk.qcow2 /disk/disk.qcow2
+</code></pre>
+<p>And the image is pushed to the platform's local registry. On 16 September, the rebuilt warm image came out at <strong>1.35 GB — against a 20 GiB volume.</strong></p>
+<p>A containerDisk behaves like any container image. It is pulled to a node once and reused; it needs no per-VM volume clone; and it is ephemeral — every start of the VM begins from the pristine image, which is why, in Chapter 7, a restarted VM counts as a genuine first boot.</p>
+<p>Measured on 17 September, pulling a 1.29 GB containerDisk that was not yet on the node took <strong>4.2 seconds</strong> from the local registry, and pulling it again once cached took <strong>0.1</strong>. That is the value of the Makefile's <code>pre-pull</code> targets on this host: a few seconds per image, paid once. Worth having. Not, as Chapter 8 showed, where the time in a cluster build actually goes.</p>
+<p>The containerDisk script's header makes its own promise: <em>"~30-60 second cluster spin-up (vs 1.5-2.5 min with DV cloning)."</em> It was written before the instrument existed. When the repository wrote down its baseline in June, cold builds took 90 to 150 seconds, with the worker waiting for the control plane before it even started. The images were not the reason. Chapter 8 tells what was.</p>
+<h2 id="the-address-that-isnt">The address that isn't</h2>
+<p>Every image reference on the platform names its registry the same way:</p>
+<pre><code>172.18.0.2:5000/ubuntu-noble-k3s:warm
+</code></pre>
+<p><code>172.18.0.2</code> is not the registry's address. It never has been.</p>
+<p>The two Kind clusters and the registry all run as containers on one Docker network, and Docker hands out addresses in the order containers join it. <code>.2</code> goes to whichever joined first. On 17 September the network looked like this:</p>
+<pre><code>cluster1-control-plane   172.18.0.2
+cluster2-control-plane   172.18.0.3
+registry                 172.18.0.4
+</code></pre>
+<p>Every image reference on the platform points at the control-plane node of <code>cluster1</code> — a Kubernetes node that runs no registry. Before the rebuild in Chapter 17, the repository's notes recorded <code>.2</code> as <code>cluster2</code>'s node instead, and in June as <code>cluster1</code>'s. The address in the image names has moved from one neighbor to another and back. In every record the repository keeps, it has never been the registry's own.</p>
+<p>Images still pull, because the container runtime on each <code>cluster2</code> node is given a small translation file:</p>
+<pre><code>[host.&quot;http://172.18.0.4:5000&quot;]
+  capabilities = [&quot;pull&quot;, &quot;resolve&quot;, &quot;push&quot;]
+  skip_verify = true
+</code></pre>
+<p>containerd reads it and quietly sends every request for <code>172.18.0.2:5000</code> to <code>172.18.0.4:5000</code> instead. Nothing else knows about the file. Asked directly from the same node on 17 September, a plain HTTP request to the alias failed to connect at all; the same request to the registry's real address returned <code>200</code>.</p>
+<p>That arrangement fails in two ways, and both have happened.</p>
+<p><strong>The registry's address drifts.</strong> When containers reconnect to the network, the registry can come back at a different address. The translation file still points at the old one, and new VMs sit in <code>ImagePullBackOff</code>, failing to reach <code>172.18.0.2:5000</code>.</p>
+<p><strong>The file disappears.</strong> It lives inside the node's container, so recreating a node — as Chapter 17 did to both clusters — deletes it.</p>
+<p>The repair is <code>scripts/fix-registry-hosts.sh</code>, added in June. It looks up the registry's current address and rewrites the translation file on every <code>cluster2</code> node. The Makefile runs it before the deploy and pre-pull targets. The UI's own deploy path does not.</p>
+<p>The alias claimed one more casualty. The UI has a Registry tab that lists images, and it dialed the alias the way any program would — over plain HTTP, without containerd's translation. It reported <code>failed to connect to registry</code> and showed the registry as disconnected, both from the host and from inside the cluster. The fix split one setting into two: <code>REGISTRY_URL</code>, a real address to dial, and <code>REGISTRY_ALIAS</code>, the name to <em>display</em> — because, in the handler's words, the alias <em>"is what image references use."</em></p>
+<p>The platform works. But hundreds of references name a machine that is not the registry, and every consumer that needs to reach it must be told, separately and locally, where the registry really is.</p>
+<h2 id="an-image-is-a-decision-frozen">An image is a decision, frozen</h2>
+<p>By 17 September the registry held three tags of the platform image, and the gap between them is the chapter's real subject.</p>
+<p><code>:warm</code> was built on 16 September, the day of the upgrade. <code>:preinit</code> was built on 18 April. <code>:latest</code> was built on <strong>3 March</strong>. After the rebuild, only <code>:warm</code> had been pulled onto the new <code>cluster2</code> node.</p>
+<p>Everything inside an image was decided on the day it was baked, and every cluster built from it inherits those decisions:</p>
+<ul>
+<li><strong>A Kubernetes version.</strong> Chapter 17 had to rebake <code>:warm</code> because every tag still carried k3s v1.31, and the variable the bake script documented for choosing the version turned out never to have controlled anything.</li>
+<li><strong>A ghost.</strong> The warm image's Node object for its own bake VM (Chapter 7).</li>
+<li><strong>Fixed certificates and a join token</strong>, baked into the warm image on purpose, safe only while one cluster runs at a time.</li>
+<li><strong>An Ubuntu base</strong> as it stood on the day it was imported.</li>
+</ul>
+<p>And the checks that decide whether to rebuild an image look only for its presence. <code>ensure-warm-image</code> asks whether an image tagged <code>warm</code> exists on the node, not what it contains. The standby cluster in Chapter 9 is built from <code>:latest</code> — whose name promises "the newest," and whose contents are six months old.</p>
+<p>For a CxO, a golden image is what a regulator would call a baseline: the approved state every new system starts from. It earns its keep only if its age and contents are as visible as the systems it produces.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-fiction">Meridian · the following Wednesday</p>
+<p>Vikram's answer to question fourteen ran to a table: one row per image, with the date it was baked, the Kubernetes version inside, the base operating system, and what had been downloaded to build it.</p>
+<p>Anita read the row for <code>:latest</code> twice. "March."</p>
+<p>"It's scheduled for a rebake, or for deletion."</p>
+<p>"And the address in every image name that belongs to another machine?"</p>
+<p>"It works because each cluster node has a file that translates it. We've added the file to the list of things a rebuild must recreate."</p>
+<p>"Then call it what it is." Anita made a note in the margin. "Anything that only works because something else translates it for us is a dependency. It goes on the dependency list, not in a script comment." She signed the page. "And every image gets a birth certificate: what's in it, where it came from, and the date after which we stop building from it."</p>
+<p>"An expiry date?"</p>
+<p>"Every cluster we build is as old as the image it came from," she said. "I'd like to decide how old that's allowed to be."</p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<ul>
+<li><strong>Claimed:</strong> cluster spin-up from about ten minutes to about two with the golden image — stated in four documents, with no measurement recorded.</li>
+<li><strong>Measured (16–17 September):</strong> base-image clone about 50 s; bake VM 160 s; a 20 GiB disk packaged as a 1.35 GB containerDisk; a cold pull of a 1.29 GB containerDisk in 4.2 s from the local registry, 0.1 s once cached.</li>
+<li><strong>Moved:</strong> the platform's internet dependency, from every node's boot to one bake.</li>
+<li><strong>Found:</strong> every image reference names an address that belongs to a Kubernetes node, not the registry; pulls work through a per-node translation file that the UI's deploy path never refreshes.</li>
+<li><strong>Frozen inside the images:</strong> a Kubernetes version, a ghost Node, fixed certificates, and — in the tag the standby uses — a build date of 3 March.</li>
+<li><strong>Still owed:</strong> a recorded bake date and contents for each image; checks that verify what an image contains, not just that it exists; a registry reference that is the registry's own address.</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>When was the image behind our newest system built, and what is inside it?</strong></li>
+<li><strong>Which of our systems only work because something else quietly translates a name or an address for them?</strong></li>
+<li><strong>When a new machine boots, what does it download, and from whom?</strong></li>
+</ol>
+<h2 id="open-the-repo">Open the repo</h2>
+<ul>
+<li><code>bake-golden-image.sh</code> and <code>bake-common.sh</code> — the bake; the in-VM recipe is the sequence of <code>[bake] Step</code> log lines.</li>
+<li><code>build-containerdisk.sh</code> — from baked volume to container image.</li>
+<li><code>scripts/import-base-images.sh</code> — the base Ubuntu images the bake starts from.</li>
+<li><code>scripts/fix-registry-hosts.sh</code> and <code>make registry-fix</code> — the alias translation, rewritten on demand.</li>
+<li><code>ui/backend/handlers/registry.go</code> — <code>REGISTRY_URL</code> versus <code>REGISTRY_ALIAS</code>.</li>
+<li><code>docker network inspect kind</code> — who actually holds <code>172.18.0.2</code> today.</li>
+</ul>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>"Ten minutes becomes two."</strong> The chapter's title is the team's stated estimate, repeated in <code>README.md</code>, <code>docs/DEVELOPER.md</code>, <code>docs/USER_GUIDE.md</code> (which says 2–5 minutes), and the strategy document. No measurement is recorded. Find the original numbers, or keep the chapter's framing of it as an estimate from before the instrument existed.</li>
+<li><strong>containerDisk header claim.</strong> <code>build-containerdisk.sh</code> promises 30–60 s spin-up; <code>docs/sub-60s-cluster-strategy.md</code> records a June baseline of 90–150 s (sequential worker). Update or remove the header claim.</li>
+<li><strong>Image dates</strong> were read from each tag's image configuration in the registry: <code>:latest</code> 2026-03-03, <code>:preinit</code> 2026-04-18, <code>:warm</code> 2026-09-16. The <code>:preinit</code> date predates the June pre-init experiments in Chapter 8; confirm which bake produced it.</li>
+<li><strong>Checked live on 17 September:</strong> address ownership on the Kind network; a plain HTTP request to the alias (connection failed) versus the registry's real address (<code>200</code>); the translation file's contents; a cold pull of <code>ubuntu-noble-k3s:preinit</code> (1.29 GB, 4.2 s) and a cached pull (0.1 s), after which the image was removed from the node; which tags were cached (only <code>:warm</code>).</li>
+<li><strong><code>CLAUDE.md</code> is stale on the alias.</strong> It says <code>172.18.0.2</code> belongs to <code>cluster2-control-plane</code>; after the rebuild it belongs to <code>cluster1-control-plane</code>.</li>
+<li><strong>Pull policy.</strong> No manifest sets <code>imagePullPolicy</code>; the June notes say the <code>:latest</code> containerDisk is pulled on every start. That follows Kubernetes' usual default for <code>:latest</code> tags, but was not re-verified for KubeVirt containerDisks here.</li>
+<li><strong>The Meridian regulator's questionnaire</strong> is fiction. The answer to it — nothing downloaded at boot, one bake per image — is the platform's real design.</li>
+<li><strong>Figures.</strong> 6.1: the pipeline — base image → bake VM → baked volume → <code>qcow2</code> → container image → registry → node cache → VM. 6.2: the alias — three containers on one network, and the translation file that makes one address mean another.</li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
+</ul></aside>
+</article>

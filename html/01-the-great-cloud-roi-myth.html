@@ -1,0 +1,470 @@
+<title>The Great Cloud ROI Myth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part I — The Bill</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="ch-number" aria-hidden="true">1</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 1: </span>The Great Cloud ROI Myth</h1>
+    <blockquote class="epigraph"><p><em>You're crazy if you don't start in the cloud; you're crazy if you stay on it.</em></p>
+<p>— Sarah Wang and Martin Casado, Andreessen Horowitz, "The Cost of Cloud, a Trillion-Dollar Paradox", 2021</p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository. <span class="legend-public">Public record</span> and <span class="legend-public">Briefing</span> sections quote named sources — published reports, or the strategy deck behind this book.</dd>
+      <dt>Length</dt>
+      <dd>About 1,800 words · about 8 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Thursday in October 2025 · the finance committee</p>
+<p>The chief financial officer had brought the original business case for the cloud migration. It was seven years old, and one line was highlighted in yellow: <em>lower total cost of infrastructure within three years.</em></p>
+<p>"I'm not here to blame anyone," he said. "The migration was right. I signed it. But this line was the reason, and it hasn't been true for a while. So what are we paying for now?"</p>
+<p>Anita had expected the question. "Speed," she said. "The migration did everything else it promised. Teams get infrastructure in minutes, not months. We launched in two new markets without building anything. That was real, and we'd make the same choice again."</p>
+<p>"And the cost?"</p>
+<p>"Nobody promised it would stay cheap. We assumed it. The price of an hour of computing didn't go up much. We bought many more hours — because it was easy, and because the business grew. The bill grows with our success."</p>
+<p>The CFO looked at the yellow line. "Then I want to know which parts of the bill are buying speed, and which parts are just the rent."</p>
+<p>"So do I," Anita said. "Give me a quarter."</p>
+<hr class="scene-break" />
+<h2 id="the-promise-was-real">The promise was real</h2>
+<p class="dateline dateline-public">Briefing · February 2026</p>
+<p>The strategy deck behind this book opens its first chapter fairly. It sets out <em>"The Promise"</em> before it gets to the problem: speed and agility, <em>"rapid deployment, instant scalability"</em>; cost efficiency through <em>"pay-as-you-go models, reduced capital expenditure"</em>; and <em>"access to cutting-edge services, global infrastructure, continuous updates."</em></p>
+<p>None of that was marketing. A team that needs a database for a two-week experiment should not wait a quarter for hardware. A company that does not know whether a product will have a hundred users or a million should not buy for a million. A business entering a country where it has no data centre should not build one first. For uncertain, spiky or brand-new demand, renting is not merely convenient. It is the correct economics.</p>
+<p>So the myth this chapter is about is not "the cloud is expensive." It is narrower, and more costly to believe: <em>that renting stays cheaper as you grow.</em></p>
+<h2 id="the-paradox">The paradox</h2>
+<p class="dateline dateline-public">Public record · May 2021</p>
+<p>The clearest statement of the problem came, perhaps surprisingly, from a venture capital firm whose portfolio companies are among the cloud's biggest customers. In "The Cost of Cloud, a Trillion-Dollar Paradox", Sarah Wang and Martin Casado of Andreessen Horowitz put it in one sentence — the epigraph above — and then tried to measure it.</p>
+<p>Among the public software companies they benchmarked, committed cloud spend averaged <strong>about 50% of cost of revenue</strong>. Practitioners who had moved workloads back to their own infrastructure told them that doing so cost <strong>one-third to one-half</strong> as much as running the same workloads in the cloud. The authors then estimated what cloud costs were doing to company valuations, through margins: <strong>around $100 billion</strong> of market value lost across fifty top public software companies, and <strong>more than $500 billion</strong> across a wider universe.</p>
+<p>Treat the valuation figures as what they are: a model, built from margins and market multiples, and contested at the time. The operational claim is the one that matters for a CTO, and it has a simple shape. <em>At scale, for steady workloads, the rent can cost two to three times the cost of owning.</em></p>
+<h2 id="two-companies-that-left">Two companies that left</h2>
+<p class="dateline dateline-public">Public record · 2018 and 2024</p>
+<p>Two companies made the case with their own accounts rather than a model.</p>
+<p><strong>Dropbox</strong> began moving user files off Amazon's storage service onto its own infrastructure in 2015. Its IPO filing in 2018 disclosed that the project, which it called <em>Infrastructure Optimization</em>, had reduced operating costs by <strong>$74.6 million over two years</strong>.</p>
+<p><strong>37signals</strong>, the company behind Basecamp and HEY, announced in 2022 that it would leave the cloud. In October 2024 its co-founder David Heinemeier Hansson reported the result. The cloud bill had fallen from an original run rate of <strong>$3.2 million a year to $1.3 million</strong>, a saving of almost two million dollars a year, for new servers costing about $700,000. With storage to follow, the company projected savings of <em>"well over ten million dollars over five years."</em> He also addressed the objection every CFO raises: <em>"There were no hidden dragons of additional workload associated with the exit that required us to balloon the team."</em></p>
+<p>Read both cases carefully, because they are easy to over-sell. Both companies run large, steady, predictable workloads — file storage and web applications with well-understood demand. Both have unusually strong engineering teams. Neither is a bank with a fifteen-year virtualization estate and a regulator. They prove that the paradox is real for <em>some</em> workloads. They do not prove it for yours.</p>
+<h2 id="two-taxes">Two taxes</h2>
+<p class="dateline dateline-public">Briefing · February 2026</p>
+<p>The strategy deck gives the problem two names, and both are useful in a boardroom.</p>
+<p>The <strong>Innovation Tax</strong> is <em>"money spent maintaining old environments instead of building new capabilities."</em> The deck states the paradox bluntly: <em>"You're paying a premium for the privilege of being stuck in an ecosystem that limits your ability to innovate."</em></p>
+<p>The <strong>Success Tax</strong> is the Meridian CFO's complaint, put as a principle: <em>"The better you perform, the more you pay — disproportionately so."</em></p>
+<p>The names are worth keeping. Several numbers the deck attaches to them are not, at least not without evidence. It claims a <em>"2–3x cost multiplier"</em>, <em>"15–25% annual increases"</em>, and that <em>"80% of IT budgets"</em> go to <em>"cloud maintenance vs. innovation."</em> None of these has a source in the deck. Its headline market figure has a problem too. The deck puts global cloud spend at <em>"$1.3T … in 2025"</em>. Gartner's published forecast for worldwide public cloud end-user spending in 2025 was <strong>$723.4 billion</strong>, up 21.5% on the year. The deck may be counting a wider market. Without a source, it cannot be checked.</p>
+<p>That growth figure carries the chapter's most practical distinction. A bill can rise because prices rise, or because consumption rises. They call for opposite responses. Rising prices are a supplier problem, answered by negotiation or by leaving. Rising consumption is a management problem, and changing suppliers doesn't fix it. The Success Tax is real only for the share of growth that cost more than the business value it bought.</p>
+<h2 id="waste-doesnt-care-who-owns-the-hardware">Waste doesn't care who owns the hardware</h2>
+<p>The published waste figure from the prologue — 29% of cloud spend, by respondents' own estimate — is often used as an argument for leaving. It is really an argument for managing.</p>
+<p>Owned hardware can be wasted too. Chapter 9 of this book measured a <em>warm standby</em>: a spare cluster kept running so that a user could claim one in a fifth of a second instead of waiting for one to be built. It is a good design. It also holds eight processor cores and 14 GiB of memory idle, around the clock, waiting. On the platform this book describes, that standby is switched off by default, for exactly that reason.</p>
+<p>Idle capacity costs money wherever it runs. The difference is who sends the bill, and whether anyone reads it.</p>
+<h2 id="the-promise-that-is-worth-testing">The promise that is worth testing</h2>
+<p class="dateline dateline-record">Build log · June–September 2026</p>
+<p>If owning is going to compete with renting, it has to match the cloud's signature promise: capacity in seconds, not months. That is testable, and the rest of this book tests it.</p>
+<p>On the platform in this book, a complete Kubernetes cluster — a control plane and a worker, each running as its own virtual machine — is built from a written declaration to both machines ready in a median of <strong>33.7 seconds</strong>, measured on 17 September 2026 (Chapter 7). Tearing one down takes <strong>18.9 seconds</strong>. Claiming a pre-built standby took <strong>194 milliseconds</strong> when it was measured in June (Chapter 9).</p>
+<p>Speed, it turns out, is not something only a landlord can offer. But the same chapters also show what it cost to get there. The first measured build took 50 seconds. Four attempts to make it faster failed. The two changes that worked took months of instrumentation to find (Chapter 8). And the dashboard reported the worker as ready for months while it was unable to run anything (Chapter 5).</p>
+<p>That is the honest shape of the ROI question. Owning can match renting on speed. What it costs in people and attention is the part the rest of this book counts.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-fiction">Meridian · the following January</p>
+<p>Anita's quarter produced a spreadsheet, not a recommendation. It had one row for each major workload, and four columns.</p>
+<p><em>Shape of demand</em>: steady, seasonal, spiky, or unknown. <em>Cost trend against the revenue it supports</em>: flat, rising, or rising faster. <em>What leaving would take</em>: the proprietary services each workload depends on. And <em>what we could test</em>.</p>
+<p>The CFO ran his finger down the first column. "Most of it is steady."</p>
+<p>"Most of it is steady," Anita agreed. "Which means most of it is exactly where renting stops being the obvious answer. It doesn't mean owning is the answer. It means we're allowed to ask."</p>
+<p>"So what do you recommend?"</p>
+<p>"Nothing yet. I'm not going to move a production system on the strength of a venture capital essay and two companies' blog posts." She turned to the last column. "I recommend a test. Small, on hardware we own, measured the way we'd measure a supplier. If it can't build infrastructure as fast as we rent it, we stop."</p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<ul>
+<li><strong>The promise:</strong> speed, elasticity and managed services are real, and are the right economics for uncertain or spiky demand.</li>
+<li><strong>The paradox (public record):</strong> committed cloud spend averaging about 50% of cost of revenue among benchmarked public software companies; repatriation reported at one-third to one-half of the cloud cost for equivalent workloads (Andreessen Horowitz, 2021).</li>
+<li><strong>The evidence (public record):</strong> Dropbox, $74.6 million saved over two years; 37signals, a cloud bill cut from $3.2 million to $1.3 million a year, with more than $10 million projected over five years.</li>
+<li><strong>Not supported:</strong> the deck's 2–3x multiplier, 15–25% annual increases, and "80% of IT budgets" have no source. Its $1.3 trillion 2025 market figure does not match Gartner's $723.4 billion forecast.</li>
+<li><strong>Measured on owned hardware (build log):</strong> a two-VM Kubernetes cluster ready in 33.7 s median; torn down in 18.9 s.</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>For each major workload, is its demand steady, seasonal, spiky or unknown — and who decided?</strong></li>
+<li><strong>How much of last year's cloud growth came from higher prices, and how much from using more — and did the extra use pay for itself?</strong></li>
+<li><strong>What would it cost, in services and in months, to move our steadiest workload off its current supplier?</strong></li>
+</ol>
+<h2 id="open-the-repo">Open the repo</h2>
+<ul>
+<li><code>docs/sub-60s-cluster-strategy.md</code> — how cluster build time was measured and brought down, including the dead ends.</li>
+<li><code>scripts/phase-timings.sh</code> (<code>make phase-timings</code>) — the per-phase measurement behind the 33.7-second figure.</li>
+<li><code>docs/warm-pool-strategy.md</code> and <code>ui/backend/handlers/pool.go</code> — the standby, and what it costs to keep warm.</li>
+<li><code>~/marketing/Reclaiming Margins with Sovereign Cloud.pptx</code>, slides 3–9 — the strategy deck's first two chapters.</li>
+</ul>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>Sources.</strong> Andreessen Horowitz, 27 May 2021: https://a16z.com/the-cost-of-cloud-a-trillion-dollar-paradox/ (paradox sentence; "averaged 50% of COR"; "one-third to one-half"; "$100B" across 50 companies; "over $500B"). Dropbox $74.6 million from its 2018 S-1, as reported by GeekWire: https://www.geekwire.com/2018/dropbox-saved-almost-75-million-two-years-building-tech-infrastructure/ — cite the S-1 directly before publication. 37signals, 17 October 2024: https://world.hey.com/dhh/our-cloud-exit-savings-will-now-top-ten-million-over-five-years-c7d9b5bd. Gartner, 19 November 2024: https://www.gartner.com/en/newsroom/press-releases/2024-11-19-gartner-forecasts-worldwide-public-cloud-end-user-spending-to-total-723-billion-dollars-in-2025.</li>
+<li><strong>37signals' 2022 announcement date</strong> is from general knowledge; confirm it against the original post before publication.</li>
+<li><strong>Counter-arguments exist.</strong> The a16z paper drew public rebuttals (for example a VentureBeat opinion piece). The chapter's caveats cover the substance; decide whether to name one.</li>
+<li><strong>Deck figures not repeated as fact.</strong> From slides 4 and 7: $3.86 ROI per $1, 94% of companies using cloud, 67% delaying deployments, 46% revenue loss, 30% fines. None has a source.</li>
+<li><strong>"The price of an hour of computing didn't go up much"</strong> is Anita's claim, in fiction. It was not verified, and it should stay in the character's voice unless it is sourced.</li>
+<li><strong>The standby's cost</strong> (8 cores, 14 GiB) and the 194 ms claim are from Chapter 9. The claim was measured in June and has not been re-measured.</li>
+<li><strong>The Meridian scenes are fiction.</strong> No Meridian figure is quantified.</li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
+</ul></aside>
+</article>

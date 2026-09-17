@@ -1,0 +1,543 @@
+<title>The First Cluster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part II — The Factory</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="ch-number" aria-hidden="true">5</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 5: </span>The First Cluster</h1>
+    <blockquote class="epigraph"><p><em>Spins up a full Kubernetes cluster where each node is a Virtual Machine running inside our management cluster.</em></p>
+<p>— <code>demo.sh</code>, "What this demo does"</p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
+      <dt>Length</dt>
+      <dd>About 2,100 words · about 9 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Wednesday in September · the fourth-floor boardroom</p>
+<p>The newest member of the board had asked a fair question at dinner — <em>what exactly did we buy?</em> — and Anita Rao had promised him the demo that had won the pilot its funding in February.</p>
+<p>"From the beginning," she told Vikram. "The version where the machine explains itself."</p>
+<p>Vikram started the script. The screen filled with a banner, a sentence about virtual machines running inside a management cluster, and a checklist.</p>
+<pre><code>    ✓ KubeVirt installed
+    ✓ CDI installed
+    ○ Container registry (172.18.0.2:5000) — not ready
+</code></pre>
+<p>Then nothing. The script had stopped.</p>
+<p>"It's the demo," Vikram said, into the silence. "Not the platform. The platform's fine."</p>
+<p>The board member smiled politely. Anita did not.</p>
+<p>"Then show him the platform," she said, "and afterwards, tell me how the thing we show people stopped working without anyone noticing."</p>
+<hr class="scene-break" />
+<p class="dateline dateline-record">Build log · February–September 2026</p>
+<h2 id="the-demo-that-stopped-at-step-one">The demo that stopped at step one</h2>
+<p><code>demo.sh</code> was written on 11 February 2026, the platform's first day in the repository, and last changed on 28 February. It is a good piece of work: nine steps, each announced with a banner and a paragraph explaining what is about to happen and why — check the prerequisites, make sure the load balancer is running, make sure the Cluster API providers are ready, pre-pull the VM image, show the golden image, deploy the cluster, wait for the VMs, wait for the API server, verify.</p>
+<p>Run on 17 September, it printed two green checks and stopped at the third.</p>
+<p>The cause is Chapter 6's. The script confirms the registry is up by sending a plain HTTP request to <code>172.18.0.2:5000</code> — the alias every image reference uses, which only the container runtime knows how to translate. A plain request to that address now reaches a Kubernetes node with no registry on it. The check fails, and because the script is written to stop on the first error, the demo ends before it begins.</p>
+<p>Nothing in the demo is wrong about February. Its narration describes VMs with two CPUs and 4 GiB of memory; today's default VMs have four cores and 8 and 6 GiB. It pre-pulls the image tagged <code>:latest</code>, which Chapter 6 found was last built in March. The platform kept moving, and the story about the platform stayed where it was.</p>
+<p>What follows walks the same ground on the running platform instead.</p>
+<h2 id="three-clusters-one-laptop">Three clusters, one laptop</h2>
+<p>The platform runs on a single workstation, and it is built from three Kubernetes clusters.</p>
+<p><code>cluster1</code> and <code>cluster2</code> are Kind clusters: Kubernetes whose "nodes" are Docker containers. <code>cluster1</code> hosts the service-mesh demonstrations in Part III. <code>cluster2</code> is the <strong>management cluster</strong> — the factory. It runs Cluster API, which manages clusters as Kubernetes objects; KubeVirt, which runs virtual machines as Kubernetes workloads; CDI, which imports disk images; MetalLB, which hands out load-balancer addresses; and the agent platform from Part IV.</p>
+<p>The third cluster, <code>target-cluster</code>, is the product. It is a k3s cluster whose control plane and worker are virtual machines running <em>inside</em> <code>cluster2</code>.</p>
+<p>The repository builds the factory in numbered stages — <code>00-prereqs</code> installs the <code>clusterctl</code> tool, <code>01-metallb</code> the load balancer, <code>02-capi-init</code> the Cluster API providers, <code>03-target-cluster</code> the target cluster, <code>04-verify</code> a health check — with <code>make all</code> running the first four. As Chapter 17 found, the stages assume a few things already exist: the Kind clusters themselves, KubeVirt, and CDI are installed by hand.</p>
+<h2 id="one-apply">One apply</h2>
+<p>The default target cluster is one file: <code>03-target-cluster/target-cluster-warm.yaml</code>, 258 lines declaring seven objects.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Object</th>
+<th>What it declares</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Cluster</code></td>
+<td>the cluster exists, and which objects implement it</td>
+</tr>
+<tr>
+<td><code>KubevirtCluster</code></td>
+<td>its machines are KubeVirt virtual machines</td>
+</tr>
+<tr>
+<td><code>KThreesControlPlane</code></td>
+<td>a one-node k3s control plane</td>
+</tr>
+<tr>
+<td><code>KubevirtMachineTemplate</code> ×2</td>
+<td>the shape of each VM: cores, memory, disk image</td>
+</tr>
+<tr>
+<td><code>Secret</code></td>
+<td>the worker's startup configuration</td>
+</tr>
+<tr>
+<td><code>MachineDeployment</code></td>
+<td>one worker, kept at one</td>
+</tr>
+</tbody>
+</table></div>
+<p>Before it is applied, a script seeds four more secrets — certificate authorities and a join token — so the cluster's identity is known in advance (Chapter 8 explains why). Then <code>kubectl apply</code>, and the file's work is done. From here on, the cluster exists only as a declaration, and controllers make it true.</p>
+<p>Four controllers take part: Cluster API's core controller, the KubeVirt infrastructure provider, and k3s's bootstrap and control-plane providers — with KubeVirt itself underneath. Counted on the running platform on 17 September, those seven objects and four secrets had produced about eighteen more: a bootstrap configuration, a MachineSet, two Machines, two KubevirtMachines, two VirtualMachines, two running VM instances, two launcher pods, a LoadBalancer Service holding the API address <code>172.18.255.215</code>, and five further Secrets, including the kubeconfig that grants access to the new cluster.</p>
+<p>Followed through its owner references, the control plane's chain reads from the top down:</p>
+<pre><code>Cluster/target-cluster
+  └─ KThreesControlPlane/target-cluster-control-plane
+       └─ Machine/target-cluster-control-plane-qkckl
+            └─ KubevirtMachine/target-cluster-cp-s9j8h
+                 ┆ (no owner reference)
+                 VirtualMachine/target-cluster-cp-s9j8h
+                   └─ VirtualMachineInstance/target-cluster-cp-s9j8h
+                        └─ Pod/virt-launcher-target-cluster-cp-s9j8h-…
+</code></pre>
+<p>One link is missing. The VirtualMachine has no owner reference back to the <code>KubevirtMachine</code> that created it; the provider manages it without one. So deleting a cluster is not a single cascade that Kubernetes performs on its own. It is a sequence of controllers noticing, finalizing, and deleting, one object at a time — which is part of why, in Chapter 17, tearing a cluster down took nearly nineteen seconds.</p>
+<h2 id="six-layers-deep">Six layers deep</h2>
+<p>The chain above describes ownership. The picture below describes where the software actually runs, and it is the thing to hold in mind for the rest of Part II:</p>
+<ol>
+<li><strong>A workstation.</strong></li>
+<li><strong>A Docker container</strong>, <code>cluster2-control-plane</code> — a Kind node running Kubernetes 1.37.</li>
+<li><strong>A pod</strong> in that cluster, <code>virt-launcher-target-cluster-cp-…</code>, whose job is to run one virtual machine.</li>
+<li><strong>A virtual machine</strong> inside the pod: QEMU running Ubuntu 24.04.5, with four cores and 8 GiB.</li>
+<li><strong>A Kubernetes node</strong> inside the VM: <code>target-cluster-cp-s9j8h</code>, running k3s v1.37.0 and its own container runtime.</li>
+<li><strong>Pods</strong> on that node — today, CoreDNS, the metrics server, a storage provisioner.</li>
+</ol>
+<p>The layers show up in small, strange ways. The target cluster reports its nodes' internal addresses as <code>10.244.0.115</code> and <code>10.244.0.114</code>, and those are not addresses in the target cluster at all: they are pod addresses in the management cluster, because each VM lives in a pod. Everything outside reaches the target cluster's API through one load-balancer address that <code>cluster2</code> hands out.</p>
+<p>Each layer is a boundary, and the virtual-machine layer is the one that matters for tenants: it gives each target cluster its own kernel, not just its own containers.</p>
+<h2 id="the-victory-lap">The victory lap</h2>
+<p><code>show-cluster.sh</code>, written on 17 February, is the demo's second half. It walks every object in the chain, looks inside the target cluster, then proves the cluster works by deploying a web server. It was run as-is on 17 September.</p>
+<p>Most of it still told the truth. It listed both VMs — four cores and 8 GiB for the control plane, four cores and 6 GiB for the worker — and the load-balancer Service at <code>172.18.255.215</code>. Some of it had aged. Its disk section announced that <em>"each VM disk is a PVC cloned from the golden image via CDI DataVolumes"</em> and then found none, because disks have been container images since February (Chapter 6).</p>
+<p>It also reused a kubeconfig file it found in <code>/tmp</code>, written the previous afternoon for a cluster that had since been deleted and rebuilt six times. The file still worked. The warm image's fixed certificates (Chapter 6) give every rebuilt cluster the same identity, so a credential issued for yesterday's cluster opens today's. For a single-cluster demo that is convenient. It is also a credential that outlives the thing it was issued for.</p>
+<p>Then the web server. The script created a namespace, deployed two replicas of nginx, and printed its heading for the result:</p>
+<pre><code>==&gt; Pods (should be spread across nodes):
+    nginx-demo-…-7kmpx   1/1   Running   0   8s   10.42.1.7   target-cluster-cp-s9j8h
+    nginx-demo-…-pf24z   1/1   Running   0   8s   10.42.1.6   target-cluster-cp-s9j8h
+</code></pre>
+<p>Both replicas ran on the control plane. Neither ran on the worker. The script then reported success — <em>"✓ nginx responded: <code>&lt;title&gt;Welcome to nginx!&lt;/title&gt;</code>"</em> — from a request that went to <code>localhost</code> inside one of the pods, which proves that nginx starts, and nothing about the second node or the Service in front of it. The namespace was deleted afterwards, as the script instructs.</p>
+<h2 id="ready-but-not-allowed-to-work">Ready, but not allowed to work</h2>
+<p>The worker was not busy and not broken. It was forbidden.</p>
+<pre><code>target-cluster-workers-rz9xt-m5x6z:
+  taints=[{&quot;effect&quot;:&quot;NoSchedule&quot;,
+           &quot;key&quot;:&quot;node.cloudprovider.kubernetes.io/uninitialized&quot;,
+           &quot;value&quot;:&quot;true&quot;}]
+</code></pre>
+<p>That taint tells the Kubernetes scheduler to place no ordinary workload on the node. On 17 September the worker ran nothing at all: every pod in the target cluster — the four system pods and both web servers — was on the control plane.</p>
+<p>The cause is one line in the worker's startup configuration, the Secret in the manifest:</p>
+<pre><code class="language-yaml">kubelet-arg:
+  - cloud-provider=external
+</code></pre>
+<p>That setting tells the worker's kubelet that an external <em>cloud controller</em> will initialize the node, and to keep the node tainted until it does. But the control plane is configured with its cloud controller disabled. Nothing on the platform ever initializes the worker, so the taint never comes off.</p>
+<p>And every signal says the worker is fine. Its Machine is <code>Running</code>. Its node is <code>Ready</code>. Its provider ID matches the Machine's, so Cluster API links them. The verification script lists it as <code>Ready</code>. The stopwatch in Chapter 7 waits for it. By every automated measure on the platform, the target cluster has two working nodes. It has one — and a second virtual machine holding four cores and 6 GiB of memory that has been given nothing to do.</p>
+<p>This static worker configuration was introduced in June, to let the worker boot at the same time as the control plane (Chapter 8), and the same line is in the default path's manifest today. This chapter verified only the cluster that was running on 17 September; whether every cluster since June has had an idle worker was not checked, and the fix — removing the setting, or running something that initializes nodes — has not been tried.</p>
+<p>The only check on the platform that ever gave the worker real work was the victory lap. Its heading said the pods <em>should be spread across nodes</em>. It printed that they were not, and declared success anyway.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-fiction">Meridian · the following Monday</p>
+<p>"It's a two-node cluster," Vikram said, "with one node allowed to work. It's been that way since June, as far as I can tell. Every dashboard we have says both are Ready."</p>
+<p>Anita let that sit. "And the demo?"</p>
+<p>"The demo stopped because of a registry address. The victory lap still runs. It even prints the evidence — it says the pods should be on both nodes and shows them on one. Nobody reads that line."</p>
+<p>"So we have been timing, to a tenth of a second, the arrival of a machine that isn't allowed to do anything." She was quiet for a moment. "Change one word on the dashboard. Stop saying <em>Ready</em>. Say <em>working</em>, and don't show it until something we gave that node has actually run on it."</p>
+<p>"And the demo?"</p>
+<p>"Fix it, and run it from the first step every Monday." She stood. "The thing we show people is the thing people believe. It had better still be true."</p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<ul>
+<li><strong>Declared:</strong> seven objects in a 258-line manifest, plus four pre-seeded secrets.</li>
+<li><strong>Produced by controllers:</strong> about eighteen more — Machines, VMs, launcher pods, a load-balancer Service, and Secrets including the new cluster's kubeconfig.</li>
+<li><strong>Nesting:</strong> six layers, from the workstation to a pod inside a VM inside a pod inside a container.</li>
+<li><strong>Found on 17 September:</strong> the origin demo stops at its first check; the victory lap narrates a disk design replaced in February; a day-old credential opens a newly rebuilt cluster; and the worker node, <code>Ready</code> by every measure, carries a taint that keeps every ordinary workload off it.</li>
+<li><strong>Idle capacity:</strong> one VM, four cores and 6 GiB.</li>
+<li><strong>Still owed:</strong> a demo that runs from step one; a definition of "done" that schedules work on every node; a worker configuration that does not wait for a cloud controller the platform does not run.</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>When a dashboard says a system is ready, what did anyone check besides the system's own report?</strong></li>
+<li><strong>Does our flagship demo still run today, from the first step?</strong></li>
+<li><strong>How much capacity are we paying for that has never done any work?</strong></li>
+</ol>
+<h2 id="open-the-repo">Open the repo</h2>
+<ul>
+<li><code>demo.sh</code> — the nine narrated steps; <code>show-cluster.sh</code> — the victory lap.</li>
+<li><code>00-prereqs</code> through <code>04-verify</code>, and <code>make all</code>.</li>
+<li><code>03-target-cluster/target-cluster-warm.yaml</code> — the seven objects, and the worker's <code>kubelet-arg</code> in its bootstrap Secret.</li>
+<li>On the management cluster: <code>kubectl get cluster,kthreescontrolplane,machinedeployment,machine,kubevirtmachine,vm,vmi</code>.</li>
+<li>On the target cluster: <code>kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name} {.spec.taints}{"\n"}{end}'</code>.</li>
+</ul>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>The worker taint is the most important finding in this chapter,</strong> and it reaches beyond it. Verified on the cluster running on 17 September only. The setting is in the static worker bootstrap Secret of <code>03-target-cluster/target-cluster-warm.yaml</code> (and in its template); the control plane sets <code>disableCloudController: true</code>. The fix is untested. Also check <code>target-cluster-parallel.yaml</code> and the legacy sequential manifest, whose worker bootstrap is generated by the k3s provider rather than written by hand.</li>
+<li><strong>Consequences for other chapters.</strong> Chapters 7, 8, 9, and 17 measure the time until both nodes report <code>Ready</code>. Those measurements stand as measurements of <code>Ready</code>, but "both nodes" does not mean "both usable." Add a sentence to Chapter 7 (and to the time-to-ready definition in the brief) once the fix is tested.</li>
+<li><strong><code>demo.sh</code></strong> fails at the registry check because it dials the alias over plain HTTP; use the registry's real address (as <code>ui/backend/handlers/registry.go</code> does) and refresh its narration — VM sizes, the <code>:latest</code> image, containerDisks.</li>
+<li><strong><code>show-cluster.sh</code></strong> narrates <em>"curl ${SVC_IP}"</em> but runs <code>wget http://localhost</code> inside a pod; its DataVolume section is obsolete; it trusts any kubeconfig already in <code>/tmp</code>.</li>
+<li><strong>Identity across rebuilds.</strong> The <code>/tmp</code> kubeconfig (written 16 September) and the current one share a CA fingerprint; the warm image's fixed identity is demo-only by design. Worth one line in Chapter 14's scorecard.</li>
+<li><strong>Object count.</strong> "About eighteen" counts, on 17 September: 1 KThreesConfig, 1 MachineSet, 2 Machines, 2 KubevirtMachines, 2 VirtualMachines, 2 VMIs, 2 launcher pods, 1 Service, and 5 Secrets (control-plane bootstrap data and its user data, worker user data, kubeconfig, SSH keys).</li>
+<li><strong>Meridian scene</strong> is fiction; the demo output it shows is real, from 17 September.</li>
+<li><strong>Figures.</strong> 5.1: the ownership chain, with the missing link drawn dashed. 5.2: the six layers as nested boxes.</li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
+</ul></aside>
+</article>

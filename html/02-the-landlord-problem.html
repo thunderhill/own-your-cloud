@@ -1,0 +1,483 @@
+<title>The Landlord Problem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part I — The Bill</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="ch-number" aria-hidden="true">2</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 2: </span>The Landlord Problem</h1>
+    <blockquote class="epigraph"><p><em>You're playing in the vendor's sandbox, and they set the rules on how high you can build.</em></p>
+<p>— <em>Reclaiming Margins with Sovereign Cloud</em>, strategic briefing, February 2026</p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository. <span class="legend-public">Public record</span> and <span class="legend-public">Briefing</span> sections quote named sources — published reports, or the strategy deck behind this book.</dd>
+      <dt>Length</dt>
+      <dd>About 1,900 words · about 8 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Tuesday in November 2025 · the CTO's office</p>
+<p>Two letters arrived in the same week, and Anita put them side by side on her desk.</p>
+<p>The first was from Meridian's internal audit team. A new control required a particular setting on the Kubernetes clusters that ran the payments platform: a rule that the clusters' control planes check every request against, before it is accepted. The managed Kubernetes service Meridian rented did not offer that setting at the level they used. The supplier's account manager had been helpful and apologetic. The setting might be possible on a higher tier. It might arrive in a future release. It was not on the roadmap anyone could share.</p>
+<p>The second letter was the renewal quote for Meridian's virtualization estate — fifteen years of it, running the systems that had never moved to the cloud. The supplier had been acquired. The licensing model had changed. The number at the bottom was one nobody had budgeted for.</p>
+<p>Vikram read both. "One's a cloud and one's our own data centre," he said.</p>
+<p>"And they're the same letter," Anita said. "In both, somebody else decides what we can change, and what it costs to stay. We don't own either one. We just thought we owned the second."</p>
+<hr class="scene-break" />
+<h2 id="the-analogy-taken-seriously">The analogy, taken seriously</h2>
+<p class="dateline dateline-public">Briefing · February 2026</p>
+<p>The strategy deck makes the argument with an analogy most board members will have lived through. <em>"Managed Cloud = Renting an Apartment"</em>: convenient, occupied immediately, but <em>"you cannot renovate the walls, upgrade the infrastructure, or optimize the layout for your specific needs. The landlord controls everything."</em> Against it: <em>"Sovereign Cloud = Owning Your Property"</em>.</p>
+<p>It then names the three things that make a landlord a problem:</p>
+<ol>
+<li><strong>No architectural control</strong> — <em>"Cannot customize control planes, networking, or security configurations."</em></li>
+<li><strong>Rent increases.</strong></li>
+<li><strong>No equity building</strong> — <em>"Years of payments build no lasting infrastructure value."</em></li>
+</ol>
+<p>The first is the one Meridian's auditors ran into. The deck puts it most sharply about Kubernetes: <em>"With managed services like AKS, you cannot customize the control plane — the brain of your cluster. Need specific RBAC configurations for compliance? You might hit a brick wall because vendors abstract that layer to keep things simple."</em></p>
+<p>That is fair, with one precision worth keeping. Managed Kubernetes services do let customers change some control-plane settings. The problem is that the <em>supplier</em> chooses which ones, on the supplier's timetable, at the supplier's price tiers. The wall is not that nothing can be changed. It is that the list of things you are allowed to change belongs to somebody else.</p>
+<h2 id="what-the-analogy-leaves-out">What the analogy leaves out</h2>
+<p>Analogies persuade by what they leave out, and this one leaves out the boiler.</p>
+<p>A tenant who wakes to a broken boiler calls the landlord. An owner fixes it. Owning the brain of your cluster means owning its mistakes too, and this book records plenty of them:</p>
+<ul>
+<li>In September 2026, Kubernetes and everything around it were upgraded on the platform this book describes. It took a week of rebuilding. The rebuild turned up a dead container image that never started, behind a setup script that reported success anyway, a version setting that had never controlled what it claimed to, and a mesh release running outside its tested range. That is Chapter 17.</li>
+<li>For months, the dashboard reported a worker machine as <code>Ready</code> while a single configuration line prevented it from running any workload at all. That is Chapter 5.</li>
+<li>A software component pinned to a <em>moving</em> version tag quietly updated itself one day and then crashed about every thirty seconds, with no log output, for thousands of restarts before anyone diagnosed it. That is recorded in the repository's own list of pitfalls.</li>
+</ul>
+<p>None of these would have been Meridian's problem in a rented managed service. All of them were the platform team's problem here. The landlord problem is real, but so is the owner's problem, and a CxO should be sold both.</p>
+<h2 id="rent-increases-come-from-every-landlord">Rent increases come from every landlord</h2>
+<p class="dateline dateline-public">Public record · 2023–2024</p>
+<p>Meridian's second letter is not fiction in its shape. In November 2023, Broadcom completed its $61 billion acquisition of VMware, the virtualization software under a large share of the world's corporate data centres. Broadcom then ended the sale of perpetual licences for VMware's products in favour of subscriptions.</p>
+<p>The dispute that made this public was AT&amp;T's. In a lawsuit filed in August 2024, AT&amp;T said Broadcom had proposed a price increase of <strong>1,050%</strong> for continued support under its existing arrangement. The two companies later settled.</p>
+<p>The lesson for a board is not about any one supplier. It is that "on-premises" and "owned" are not the same thing. An organization can own every server in its data centre and still rent the layer that makes those servers useful. The landlord problem belongs to any single supplier controlling a layer you cannot easily leave, whether that layer runs in someone else's building or your own.</p>
+<h2 id="the-exit-fee-is-being-legislated-away-the-lock-in-isnt">The exit fee is being legislated away. The lock-in isn't.</h2>
+<p class="dateline dateline-public">Public record · 2024–2027</p>
+<p>The deck's third chapter prices the cost of leaving: an <em>"exit cost multiplier"</em> of 3–5x, <em>"18–24 months to migrate"</em>, and an <em>"average migration cost"</em> of $2–5 million. It gives no source for any of the three, so they are best read as illustrations.</p>
+<p>One part of the exit cost is falling, and falling by law. The European Union's Data Act allows cloud providers to charge customers for switching only at cost from January 2024, and bans switching charges entirely from <strong>12 January 2027</strong>. The largest cloud providers moved ahead of the deadline: Google Cloud stopped charging data-transfer fees to customers leaving in January 2024, and Amazon Web Services followed in March 2024, with Microsoft following suit.</p>
+<p>So the most visible exit fee — paying to take your own data out — is going away, at least for customers covered by the Data Act. What regulation does not remove is the part of the exit cost the deck gets exactly right. It calls this <em>"The Dependency Spiral"</em>: basic infrastructure has a <em>"low exit cost"</em>; add platform services and there is <em>"moderate lock-in"</em>; add software services and there is <em>"high entanglement"</em>; adopt the full ecosystem and the exit becomes <em>"prohibitive"</em>. Every proprietary database, queue, identity service or AI platform a workload depends on is another thing that has to be rebuilt somewhere else before it can move.</p>
+<p>That is where Meridian's real lease lives. Not in the egress price, but in the list of services nobody else sells.</p>
+<h2 id="what-owning-the-brain-looks-like">What owning the brain looks like</h2>
+<p class="dateline dateline-record">Build log · June 2026</p>
+<p>The strongest argument for owning a layer is being able to change it the day you need to.</p>
+<p>Chapter 8 tells how the platform in this book brought the time to build a cluster down from 50.0 seconds to 34.5 seconds. Every attempt to make the golden image smarter failed. The two changes that worked were one line each, and both were in layers a tenant usually cannot touch:</p>
+<ul>
+<li><strong>A control-plane startup setting</strong> — telling the cluster's control plane which address to advertise to its workers. That one line removed a ten-second network timeout and took the build from 50.0 to 42.7 seconds.</li>
+<li><strong>A virtualization-layer resource setting</strong> — raising the processor allowance that KubeVirt gives the small helper containers beside each virtual machine. With a tiny default allowance, the operating system throttled them while each VM started. That took the build from 42.7 to 34.5 seconds.</li>
+</ul>
+<p>Neither is dramatic. Both are exactly the kind of change the deck's apartment analogy is about: knocking down a wall. On rented infrastructure, the first would have been a feature request. The second would not have been possible at all.</p>
+<h2 id="the-owners-ledger">The owner's ledger</h2>
+<p>The deck is honest about what ownership demands, and this chapter should be too. Its own list of <em>"Infrastructure Requirements"</em> for a self-managed platform is: hardware; data-centre facilities; a platform engineering team of <em>"Kubernetes experts, DevOps, SRE specialists"</em>; automation and tooling; and operational processes for incidents, changes and security. It estimates <em>"12–18 months to full production readiness"</em> and <em>"$2–5M for mid-size enterprise deployment"</em> — again without a source.</p>
+<p>This book adds three items from experience:</p>
+<ul>
+<li><strong>Upgrades are yours.</strong> On a managed service, a Kubernetes upgrade is a button and a maintenance window. Here it was a week (Chapter 17).</li>
+<li><strong>Measurement is yours.</strong> Nobody tells an owner how long things take, or whether a dashboard is telling the truth. Chapters 5, 7 and 11 are about building that for yourself.</li>
+<li><strong>Pinning is yours.</strong> An owner who does not fix software versions in place has quietly handed the landlord's role to whoever publishes the latest release.</li>
+</ul>
+<p>Owning does not remove the landlord's work. It moves the work in-house, where it can be done on your schedule and to your standard — or not done at all.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-fiction">Meridian · the following week</p>
+<p>Vikram's answer to both letters was a table. One row for every layer of Meridian's technology, from physical buildings up to the AI assistant the service desk was piloting. Four columns: <em>who supplies it</em>, <em>what we cannot change that we need to</em>, <em>what leaving would take</em>, and <em>who at Meridian could run it if we owned it</em>.</p>
+<p>Anita read the fourth column first. Most of it was blank.</p>
+<p>"That's the real finding," Vikram said. "It's not the lock-in. We know about the lock-in. It's that for most of these layers, if the landlord went away tomorrow, we wouldn't have anyone who could fix the boiler."</p>
+<p>"Then that's our lease," Anita said. "The second column is what we pay the landlord in control. The fourth is what we'd pay ourselves in people." She circled two rows: the Kubernetes clusters, and the virtualization estate. "Start there. Those are the two where somebody else owns the brain, and where learning to own it ourselves would be worth something even if we never left."</p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<ul>
+<li><strong>The landlord problem (briefing):</strong> no architectural control, rising rent, no equity. On managed Kubernetes, which control-plane settings a customer may change is decided by the supplier.</li>
+<li><strong>Every landlord (public record):</strong> Broadcom completed its $61 billion VMware acquisition in November 2023 and ended perpetual licences; AT&amp;T alleged a proposed 1,050% increase in a 2024 lawsuit, later settled.</li>
+<li><strong>The exit fee (public record):</strong> EU Data Act switching charges limited to cost from January 2024 and banned from 12 January 2027; Google Cloud and AWS dropped exit data-transfer fees in 2024.</li>
+<li><strong>The lock-in that stays (briefing):</strong> the dependency spiral of proprietary services.</li>
+<li><strong>Owning the brain (build log):</strong> two one-line changes, in layers a tenant rarely reaches, cut cluster build time from 50.0 s to 34.5 s.</li>
+<li><strong>The owner's cost (build log):</strong> a week-long upgrade; a dashboard wrong for months; a moving version tag that crashed a service thousands of times.</li>
+<li><strong>Not supported:</strong> the deck's 3–5x exit multiplier, 18–24 months, and $2–5 million figures have no source.</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>For each layer of our technology, which settings do we need to change but aren't allowed to — and who decides?</strong></li>
+<li><strong>Which of our suppliers could raise our price tenfold, and what would we do the next morning?</strong></li>
+<li><strong>If a supplier disappeared tomorrow, which layers could we run ourselves, and which could we not even diagnose?</strong></li>
+</ol>
+<h2 id="open-the-repo">Open the repo</h2>
+<ul>
+<li><code>docs/sub-60s-cluster-strategy.md</code> — the two one-line changes, and the four that failed.</li>
+<li><code>03-target-cluster/target-cluster-warm.yaml</code> — the control-plane setting, in the manifest (<code>advertise-address</code>).</li>
+<li><code>scripts/configure-kubevirt-perf.sh</code> — the virtualization-layer setting (<code>supportContainerResources</code>).</li>
+<li><code>CLAUDE.md</code>, "Common Pitfalls" — the owner's side of the ledger, including the upgrade record and the moving-tag crash.</li>
+<li><code>~/marketing/Reclaiming Margins with Sovereign Cloud.pptx</code>, slides 5, 8, 9 and 16.</li>
+</ul>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>Sources.</strong> AT&amp;T/Broadcom: Channel Futures, https://www.channelfutures.com/channel-business/att-vmware-fight-impasse-over-1-050-price-increase; settlement, CIO Dive, https://www.ciodive.com/news/broadcom-att-vmware-settlement-licensing-support-lawsuit/733763/. Cite the court filing directly if possible. The $61 billion figure and the end of perpetual licences are as reported in that coverage. The November 2023 close date is from general knowledge; confirm it.</li>
+<li><strong>EU Data Act.</strong> Regulation (EU) 2023/2854. The dates (cost-only charges from 12 January 2024; ban from 12 January 2027) were cross-checked in several legal commentaries, e.g. https://kempitlaw.com/insights/the-end-of-switching-charges-commercial-impact-and-compliance-priorities/. The provider waivers (Google January 2024, AWS March 2024, Microsoft afterwards) come from secondary coverage; confirm each against the provider's own announcement, and check the exact scope and conditions.</li>
+<li><strong>Managed Kubernetes wording.</strong> The deck names AKS. The chapter deliberately generalizes ("the supplier chooses which settings"). Do not claim any specific managed service cannot set any specific flag without checking current documentation.</li>
+<li><strong>The moving-tag crash</strong> ("~5,680 restarts") is recorded in <code>CLAUDE.md</code>; the chapter says "thousands" to avoid citing a figure it did not re-measure.</li>
+<li><strong>Meridian's letters are fiction,</strong> modelled on public events. Keep the virtualization supplier unnamed in Meridian scenes.</li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
+</ul></aside>
+</article>

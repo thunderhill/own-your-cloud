@@ -1,0 +1,605 @@
+<title>Rules the Model Cannot Break</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part IV — The Brain</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="ch-number" aria-hidden="true">14</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 14: </span>Rules the Model Cannot Break</h1>
+    <blockquote class="epigraph"><p><em>If refusal must be guaranteed, enforce it below the model … not in the prompt.</em></p>
+<p>— <code>CLAUDE.md</code>, the <code>mesh-sre-agent</code> section</p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
+      <dt>Length</dt>
+      <dd>About 2,800 words · about 12 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Thursday in August · the CTO's office</p>
+<p>Anita Rao had the strategy document open at a section called <em>Architecture Constraints</em>. Eight numbered rules, each one sensible.</p>
+<p>"Local model first. Pinned endpoint. Address discipline. An egress allowlist. Keep the model warm. Append-only audit. Tenant isolation. A sandbox for anything that takes free-form chat." She scrolled back to the top. "These are good rules."</p>
+<p>"They're the contract," Vikram said. "Every change to the agent layer is supposed to satisfy them."</p>
+<p>"Then I want one more column." She turned the screen toward him. "Next to each rule, write what happens if the agent ignores it."</p>
+<p>"The agent doesn't decide most of these."</p>
+<p>"Then write down who does. A person. A script. The API server. The permission system. The network." She paused. "And if the honest answer is <em>we told the model</em>, write that down too."</p>
+<p>"That's not going to be a flattering column."</p>
+<p>"It isn't supposed to be," Anita said. "I'd rather read it from you than from an incident report."</p>
+<hr class="scene-break" />
+<p class="dateline dateline-record">Build log · July–September 2026</p>
+<h2 id="where-a-rule-can-live">Where a rule can live</h2>
+<p>A rule for an AI agent can live in several places, and they are not equally strong. From weakest to strongest:</p>
+<ol>
+<li><strong>The prompt.</strong> The model is asked.</li>
+<li><strong>A document.</strong> People are asked.</li>
+<li><strong>A script.</strong> The right thing happens, if someone runs it.</li>
+<li><strong>Admission.</strong> The API server refuses to create the object.</li>
+<li><strong>Permissions.</strong> The credentials cannot do it.</li>
+<li><strong>The network.</strong> The packets never arrive.</li>
+<li><strong>Absence.</strong> The tool, the credential, or the route does not exist.</li>
+</ol>
+<p>A model can ignore the first. People can ignore the second and third. The rest do not care what anyone intended. This chapter is the column Anita asked for: each of the platform's eight rules, and the layer that actually enforces it, measured on the running platform rather than read from its documentation.</p>
+<p>Most of the measurements were taken on 17 September 2026, on Sympozium 0.10.75 and Kubernetes 1.37, specifically for this chapter. Where they contradict what the repository says, the chapter says so.</p>
+<h2 id="the-rule-that-lived-in-the-prompt">The rule that lived in the prompt</h2>
+<p>Start at the bottom of the ladder, because the repository has already measured what happens there.</p>
+<p>The <code>mesh-sre-agent</code> from Chapter 15 was deliberately given no path to metrics — no route to Prometheus or Kiali. Its briefing opens with a rule meant to stop it from pretending otherwise:</p>
+<p><em>"RULE 1 — METRICS ARE UNAVAILABLE. … If asked for latency, p50/p95, request rates, error rates, throughput or saturation, do NOT run a command and do NOT estimate: reply exactly 'Metrics are not reachable from this agent …' Never invent a number."</em></p>
+<p>Measured on <code>qwen2.5:7b</code> across repeated attempts, the repository records that it <em>"does </em><em>not</em><em> reliably comply: it ignores 'do not run a command', and in one run answered 'we can make an educated guess based on the availability of related metrics'."</em> It never actually produced an invented number in testing. But moving the rule to the very top of the prompt did not fix the compliance, and the conclusion written into the repository is the sentence this chapter takes as its epigraph: <em>"the guard is a nudge, not a control."</em></p>
+<p>The same repository gives every agent the same closing instruction in its briefing: <em>"Read-only unless the user explicitly approves a change."</em> Hold on to that sentence. It comes back.</p>
+<h2 id="what-held">What held</h2>
+<p>Some rules genuinely live below the model, and they held when tested.</p>
+<p><strong>Admission refused a self-granted exception.</strong> The platform's policy for <code>cluster2-agent</code> denies a web-fetching tool called <code>fetch_url</code>. Lab 04 tries to create a run that explicitly re-allows it. On 17 September, asked to validate that run without creating it, the API server refused, exactly as the lab recorded in July:</p>
+<pre><code>Error from server (Forbidden): admission webhook &quot;vagentpod.sympozium.ai&quot;
+denied the request: tool &quot;fetch_url&quot; is denied by policy
+</code></pre>
+<p>That webhook is configured to <em>fail closed</em>: if it cannot be reached, the request is rejected rather than waved through. Its sibling, which validates tool packs, is configured the same way, and on 16 September it showed what that means in practice: while the platform was being reinstalled and the webhook was not yet serving, the install was refused until it came up. An inconvenience during setup; the right behavior for a guard.</p>
+<p><strong>Permissions kept agents read-only outside their own namespace.</strong> An agent run's identity was checked directly. Across the cluster, it cannot delete deployments or virtual machines, and it cannot create workloads in other namespaces. The extra grants the repository adds, for virtual machines and for the service mesh, are read-only by design and say so in their headers.</p>
+<p><strong>The network closed the metrics path.</strong> This one needed a test, because the lab written in July said the opposite (more on that below). Two short-lived pods were started in the agents' namespace: one carrying the same labels as a real agent run — <code>sympozium.ai/role=agent</code> and <code>app.kubernetes.io/part-of=sympozium</code>, confirmed against a live run pod the same morning — and an identical control pod with neither label. Both tried the same four destinations:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>Agent-labeled pod</th>
+<th>Unlabeled control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ollama, through the in-cluster Service (port 11434)</td>
+<td><code>200</code></td>
+<td><code>200</code></td>
+</tr>
+<tr>
+<td>Kiali on <code>cluster1</code> (port 20001)</td>
+<td>no connection</td>
+<td><code>302</code></td>
+</tr>
+<tr>
+<td><code>example.com</code> over HTTP (port 80)</td>
+<td>no connection</td>
+<td><code>200</code></td>
+</tr>
+<tr>
+<td><code>example.com</code> over HTTPS (port 443)</td>
+<td><code>200</code></td>
+<td><code>200</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>The control pod reached everything; the agent-labeled pod could not reach Kiali or plain HTTP. Network policy is enforced on this cluster, and the metrics endpoints really are out of an agent's reach. Whatever the model says about latency, it did not read it from Prometheus.</p>
+<p><strong>The UI will only execute one action.</strong> However an agent phrases a proposal, the web backend acts only on an allowlist written in code, and that list has one entry: deploying a target cluster. A model cannot talk its way onto that list.</p>
+<p>Those four are real controls. Now look at the last row of the network table again.</p>
+<h2 id="what-did-not-hold">What did not hold</h2>
+<p><strong>HTTPS goes anywhere.</strong> The agent-labeled pod reached <code>example.com</code> on port 443. The reason is in the repository's own network policy, <code>sympozium-allow-ollama</code>. It was written to open two paths agents genuinely need — Ollama, and the Kubernetes API — and it opens them <em>by port</em>, with no destination:</p>
+<pre><code>to=  ports=[{&quot;port&quot;:11434,&quot;protocol&quot;:&quot;TCP&quot;}]
+to=  ports=[{&quot;port&quot;:443,&quot;protocol&quot;:&quot;TCP&quot;},{&quot;port&quot;:6443,&quot;protocol&quot;:&quot;TCP&quot;}]
+</code></pre>
+<p>Port 443 was opened for the Kubernetes API, and a port number cannot tell the Kubernetes API from the rest of the internet.</p>
+<p><strong>A denied tool ran anyway.</strong> Lab 04's other run creates no exception at all. It simply asks the agent to fetch <code>example.com</code> with the tool its policy denies. Re-run on 17 September, the agent made one tool call, and the answer described the real page's contents. The deny rule only blocks a run that <em>explicitly asks</em> to re-allow the tool; a run that says nothing about tools — which is how nearly every run is written — can use it freely. Put that together with open HTTPS and the result is straightforward: an agent on this platform can send a request to an arbitrary web server.</p>
+<p>Notice the irony in the epigraph's source. The same note that says to enforce refusal below the model names policy tool gating as one way to do it. On this version, tool gating is the control that only works when nobody needs it.</p>
+<p><strong>Inside their own namespace, agents can write.</strong> The built-in <code>k8s-ops</code> tool pack grants two sets of permissions. Across the cluster, they are read-only. Inside the namespace where the run executes, they are not: <code>create</code>, <code>update</code>, <code>patch</code>, and <code>delete</code> on pods, deployments, jobs, network policies, roles, role bindings — and secrets. Checked against a real run identity from a chat with <code>cluster2-agent</code>:</p>
+<pre><code>delete pods -n sympozium-system        yes
+get secrets -n sympozium-system        yes
+</code></pre>
+<p>That namespace is where the agent platform itself lives. It holds every agent's API key, the model credentials, and one more Secret worth naming: <code>target-cluster-kubeconfig</code>, whose user is <code>target-cluster-admin</code>, for the target cluster's API on port 6443 — which the network policy above leaves open. A <code>cluster2-agent</code> run's identity is permitted to read it.</p>
+<p><code>cluster2-agent</code>'s briefing says its tools talk to its own cluster only, and every briefing says <em>read-only unless the user explicitly approves a change.</em> Outside the namespace, permissions make that true. Inside it, the only thing standing between a run and those writes and those credentials is the sentence in the prompt — the layer this chapter began by measuring.</p>
+<h2 id="the-scorecard">The scorecard</h2>
+<p>Here is the column, rule by rule.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align: right;">#</th>
+<th>Constraint</th>
+<th>What actually enforces it today</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>Local-LLM-first</td>
+<td>The agent's configuration; not the network, which allows HTTPS anywhere</td>
+<td>Partly</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>Pinned model endpoint</td>
+<td>An in-cluster Service defined in the repository</td>
+<td>Held — at a different address than the rule names</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>Address-pool discipline</td>
+<td>MetalLB within each cluster; only a table and a warning between the two</td>
+<td>Partly</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>Egress allowlist</td>
+<td>Network policy, by port rather than destination</td>
+<td>Partly</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>Warmth is mandatory</td>
+<td>A setting on the host, outside the repository</td>
+<td>Partly, and by accident</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>Audit is append-only</td>
+<td>Nothing</td>
+<td>Not held</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>Tenant isolation</td>
+<td>Nothing inside the shared namespace</td>
+<td>Not held</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>Sandbox free-form chat</td>
+<td>A policy reference that never applies</td>
+<td>Not held</td>
+</tr>
+</tbody>
+</table></div>
+<p>A few rows need their evidence.</p>
+<p><strong>Rule 2</strong> names the Ollama address <code>172.18.0.1</code> and warns against a hostname that does not resolve on this kind of cluster. The agents no longer dial that address at all. The repository records that agent pods <em>"couldn't dial that IP directly under kindnet's NetworkPolicy enforcement,"</em> so it added an in-cluster Service whose endpoint points at the host. The rule's intent — one fixed, local model endpoint — held. Its text is out of date.</p>
+<p><strong>Rule 3</strong> requires every load-balancer address change to land in three places at once. Within a single cluster, MetalLB itself refuses to hand the same address to two services. But <code>cluster1</code> and <code>cluster2</code> advertise on the same network segment, and nothing stops their pools from overlapping except a table in the repository and a warning never to run one cluster's install script on the other. The pool the rule describes, <code>.211–.220</code>, has already been widened to <code>.211–.225</code>.</p>
+<p><strong>Rule 5</strong> says no persona enters the fleet without a warm-path guarantee, and names the mechanism: a heartbeat schedule. The repository ships one, set to run every four minutes. On 17 September its status recorded two runs in total, the last at 07:44 UTC the previous day, with a "next run" time that had passed seventeen hours earlier. The schedule is not firing. The model stays warm anyway, because the host's Ollama service runs with <code>OLLAMA_KEEP_ALIVE=-1</code> and never unloads a model once it is loaded. That setting lives in the host's service configuration, not in the repository (whose Ollama notes suggest 24 hours). It keeps only models that have already been loaded: on 17 September, <code>qwen2.5:7b</code> was resident, and <code>llama3.2</code>, the target-cluster agent's model, was not.</p>
+<p><strong>Rule 6</strong> is Chapter 13's finding: the audit trail is deletable, was deleted by routine scripts, and vanished entirely in the rebuild.</p>
+<p><strong>Rule 7</strong> says one namespace per tenant and one identity per agent, with no cross-tenant bindings. Every agent shares one namespace. Identities are now per run — better than the rule asked — but Chapter 15's fix bound mesh and VM read access to every service account in that namespace, and the write permissions above let a run of any agent equipped with <code>k8s-ops</code> — <code>cluster2-agent</code> or <code>mesh-sre-agent</code> — read every other agent's key.</p>
+<p><strong>Rule 8</strong> puts free-form chat under a restricted network policy allowing DNS, the Ollama host, and the Kubernetes API only. <code>cluster2-agent</code> does reference that policy. But the policy's network rules are scoped to pods labeled as sandboxed, and every agent in the repository runs with its sandbox disabled, so no agent pod carries the label. On 17 September, a real run pod carried <code>sympozium.ai/role=agent</code> and no sandbox label at all. The restricted rules exist; they select nothing.</p>
+<h2 id="a-correction">A correction</h2>
+<p>Lab 04, written in July, concluded that network policy was <em>"inert on this platform"</em> for two reasons. The first — the missing sandbox label — is still true. The second was that Kind's default network plugin <em>"has no policy engine"</em> and never enforces policy. On 17 September, on the rebuilt cluster, that was false: the probe pods above show enforcement plainly, and the repository's own shim Service for Ollama exists <em>because</em> a policy blocked a direct connection.</p>
+<p>Whether the lab's second finding was wrong in July, or became wrong later, the record cannot say — the July cluster no longer exists. What it shows is the chapter's thesis turned on its authors. "Network policy is not enforced" was a claim about a control, made without a test that could have failed. The test takes two pods and a minute.</p>
+<h2 id="rules-that-cannot-move-below-the-model">Rules that cannot move below the model</h2>
+<p>Not every rule can be pushed down the ladder, and it is worth being clear about which.</p>
+<p><em>"Never invent a number"</em> is one. The network can guarantee that the agent cannot read real metrics — and here it does. It cannot stop a language model from writing a plausible latency figure out of nothing. No permission, admission rule, or firewall reaches inside the text a model generates. For rules like that, the control is not enforcement but verification: the ladder of evidence in Chapter 15, and a process that treats an agent's answer as a claim.</p>
+<p>Everything else in this chapter's failures <em>can</em> move down, and the moves are unglamorous:</p>
+<ul>
+<li>Replace port-only egress with destinations: the API server's address, the target cluster's address, the model host.</li>
+<li>Run agents somewhere their credentials cannot read the platform's own secrets, or strip the tool pack's write permissions inside that namespace.</li>
+<li>Enable the sandbox, so the restricted policy actually selects agent pods.</li>
+<li>Replace the heartbeat that stopped with something whose failure someone notices, and write the host's keep-alive setting into the repository.</li>
+<li>Copy run records off the cluster before anything can delete them.</li>
+</ul>
+<p>None of these needs a better model. All of them need someone to decide that a rule is not real until something other than the model enforces it.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-fiction">Meridian · two weeks later</p>
+<p>Vikram brought the column back on one page, with the verdicts in the right-hand margin: one rule held, four held partly, three did not.</p>
+<p>Anita read the page twice, then asked the question she always asked first. "Which of these lets an agent do something we can't undo?"</p>
+<p>"Seven. Inside its own namespace, an agent's run can write, and it can read every secret there — including an administrator credential for the target cluster."</p>
+<p>"And what stops it today?"</p>
+<p>"A sentence in its briefing."</p>
+<p>She drew a box around row seven. "That one first. Then the network rule. Then the sandbox." She slid the page back. "And strike <em>Architecture Constraints</em> off the top of the document."</p>
+<p>"And call it what?"</p>
+<p>"<em>Intentions</em>," she said, "until each one has something under it that the model can't argue with. If the model can break it, it isn't a rule. It's a request."</p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<ul>
+<li><strong>Tested on 17 September, current release:</strong> network enforcement with two probe pods; both of lab 04's runs; the real permissions of an agent run's identity; the warm-up schedule's status; the resident models; how the admission webhooks fail.</li>
+<li><strong>Held below the model:</strong> admission refused an explicit tool override, and fails closed; permissions kept agents read-only outside their namespace; the network blocked metrics endpoints and plain HTTP; the UI backend executes one allowlisted action.</li>
+<li><strong>Did not hold:</strong> a denied tool was used anyway; HTTPS reached an arbitrary host; agent runs can write in their own namespace and read every secret there, including a target-cluster administrator credential; the chat sandbox's policy selects no pods; the warm-up schedule stopped firing seventeen hours before the check.</li>
+<li><strong>Held by accident:</strong> model warmth, kept by an unrecorded host setting rather than the mechanism the rule names.</li>
+<li><strong>Corrected:</strong> lab 04's claim that network policy is inert on this cluster.</li>
+<li><strong>Cannot be enforced below the model:</strong> "never invent a number." That one needs verification, not a control.</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>For each rule we have given our AI agents, what enforces it if the model ignores it?</strong> Count how many answers are "the prompt."</li>
+<li><strong>What can an agent's credentials read, and which of those secrets unlock something bigger than the agent?</strong></li>
+<li><strong>When a guardrail fails — a webhook down, a policy matching nothing — does it fail open or closed, and would anyone notice?</strong></li>
+</ol>
+<h2 id="open-the-repo">Open the repo</h2>
+<ul>
+<li><code>Sovereign_Cloud_Agentic_Strategy.md</code> — "Architecture Constraints", and §4 for the reasoning behind them.</li>
+<li><code>06-sympozium/labs/04-policy/</code> — both runs; re-run <code>run-allowed.yaml</code> with <code>--dry-run=server</code> to see the refusal without creating anything.</li>
+<li><code>06-sympozium/policies/sandbox-restricted.yaml</code> beside <code>06-sympozium/agent-egress-ollama.yaml</code> — the destination-specific allowlist that never applies, and the port-only rule that does.</li>
+<li><code>kubectl auth can-i --list -n sympozium-system --as=system:serviceaccount:sympozium-system:sympozium-run-&lt;run-name&gt;</code> — what a real agent run can actually do.</li>
+<li><code>06-sympozium/mesh-sre-agent.yaml</code> — RULE 1, and the header explaining why the metrics path is closed.</li>
+<li><code>ui/backend/handlers/ai.go</code> — <code>allowedActions</code>.</li>
+</ul>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>Fix before publishing, not just before print.</strong> This chapter describes, at design level, a path from an agent run to a target-cluster administrator credential. It is the author's own demo platform, but either fix it first and describe the fix, or confirm you are comfortable publishing it as open.</li>
+<li><strong>Probe method.</strong> Two <code>curlimages/curl</code> pods in <code>sympozium-system</code>, one labeled <code>sympozium.ai/role=agent,app.kubernetes.io/part-of=sympozium</code> and one unlabeled; <code>curl</code> with a 5-second connect timeout; "no connection" is curl status <code>000</code>. Both pods were deleted. The labels were checked against the pod of lab 04's real run the same morning. Kind 0.33.0, <code>kindnetd</code> image <code>v20260820</code>.</li>
+<li><strong>Lab 04's README is wrong about the network plugin</strong>, at least today. Update it. Note that <code>06-sympozium/host-ollama-service.yaml</code> already says policy enforcement is what made the shim necessary.</li>
+<li><strong>Re-verified on 17 September:</strong> the admission refusal (dry run); <code>fetch_url</code> used despite the deny (one tool call, 3.8 s of model time, 6,956 input and 121 output tokens — July's run used 4,010 and 95); webhook failure policies (<code>vagentpod</code> and <code>vskillpack</code> fail closed; the repository's own skills webhook fails open). <strong>Not re-verified:</strong> the RULE 1 refusal measurements, which date from August on <code>qwen2.5:7b</code>.</li>
+<li><strong>The strategy document is stale in several places this chapter grades:</strong> Constraint 1 names llama3.2 at <code>172.18.0.1</code>; Constraint 3's pool is now <code>.211–.225</code>; Constraints 4 and 7 bind policy through <code>SympoziumInstance.spec.policyRef</code>; Constraint 8 calls the policy <code>sympozium-sandbox-restricted</code>, while the repository's policy is named <code>sandbox-restricted</code> (the generated network policy carries the longer name).</li>
+<li><strong>Warm-up schedule.</strong> The cause of it stopping is not established. The pre-rebuild record also shows far fewer runs than a four-minute schedule implies (18 over about 26 days). The heartbeat's own comment says it keeps llama3.2 warm, but it runs against <code>cluster2-agent</code>, whose model is <code>qwen2.5:7b</code>.</li>
+<li><strong>Verdict counts.</strong> The Meridian close says one held, four partly, three not — matching the scorecard, with rule 2 counted as held.</li>
+<li><strong>Figures.</strong> 14.1: the seven-layer ladder, with each of the eight rules placed where it actually lives. 14.2: the probe results as a two-column reachability diagram.</li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
+</ul></aside>
+</article>

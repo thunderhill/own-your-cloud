@@ -1,0 +1,761 @@
+<title>Two Lines and a CPU Quota</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part II — The Factory</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="ch-number" aria-hidden="true">8</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 8: </span>Two Lines and a CPU Quota</h1>
+    <blockquote class="epigraph"><p><em>Do not claim anything is faster until you have pasted the timing output that shows it.</em></p>
+<p>— from the brief, <code>docs/fable-cluster-speed-prompt.md</code></p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
+      <dt>Length</dt>
+      <dd>About 4,700 words · about 20 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Tuesday in September · the fourth-floor boardroom</p>
+<p>The slide said <strong>&lt; 40 s</strong>.</p>
+<p>It had said so since June: in the platform team's quarterly review, on the internal wiki, and in the one-page summary Anita Rao had sent the board when she asked them to fund the sovereign-cloud pilot instead of another three-year committed-spend agreement. Forty seconds from <em>I need a cluster</em> to a cluster. It was the number that made the pilot sound like a product.</p>
+<p>Vikram Iyer put a single sheet of paper on the table. It was not a slide. It was the raw output of a script, and its last line read <code>48.520s</code>.</p>
+<p>"That's the cold build," he said. "Clean host, both nodes ready."</p>
+<p>"When?"</p>
+<p>"June. Nothing has moved it since."</p>
+<p>Anita read the sheet twice. "Then where did forty come from?"</p>
+<p>"Forty was the target. Somewhere between the plan and the wiki, somebody wrote the target down in the column for results."</p>
+<p>She did not ask who. She asked the more expensive question. "The standby pool hands a team a cluster in two hundred milliseconds. You showed me. Why do I care what the cold build does?"</p>
+<p>"Because the pool is one deep." He had rehearsed this part. "The first team that asks gets the standby. The second team that asks in the same minute gets the cold build. And the standby is eight cores and fourteen gigabytes of memory sitting idle, on purpose, all day. Every second I take off the cold build is idle capacity I don't have to buy to hide it."</p>
+<p>"So the cold build is an inventory problem."</p>
+<p>"It's an inventory problem."</p>
+<p>Anita turned the sheet over, as if there might be a better number on the back. "We spent June making the golden image smarter. Twice. What did that buy us?"</p>
+<p>"Two things we now know don't work," Vikram said. "And a rule. Nobody changes a line until we can say where the forty-eight seconds go."</p>
+<hr class="scene-break" />
+<p class="dateline dateline-record">Build log · June 2026</p>
+<h2 id="making-the-image-smarter">Making the image smarter</h2>
+<p>Chapter 6 described the golden image: a virtual-machine disk with k3s already installed, baked once and copied for every cluster, so that a new node does not spend its first minutes downloading software. By early summer the default build — control plane first, worker only once the control plane reported ready — took between 90 and 150 seconds. The obvious next move was to put even more into the image.</p>
+<p>The theory was attractive and, on paper, sound. The first time k3s starts, it does a great deal of work: it creates its datastore, generates certificate authorities and signs certificates with them, registers its built-in resource types, and installs its system components. All of that is identical on every cluster. Do it once, at bake time, and every cluster afterwards inherits it for free.</p>
+<p>Two experiments followed. Both failed, for different reasons, and both failures are worth the space.</p>
+<h3 id="dead-end-one-preinit">Dead end one: <code>:preinit</code></h3>
+<p>The first attempt preserved k3s's entire state inside the image — the datastore with its resource definitions and access rules, the certificate directory, the air-gapped container images — and added a first-boot step that ran <code>k3s server --cluster-reset</code> to give each new cluster a fresh datastore identity. The estimated saving was 30 to 60 seconds.</p>
+<p>What actually happened was a cluster stuck at <code>WaitingForKthreesServer</code> for more than twenty minutes, while a log inside the control-plane VM repeated one line:</p>
+<pre><code>CA cert validation failed: Get &quot;https://127.0.0.1:6444/cacerts&quot;:
+  tls: failed to verify certificate: x509: certificate signed by unknown authority
+</code></pre>
+<p>The cause was a disagreement between two systems, each doing exactly what it was built to do. The bake had generated certificate authorities and signed every certificate on disk with them. Then the Cluster API provider for KubeVirt booted the VM and wrote <em>fresh</em> per-cluster certificate authorities into it — because managing cluster identity from the management cluster is its job. It overwrote the authority files and left in place every certificate the old authorities had signed. k3s started, presented a certificate signed by the old authority, validated it against the new one, and retried forever.</p>
+<p>The repository's post-mortem puts it plainly: <em>"This failure mode is invisible in design docs that only reason about etcd identity. It only showed up under real end-to-end boot."</em></p>
+<p>The fix was to delete every certificate that was not an authority before k3s started, and let k3s regenerate them. That worked. It also threw away most of what the image had preserved. The reset still ran, the certificates were still generated at boot, and the one measurement taken came in at about 136 seconds — back inside the 90-to-150-second band the whole exercise had been meant to escape.</p>
+<h3 id="the-change-that-did-work">The change that did work</h3>
+<p>The same week, a different kind of change was tried. Cluster API normally holds the worker back until the control plane reports ready, so the two VMs boot one after the other. Three settings removed that wait: a join token created in advance, a static bootstrap configuration for the worker, and an annotation telling Cluster API to skip its readiness gate. The worker's agent simply retries the control plane's virtual IP until it answers.</p>
+<p>Three runs: 46.6, 49.7, and 50.0 seconds. It was the largest single improvement of the summer, and it was not an image change. Nobody drew that conclusion yet.</p>
+<h3 id="dead-end-two-warm">Dead end two: <code>:warm</code></h3>
+<p>The second image experiment attacked the certificate conflict directly. If the provider insists on writing certificate authorities into the VM, make sure it writes the <em>same</em> ones the image was baked with. The bake used a fixed set of authorities and a fixed join token; before each deploy, a script pre-loaded those same authorities into the management cluster's secrets; the provider found them there, adopted them, and wrote back identical files. No conflict, no purge, no reset.</p>
+<p>It worked exactly as designed. k3s kept the pre-placed authority byte for byte. And the first few runs came in at around 35 seconds.</p>
+<p>That was the dangerous moment. Thirty-five seconds is under forty. It is the number on the slide.</p>
+<p>The team ran it again, head to head, on the same host, against the plain parallel build it was supposed to beat. The warm image landed between 46 and 56 seconds. The plain build had landed at 46.6, 49.7, and 50.0. A clean cold run of the warm path, measured a few days later, took 48.520 seconds. The two were statistically indistinguishable. The 35-second runs had happened on a quiet host, and this host is rarely quiet.</p>
+<p>In hindsight the reason is simple. Everything the warm image pre-computed — certificates, resource definitions, system components — sat <em>off the critical path</em>. A node reports ready well before k3s has finished installing its optional components, which apply in the background anyway. The image had made fast a set of steps nobody was waiting for.</p>
+<p>The warm image became the default regardless. It was no slower, it was more reliable than the preinit path, and it was what the parallel build now ran on. What went onto the wiki next to it was a line describing it as the path that <em>"targets time-to-ready &lt; 40s."</em></p>
+<blockquote>
+<p>Two capable attempts, each built on a plausible theory, each costing a full bake cycle to disprove. Neither theory had been measured before it was built.</p>
+</blockquote>
+<p>This is one of the most common ways engineering budgets disappear, and it rarely looks like failure while it is happening. The team optimized the part of the system it could reason about most easily — k3s's own startup. Nobody had yet asked where the fifty seconds actually went.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-record">Build log · September 2026</p>
+<h2 id="the-brief">The brief</h2>
+<p>Before anyone changed a line in September, someone wrote a brief. It was addressed to an AI coding agent — the same kind of worker Part IV of this book is about — and it lives in the repository as <code>docs/fable-cluster-speed-prompt.md</code>. It is worth reading in full, because nearly everything that went right afterwards is already in it.</p>
+<p>It named <strong>one number</strong> and defined it precisely: the wall time from <code>kubectl apply</code> of the cluster manifest until both nodes report <code>Ready</code>. <em>"It is the only metric that counts."</em></p>
+<p>It listed what had already failed, under a heading that leaves no room for interpretation: <strong>"Do NOT retry these — they are settled negative results."</strong> Baking more state into the image. The warm image. Parallelizing the worker's boot, which had already been done.</p>
+<p>It called out its own documentation. The wiki's under-forty claim was <em>"a stale aspiration, never achieved. Where CLAUDE.md and the table above disagree, the table wins."</em></p>
+<p>It made instrumentation mandatory before any optimization: <em>"Every optimisation attempt so far has been evaluated against a single aggregate number, which is why two dead ends took a full bake cycle each to disprove."</em> It even distrusted its own starting estimate — a rough split of seventeen seconds for the VMs to boot, seventeen for the control plane to start, eighteen for the worker to join — and asked for it to be checked: <em>"If it is wrong, say so; that finding alone is worth more than a speculative patch."</em></p>
+<p>It set a measurement protocol and called it non-negotiable. Tear the old cluster down and confirm it is gone. Record host load before every run. Three runs minimum; report the median <em>and the full spread</em>. Re-measure the baseline in the same session as the candidate, never against a number from another day. Change one variable at a time. And it said why: the host was shared with two Kind clusters and three unrelated containers, and <em>"an earlier run of this work recorded 35s times that turned out to be quiet-host luck rather than a real improvement."</em></p>
+<p>It defined success — a median under 40 seconds over three clean runs, with the cluster verification passing afterwards — and then it defined an acceptable failure: <em>"'No lever found' is an acceptable and valuable outcome."</em></p>
+<p>Its last line is this chapter's epigraph.</p>
+<p>Three things in that brief cost nothing and are almost never written down. A single metric, defined precisely enough that two people measuring it get the same answer. A list of what has already been proven not to work. And explicit permission to come back empty-handed. The third matters most. A team that cannot report <em>no lever found</em> will, eventually, report a lever.</p>
+<h2 id="where-the-fifty-seconds-went">Where the fifty seconds went</h2>
+<p>Chapter 7 tells the story of the instrument itself: a read-only script, <code>scripts/phase-timings.sh</code>, that reconstructs a cluster's boot from timestamps the platform already records — when each Kubernetes object was created, when each VM changed phase, when the guest kernel printed its first line, when k3s announced it had started — without logging in to anything.</p>
+<p>Its first job was the baseline. Re-measured in the same session, as the brief required, it was not 48.5 seconds but 50.0: runs of 52.7, 50.0, and 46.6. Here is where those seconds went, median of three clean runs:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Phase</th>
+<th style="text-align: right;">Seconds</th>
+<th style="text-align: right;">Share</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kubectl apply</code> → VM instance created (Cluster API controllers)</td>
+<td style="text-align: right;">6.6</td>
+<td style="text-align: right;">14%</td>
+</tr>
+<tr>
+<td>Launcher pod created → QEMU running</td>
+<td style="text-align: right;">10.0</td>
+<td style="text-align: right;">21%</td>
+</tr>
+<tr>
+<td>Firmware, kernel, initramfs</td>
+<td style="text-align: right;">3.7</td>
+<td style="text-align: right;">8%</td>
+</tr>
+<tr>
+<td>systemd and cloud-init → k3s start</td>
+<td style="text-align: right;">5.5</td>
+<td style="text-align: right;">12%</td>
+</tr>
+<tr>
+<td>Control-plane k3s start → first <code>200</code> from <code>/readyz</code></td>
+<td style="text-align: right;">7.0</td>
+<td style="text-align: right;">15%</td>
+</tr>
+<tr>
+<td>Worker joins, after the API is already answering</td>
+<td style="text-align: right;">11.8</td>
+<td style="text-align: right;">25%</td>
+</tr>
+<tr>
+<td><strong>Median time-to-ready</strong></td>
+<td style="text-align: right;"><strong>50.0</strong></td>
+<td style="text-align: right;">52.7 / 50.0 / 46.6</td>
+</tr>
+</tbody>
+</table></div>
+<p>Two things in that table changed the plan immediately.</p>
+<p>The first was how wrong the estimate had been. The rough split gave the control plane's k3s startup seventeen seconds. The instrument measured seven. The theory both image experiments had been built on — <em>the slow part is k3s starting up</em> — had bet on a row worth fifteen percent of the total.</p>
+<p>The second was the top two rows. <strong>Thirty-six percent of the wall clock — 16.6 seconds — elapsed before the guest kernel printed its first character.</strong> No change to the image could touch any of it, because none of it happens inside the image.</p>
+<p>Two rows looked suspicious. Ten seconds between a launcher pod being created and QEMU running, eight of which the first version of the table labelled <em>"containerDisk unpack."</em> And nearly twelve seconds for a worker to join a control plane that was already answering. The team went after the worker first. It took two wrong turns.</p>
+<h2 id="dead-end-three-the-retry-that-was-doing-work">Dead end three: the retry that was doing work</h2>
+<p>The worker's k3s agent does not wait politely for the control plane. It starts, tries to reach the API, fails, waits, and tries again. The phase data showed the agent starting at 26.7 seconds, the API first answering at 34.8, and the agent's next attempt landing at 36.7 — because it retries on a cycle of roughly five seconds. That looked like 1.9 seconds of pure waste: the API was ready, and the agent was asleep.</p>
+<p>The fix looked obvious. Have the worker wait until the API's unauthenticated <code>/readyz</code> endpoint answers, <em>then</em> start the agent, so that its first attempt succeeds.</p>
+<p>It made the cluster slower. The median went to <strong>53.1 seconds — a 3.1-second regression.</strong> In the repository's words: <em>"The premise was wrong."</em></p>
+<p>The worker's own log explained why. During those "wasted" retry cycles, the agent was starting its container runtime and preparing the node — real work, overlapping with the control plane's boot. The retry window was not idle; it was parallel. Holding the agent back until the API answered turned two things happening at once into two things happening in sequence. The change was reverted.</p>
+<blockquote>
+<p>From the outside, a retry loop looks like waste. Often it is the only part of the system working in parallel.</p>
+</blockquote>
+<h2 id="dead-end-four-no-route-to-host">Dead end four: no route to host</h2>
+<p>The worker's log held something else: a connection error, three times, each attempt taking about 3.1 seconds, before the agent fell back to the control plane's stable virtual IP, <code>172.18.255.215</code>, and succeeded.</p>
+<pre><code>connect: no route to host
+</code></pre>
+<p>The explanation is a genuinely strange property of running VMs inside Kubernetes. When KubeVirt connects a VM to the network in bridge mode, the guest receives its pod's IP address <em>and that address's /24 subnet</em>. So the guest believes every other pod in the range is on the same local wire, and tries to find them the way machines on a shared wire do: by broadcasting an ARP request. But pods on this cluster's network are not on a shared wire. Traffic between them is routed. The broadcast finds nothing, and the connection fails with <em>no route to host</em>.</p>
+<p>Why was the worker trying to reach a pod address at all? Because when the agent first contacts the control plane, the control plane hands back a list of addresses where its API can be reached, and on that list was the control-plane VM's own pod IP. There was also a stale <code>10.0.2.2:6443</code> — the address of QEMU's internal gateway — left over from bake time in the warm image's datastore.</p>
+<p>Routing the pod range through the gateway fixed the errors completely. Six logged errors per run became zero, and the agent made one clean connection.</p>
+<p>The timing benefit was nothing. <strong>The median was 54.3 seconds.</strong></p>
+<p>The log showed why. Between the line where k3s announced that it was starting the kubelet — <code>Running kubelet --address=0.0.0.0</code> — and the kubelet's first output, there was a <strong>ten-second silence</strong>. The failed dials had been happening <em>inside</em> that silence, not adding to it. Remove them, and the silence was still ten seconds long.</p>
+<p>It was a real bug, and the fix was kept for correctness. It was not the slow thing.</p>
+<blockquote>
+<p>A real bug is not necessarily the expensive one. The instrument is what tells you which is which.</p>
+</blockquote>
+<h3 id="found-on-the-way">Found on the way</h3>
+<p>The same investigation turned up a third bug, one that cost nothing today and could have cost a great deal later. The worker's bootstrap asked for k3s's <em>agent</em> mode through an environment variable, which the installer baked into the image silently ignored: it read only positional arguments. So every worker started the k3s <em>server</em>, which failed about 0.8 seconds later and aborted the install script before it wrote the file that marks a successful bootstrap. The cluster came up anyway — but only because the provider had been configured not to check for that file. Moving one word to the right place on the command line fixed it.</p>
+<h2 id="ten-point-zero-zero-zero">Ten point zero zero zero</h2>
+<p>The ten-second silence had one more trick. Across runs where the dials behaved completely differently, it measured 10.019 seconds and 10.017 seconds. A gap that stable, whatever the network did, looked like a fixed timer somewhere inside k3s that had nothing to do with the dials.</p>
+<p>Turning on the agent's debug logging named it exactly:</p>
+<pre><code>Dial error from server 10.244.0.186:6443@UNCHECKED after 10.000162522s: i/o timeout
+</code></pre>
+<p>The kubelet's first log line landed seven milliseconds after that timeout expired.</p>
+<p>It was not a timer unrelated to the dials. It <em>was</em> the dial: a ten-second TCP connection timeout, reached by two different routes. Before the routing fix, the agent spent the window failing repeatedly. After it, a single connection hung silently until the timeout ran out. Either way, the kubelet did not start until the agent's connection attempt gave up.</p>
+<p>And the address it was trying to reach, <code>10.244.0.186</code>, was the control-plane VM's pod IP. A two-line test made the problem undeniable:</p>
+<pre><code>node -&gt; CP VM pod IP:6443   =  200, connect 0.0003s
+pod  -&gt; CP VM pod IP:6443   =  timeout
+</code></pre>
+<p><strong>A KubeVirt VM's pod address is reachable from the node it runs on, but not from other pods.</strong> And the worker VM, as far as the network is concerned, is just another pod. It could never reach that address. It waited out the full ten seconds, then fell back to the virtual IP it had been configured with all along.</p>
+<p>The fix is one line, added to the commands the control plane runs before k3s starts:</p>
+<pre><code class="language-yaml">- &quot;echo 'advertise-address: 172.18.255.215' &gt;&gt; /etc/rancher/k3s/config.yaml&quot;
+</code></pre>
+<p>It tells the control plane to advertise the virtual IP — an address every VM can already reach — instead of its own pod address.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">Before</th>
+<th style="text-align: right;">After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Median time-to-ready</td>
+<td style="text-align: right;">50.0 s</td>
+<td style="text-align: right;"><strong>42.7 s</strong></td>
+</tr>
+<tr>
+<td>Runs</td>
+<td style="text-align: right;">52.7 / 50.0 / 46.6</td>
+<td style="text-align: right;">42.7 / 42.8 / 41.2</td>
+</tr>
+<tr>
+<td>Run-to-run spread</td>
+<td style="text-align: right;">6.1 s</td>
+<td style="text-align: right;"><strong>1.6 s</strong></td>
+</tr>
+<tr>
+<td>Dial timeouts per run</td>
+<td style="text-align: right;">4–6</td>
+<td style="text-align: right;"><strong>0</strong></td>
+</tr>
+<tr>
+<td>Worker join after API ready</td>
+<td style="text-align: right;">11.8 s</td>
+<td style="text-align: right;">5.1 s</td>
+</tr>
+</tbody>
+</table></div>
+<p>Before trusting it, the team checked that nothing had broken. Inside the target cluster, the built-in <code>kubernetes</code> service now pointed at the virtual IP, and a pod could still reach <code>kubernetes.default</code> with a <code>200</code>.</p>
+<p>The spread row matters as much as the median. Run-to-run variation fell from 6.1 seconds to 1.6, because the ten-second timeout had been its largest source. What had looked like a noisy host was, mostly, the bug.</p>
+<blockquote>
+<p>The noise was the bug.</p>
+</blockquote>
+<h2 id="one-percent-of-a-core">One percent of a core</h2>
+<p>That left the other suspicious row: ten seconds from a VM's launcher pod being created to QEMU actually running, eight of them attributed in the first table to <em>"containerDisk unpack."</em></p>
+<p>That label was a guess, and it was wrong.</p>
+<p>Every VM in KubeVirt runs inside a launcher pod, and that pod carries small helper containers alongside the one that runs the VM. The instrument showed when each of them started:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Container</th>
+<th>Job</th>
+<th style="text-align: right;">CPU limit</th>
+<th style="text-align: right;">Started at</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>guest-console-log</code></td>
+<td>copies the VM's serial console to the pod log</td>
+<td style="text-align: right;"><strong>15m</strong></td>
+<td style="text-align: right;">+3.0 s</td>
+</tr>
+<tr>
+<td><code>volumesystemdisk</code></td>
+<td>holds the VM's disk image for the launcher</td>
+<td style="text-align: right;"><strong>10m</strong></td>
+<td style="text-align: right;">+9.0 s</td>
+</tr>
+<tr>
+<td><code>compute</code></td>
+<td>runs QEMU</td>
+<td style="text-align: right;">none</td>
+<td style="text-align: right;">+9.0 s</td>
+</tr>
+</tbody>
+</table></div>
+<p>The limits are the clue. In Kubernetes CPU units, <code>10m</code> means ten millicores: one percent of one core. Linux enforces that as a quota — roughly one millisecond of CPU time in every hundred. Even a program that does almost nothing (this container's process literally runs with a <code>--no-op</code> flag) needs CPU time to load its libraries and page itself into memory. At one millisecond per hundred, that takes dozens of scheduling periods. The disk container could not start until it had them, and the VM could not start until the disk container had.</p>
+<p>Nobody guessed that. It was found by elimination, and every rival explanation was measured and discarded first:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Hypothesis</th>
+<th>Test</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The 1.17 GB image is slow to unpack</td>
+<td>Mount the same image as an image volume</td>
+<td>Container started in <strong>+0.0 s</strong></td>
+</tr>
+<tr>
+<td>Two VMs starting at once contend</td>
+<td>Start one VM on its own</td>
+<td><strong>9.0 s</strong> — <em>slower</em> than 8.0 s</td>
+</tr>
+<tr>
+<td>The node's container runtime is slow</td>
+<td>Start a trivial two-container pod</td>
+<td><strong>1.0 s</strong> in total</td>
+</tr>
+<tr>
+<td>Mounting image volumes is slow</td>
+<td>As above</td>
+<td>Fast</td>
+</tr>
+</tbody>
+</table></div>
+<p>What gave it away was that the eight seconds was <strong>deterministic</strong>: 8.0 seconds on every VM, on every run, whether the host was busy or not. Load produces variation. A quota produces a constant.</p>
+<p>Nobody on the team had chosen ten millicores. It came with the platform. Changing it meant raising a ceiling in KubeVirt's own configuration — <code>supportContainerResources</code> — from one percent of a core to a full core:</p>
+<pre><code class="language-json">{&quot;type&quot;: &quot;container-disk&quot;,
+ &quot;resources&quot;: {&quot;requests&quot;: {&quot;cpu&quot;: &quot;100m&quot;, &quot;memory&quot;: &quot;40M&quot;},
+               &quot;limits&quot;:   {&quot;cpu&quot;: &quot;1&quot;,    &quot;memory&quot;: &quot;100M&quot;}}}
+</code></pre>
+<p>The limit is the part that removed the eight seconds, and a limit is a ceiling, not a reservation. These containers do their work at startup and then sit idle, so raising the ceiling costs nothing once the VM is running. (The same change sets a modest request of a tenth of a core per helper container.)</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">Before</th>
+<th style="text-align: right;">After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>containerDisk phase</td>
+<td style="text-align: right;">8.0 s</td>
+<td style="text-align: right;"><strong>1.0 s</strong></td>
+</tr>
+<tr>
+<td>Pod → QEMU running</td>
+<td style="text-align: right;">10.0 s</td>
+<td style="text-align: right;">4.0 s</td>
+</tr>
+<tr>
+<td>Median time-to-ready</td>
+<td style="text-align: right;">42.7 s</td>
+<td style="text-align: right;"><strong>34.5 s</strong></td>
+</tr>
+<tr>
+<td>Runs</td>
+<td style="text-align: right;">42.7 / 42.8 / 41.2</td>
+<td style="text-align: right;">34.5 / 34.2 / 34.7</td>
+</tr>
+<tr>
+<td>Run-to-run spread</td>
+<td style="text-align: right;">1.6 s</td>
+<td style="text-align: right;"><strong>0.5 s</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>There is one catch, and it belongs in the ledger. This setting lives in the running cluster's KubeVirt configuration, not in a manifest in Git. Rebuild the management cluster and it is gone. The fix was wrapped in a script, <code>scripts/configure-kubevirt-perf.sh</code>, and wired into the management cluster's setup so that a rebuild would reapply it. A week later, after a rebuild from nothing, it was found missing anyway and had to be applied by hand. That story is Chapter 17.</p>
+<h2 id="where-it-landed">Where it landed</h2>
+<pre><code>baseline                 50.0 s   (52.7 / 50.0 / 46.6, spread 6.1 s)
++ advertise-address      42.7 s   (42.7 / 42.8 / 41.2, spread 1.6 s)
++ supportContainerRes    34.5 s   (34.5 / 34.2 / 34.7, spread 0.5 s)
+                        ────────
+                        −15.5 s   (−31%); the gate was &lt; 40 s
+</code></pre>
+<p>Fifteen and a half seconds off every cold build, and a pipeline that now finishes within half a second of itself.</p>
+<p>Neither fix touched the image. The repository's own summary is the sentence this chapter is named for: <em>"Every attempt to make the image smarter (<code>:preinit</code>, <code>:warm</code>) failed, while the two things that worked were a bad advertised address and a CPU quota."</em> Add the parallel boot from June, and the pattern holds across the whole summer: every change that moved the number was about how the pieces were orchestrated and configured, not about what was baked into them.</p>
+<p>There is a rhyme between June and September worth pausing on. In June a stopwatch said 35 seconds, and it was luck. In September it said 34.5, and it was true. The difference was not the number. It was a spread of half a second across three runs, and two causes you can point to in a log.</p>
+<p>The instrument also said what is left, by measured size: about six seconds of Cluster API controllers doing their work before any VM exists, which no change inside the guest can reach; seven seconds for the control plane's k3s to answer; five and a half seconds of systemd and cloud-init. That last phase is the one a leaner, systemd-free image would attack — and a perfect result there is worth about three seconds. It is the fourth lever, not the first.</p>
+<h2 id="the-caveat-that-limits-all-of-this">The caveat that limits all of this</h2>
+<p>Every number above comes with a condition, and the repository records it under a heading that does not soften it: <em>"Measurement caveat that limits all of the above."</em></p>
+<p>At the start of this work, run-to-run spread on this host was about six seconds. With three runs per candidate, any change smaller than roughly five seconds disappears into that noise. The two fixes that worked were each worth seven to eight seconds — just large enough to see. A three-second improvement would have been invisible, and a three-second regression could have shipped unnoticed. Anything finer needs seven or more runs, a quiet host, or both.</p>
+<p>The fixes changed that condition too. With the spread down to half a second, a one-second regression is now visible in three runs. Removing the bug did not only make the cluster faster. It made the cluster <em>measurable</em>.</p>
+<h2 id="postscript-the-ten-seconds-that-werent">Postscript: the ten seconds that weren't</h2>
+<p>On 16 September, a week later, everything underneath the platform was upgraded at once — Kubernetes on the two host clusters from 1.35 to 1.37, k3s inside the VMs from 1.31 to 1.37 — and both host clusters were destroyed and rebuilt from nothing. Afterwards, the same instrument, three clean runs, reported <strong>23.9, 24.1, and 23.7 seconds.</strong> Another ten seconds, and steadier.</p>
+<p>It was wrong.</p>
+<p>As Chapter 7 tells, the instrument had been stopping its clock when the control plane turned <code>Ready</code> — fooled by a ghost node carried inside the golden image — and reporting the control plane's time as the total for both nodes. Measured again on 17 September, naming each node instead of counting them, the upgraded platform builds both nodes in <strong>33.7 seconds</strong> (30.4, 35.1, 33.7). Within the noise of three runs, that is the same as the 34.5 before the upgrade.</p>
+<p>This chapter's rule — a faster number is a claim until the phase table says why — turned out to apply to the phase table too. This time the explanation for the good news was the stopwatch.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-fiction">Meridian · the following Tuesday</p>
+<p>Vikram put another sheet on the table. Three lines this time: <code>34.5</code>, <code>34.2</code>, <code>34.7</code>.</p>
+<p>Anita looked at the spread before she looked at the median. "Half a second."</p>
+<p>"Half a second."</p>
+<p>"What did it cost?"</p>
+<p>"A script to measure it. Two lines of configuration."</p>
+<p>"Hardware?"</p>
+<p>"None. The second line raises a ceiling. It doesn't reserve anything."</p>
+<p>"And the standby?"</p>
+<p>"Still one deep. But the second team in the minute now waits thirty-four seconds instead of fifty."</p>
+<p>"And June?"</p>
+<p>"June is written down, with its numbers. Nobody here pays for it twice."</p>
+<p>She opened the board summary on her laptop, found the line that said <em>&lt; 40 s</em>, and deleted it. Then she typed the replacement herself: <em>34.5 s median, three runs, spread 0.5 s — measured 9 September.</em></p>
+<p>"Put a date on every number," she said. "A number without a date and a spread is a slogan."</p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<ul>
+<li><strong>Spent:</strong> two golden-image experiments, each a full bake cycle to disprove; one instrumentation script; two further hypotheses — gating the worker, rerouting the pod network — that did not survive measurement.</li>
+<li><strong>Changed:</strong> one line in the control plane's startup commands; one CPU ceiling on KubeVirt's helper containers.</li>
+<li><strong>Hardware added:</strong> none.</li>
+<li><strong>Saved:</strong> 15.5 seconds on every cold cluster build — 50.0 s to 34.5 s, −31%. Run-to-run spread from 6.1 s to 0.5 s.</li>
+<li><strong>Proved:</strong> four dead ends, recorded with their numbers so that nobody pays for them twice.</li>
+<li><strong>Still owed:</strong> a setting that lives in cluster state rather than in Git, and two timing scripts that can stop the clock on a ghost node (Chapter 7).</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>What is our one number, exactly how is it measured, and when was it last measured on this hardware?</strong> Ask to see the timing output, not the wiki page.</li>
+<li><strong>What have we already proven does not work, and where is it written down?</strong> If the answer is "people remember," you will pay for it again.</li>
+<li><strong>Which of our performance-critical settings did nobody here choose?</strong> Ten millicores came with the platform. Find yours.</li>
+</ol>
+<h2 id="open-the-repo">Open the repo</h2>
+<ul>
+<li><code>make phase-timings ARGS="--runs 3"</code> — runs <code>scripts/phase-timings.sh</code> and prints the per-phase table, using this chapter's three-run protocol.</li>
+<li><code>docs/fable-cluster-speed-prompt.md</code> — the brief, verbatim.</li>
+<li><code>docs/sub-60s-cluster-strategy.md</code> — "What failed, and how it was fixed" for <code>:preinit</code>; "Phase-level measurement" for the budget, both dead ends, and both fixes.</li>
+<li><code>03-target-cluster/target-cluster-warm.yaml</code> — the <code>advertise-address</code> line in the control plane's <code>preK3sCommands</code>.</li>
+<li><code>make kubevirt-perf</code> — applies the CPU ceiling; the header of <code>scripts/configure-kubevirt-perf.sh</code> explains it.</li>
+<li><code>git show c7ad792</code> — the commit that landed both fixes, with the measurements in its message.</li>
+</ul>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>Character names.</strong> Anita Rao (CTO) and Vikram Iyer (platform lead) are placeholders. Settle them in the Prologue and carry them through.</li>
+<li><strong>Figure 8.1.</strong> Per-run dots for the three stages (52.7 / 50.0 / 46.6 → 42.7 / 42.8 / 41.2 → 34.5 / 34.2 / 34.7), so the median falling and the spread collapsing read as one picture.</li>
+<li><strong>Figure 8.2.</strong> Reachability sketch: node → control-plane VM pod IP (<code>200</code>, 0.3 ms); worker VM → control-plane VM pod IP (timeout); worker VM → VIP <code>172.18.255.215</code> (reachable).</li>
+<li><strong>Source conflict — resolve before print.</strong> In <code>docs/sub-60s-cluster-strategy.md</code>, "What is actually left" strikes the 10 s kubelet gap as fixed, then lists "~10s silent gap inside kubelet startup on the worker" as still open. Worker join after API ready fell to 5.1 s after the fix, which suggests the second entry is stale. This draft omits it.</li>
+<li><strong>Source conflict.</strong> <code>:preinit</code> at ~136 s is "not worse than legacy" in the strategy doc and "slower than legacy" in the brief. The draft says "back inside the 90-to-150-second band," which is true under both readings.</li>
+<li><strong>Source conflict.</strong> <code>CLAUDE.md</code> gives the parallel-boot build as "~61s"; the brief's measured table gives 46.6 / 49.7 / 50.0. The draft uses the brief (it says its table wins).</li>
+<li><strong>Section numbers.</strong> The strategy doc has two sections numbered 6, so the draft cites section titles. Renumber the doc if you want to cite by number.</li>
+<li><strong>The agent.</strong> The September investigation was run by an AI coding agent working from the brief (commit <code>c7ad792</code> is agent co-authored). This draft says so once; decide whether to foreground it here or save it for Part IV.</li>
+<li><strong>Postscript corrected 17 September.</strong> The earlier draft reported 23.9 s as a both-nodes time; it was the control plane only (see Chapter 7). The corrected both-nodes median is 33.7 s. The 9 September runs cannot be re-checked — their raw files were not kept — though their tables report a worker-join phase, so the worker was captured.</li>
+<li><strong>Trim the phase table.</strong> Chapter 7 now introduces the 9 September budget; replace this chapter's copy with a back-reference.</li>
+<li><strong>Optional.</strong> CxO readers will compare against managed-Kubernetes cluster-creation times. If you add that comparison, source it; the draft deliberately quotes no external number.</li>
+</ul></aside>
+</article>

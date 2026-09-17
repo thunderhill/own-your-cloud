@@ -1,0 +1,518 @@
+<title>Kubernetes That Runs Kubernetes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part I — The Bill</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="ch-number" aria-hidden="true">4</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 4: </span>Kubernetes That Runs Kubernetes</h1>
+    <blockquote class="epigraph"><p><em>Cluster API (CAPI) is elegantly defined as "using Kubernetes to manage Kubernetes."</em></p>
+<p>— <em>Reclaiming Margins with Sovereign Cloud</em>, strategic briefing, February 2026</p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository. <span class="legend-public">Public record</span> and <span class="legend-public">Briefing</span> sections quote named sources — published reports, or the strategy deck behind this book.</dd>
+      <dt>Length</dt>
+      <dd>About 2,000 words · about 9 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Saturday in January 2026 · the board strategy day</p>
+<p>The board gave the technology session forty minutes, and Anita had been told to use no more than one slide.</p>
+<p>The slide showed three roads. On the left, <em>stay with what we know</em>: Meridian's virtualization supplier, which now also sold Kubernetes built into its platform. In the middle, <em>rent the pieces and run them ourselves</em> on one cloud. On the right, <em>build our own</em>.</p>
+<p>The chair asked the question she had been waiting for. "I understand the left-hand road. I understand renting. What is the right-hand one, in a sentence? What would we actually be building?"</p>
+<p>"A factory," Anita said. "Not for products — for computing environments. We write down what we want: how many machines, what size, which software. The factory reads the order and builds it, and it keeps checking that what exists still matches what we wrote. If a machine dies, it builds another. If we change the order, it changes the environment."</p>
+<p>"And who builds the factory?"</p>
+<p>"The same factory builds itself, the same way. That's the point, and it's the part that sounds like a trick." She looked around the table. "The technology is called Cluster API. It's Kubernetes, managing Kubernetes."</p>
+<hr class="scene-break" />
+<h2 id="a-factory-for-clusters">A factory for clusters</h2>
+<p class="dateline dateline-public">Briefing · February 2026</p>
+<p>Kubernetes is already a factory of a kind. The strategy deck explains it in one line: <em>"Normally, you write YAML to say 'I want 3 web servers running' — Kubernetes makes it happen automatically."</em> You declare what you want, and a control loop keeps working until reality matches the declaration.</p>
+<p><strong>Cluster API</strong> applies the same idea one level down. In the deck's words: <em>"With CAPI, you write code to say 'I want 3 Kubernetes clusters with these hardware settings' — and it creates them."</em> A central <strong>management cluster</strong> <em>"acts as the command center, bootstrapping workload clusters across providers."</em></p>
+<p>The words that matter for a board are <em>declaration</em> and <em>reconciliation</em>:</p>
+<ul>
+<li><strong>Declaration</strong> means a cluster is described in a file. The file can be reviewed, approved, versioned and audited like any other document. The question "how is the payments cluster configured?" has an answer you can read.</li>
+<li><strong>Reconciliation</strong> means the management cluster keeps comparing the description with what exists, and acting on any difference. A cluster is not built once and then left to drift. It is continuously held to its description.</li>
+</ul>
+<p>The deck calls CAPI <em>"a universal translator"</em>, because the same declaration style works whether the machines come from a public cloud, a private one, or bare metal. A different <strong>provider</strong> plugin translates the declaration for each kind of infrastructure. That is where the escape from lock-in lives: not in the promise that nothing changes when you move, but in the fact that the <em>shape</em> of the declaration stays the same.</p>
+<h2 id="the-spectrum">The spectrum</h2>
+<p class="dateline dateline-public">Briefing · February 2026</p>
+<p>The deck lays the options out as a spectrum from convenience to control, using three real products as markers:</p>
+<ul>
+<li><strong>VMware Tanzu, "The Familiar Choice"</strong> — aimed at <em>"organizations with 15+ years of VMware estate"</em>; Kubernetes built into the virtualization platform they already run. <em>"No staff retraining required."</em> The warning attached: <em>"High vendor lock-in persists. If Broadcom raises prices or you want bare metal elsewhere, you're still tangled in proprietary web."</em></li>
+<li><strong>CAPZ, "The DIY Power User"</strong> — the open-source Cluster API provider for Azure. <em>"You manage Azure VMs, networking, and cluster resources yourself. No Microsoft support ticket for internal cluster logic."</em></li>
+<li><strong>Kubermatic Kubernetes Platform (KKP), "The Multi-Cloud Orchestrator"</strong> — <em>"a unified control plane across AWS, Azure, GCP, and on-premises infrastructure."</em></li>
+</ul>
+<p>The deck's summary line: <em>"From safe but locked (Tanzu) → powerful but complex (CAPZ) → truly sovereign (KKP)."</em> Past the end of the spectrum, it adds a fourth option — <em>"The Self-Managed Sovereign Platform"</em>: <em>"building your own cloud platform using open standards."</em></p>
+<p>Two cautions before a board uses this slide. First, the labels are the deck's opinions, not measurements; <em>"truly sovereign"</em> in particular depends on who runs the platform, under what licence, and with what support. Second, the four options are not exclusive. The platform in this book is the fourth kind, built from the same open-source Cluster API the middle options use. Meridian's three roads share more pavement than the slide suggests.</p>
+<h2 id="why-virtual-machines-still-matter">Why virtual machines still matter</h2>
+<p>For an organization like Meridian, the most important word on the Tanzu marker is <em>estate</em>. Fifteen years of virtualization means thousands of virtual machines running systems that will never be rewritten as containers: vendor appliances, licensed databases, old applications nobody dares to touch.</p>
+<p>A Kubernetes strategy that has nothing to say about virtual machines asks those systems to wait for a future that will not arrive. That is why the platform in this book is built on <strong>KubeVirt</strong>, an open-source project that runs virtual machines <em>as Kubernetes objects</em>. A virtual machine sits beside containers, is declared in the same kind of file, and is scheduled, networked and monitored by the same system.</p>
+<p>The platform then does something a little dizzying with that. The workload clusters it manufactures are Kubernetes clusters <strong>whose machines are themselves virtual machines</strong>, run by KubeVirt on the management cluster. Kubernetes manages virtual machines, which run Kubernetes.</p>
+<p>One honest limit belongs here, before Part II begins. The repository contains no tooling for <em>moving</em> existing VMware virtual machines — none of the usual import or conversion tools appears anywhere in it. This book shows the destination, and measures it. The migration of an existing estate is a separate project, and this book does not pretend to have done it.</p>
+<h2 id="the-factory-running">The factory, running</h2>
+<p class="dateline dateline-record">Build log · 17 September 2026</p>
+<p>This is the factory as it stood on the day this chapter was checked.</p>
+<p><strong>The machinery is open source, with version numbers.</strong> On the management cluster: Cluster API v1.14.2; the KubeVirt infrastructure provider (CAPK) v0.11.2; the k3s bootstrap and control-plane providers v0.3.0; KubeVirt v1.9.0; and CDI v1.66.0, which imports disk images for the virtual machines.</p>
+<p><strong>The order is a 258-line file.</strong> The default declaration, <code>03-target-cluster/target-cluster-warm.yaml</code>, contains seven objects:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Object</th>
+<th>What it declares</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Cluster</code></td>
+<td>The cluster itself, and what it is made of</td>
+</tr>
+<tr>
+<td><code>KubevirtCluster</code></td>
+<td>The infrastructure it runs on — here, KubeVirt</td>
+</tr>
+<tr>
+<td><code>KThreesControlPlane</code></td>
+<td>The control plane: one k3s server, version v1.37.0+k3s1</td>
+</tr>
+<tr>
+<td><code>KubevirtMachineTemplate</code> ×2</td>
+<td>The virtual-machine shapes, one for the control plane and one for workers</td>
+</tr>
+<tr>
+<td><code>MachineDeployment</code></td>
+<td>The worker pool: how many, from which template</td>
+</tr>
+<tr>
+<td><code>Secret</code></td>
+<td>A pre-shared join token, so the worker can boot in parallel with the control plane</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>The factory built what the order said.</strong> Cluster API recorded two Machines. Each is backed by a KubeVirt virtual machine, <code>target-cluster-cp-s9j8h</code> and <code>target-cluster-workers-rz9xt-m5x6z</code>, both <code>Running</code> and ready. From the moment the file is applied, both machines are ready in a median of <strong>33.7 seconds</strong>, and the whole cluster is torn down in <strong>18.9 seconds</strong> (Chapter 7).</p>
+<p><strong>The factory fits in a laptop.</strong> The management cluster, the cluster it built, a second cluster for the service mesh, and the AI agents all ran on one host (the prologue lists it). The manufacturing pattern is the same one a data centre would use. The capacity is not.</p>
+<h2 id="the-gauge-that-disagrees">The gauge that disagrees</h2>
+<p>One more reading from the same day belongs in a chapter for a board, because it is the first appearance of this book's most persistent theme.</p>
+<p>While the target cluster was serving workloads normally — including the measurements in Chapter 10, run that morning — Cluster API's own summary of it read:</p>
+<pre><code>AVAILABLE   False
+ControlPlaneAvailable=False  (WaitingForKthreesServer)
+ControlPlaneComponentsHealthy=False  Following machines are reporting control plane errors
+</code></pre>
+<p>The factory reported its product as <em>not available</em> while the product was working. The k3s control-plane provider, at version 0.3.0, is a young project, and the cause was not investigated for this chapter. Chapter 5 will find the mirror image of the problem: a status that said <em>Ready</em> about a machine that could not do its job.</p>
+<p>The lesson for a board is the same in both directions. A factory's gauges are part of the factory. They need to be checked against the product as carefully as the product is checked against the order.</p>
+<p>A smaller example of the same drift sits at the top of the repository. Its front-page architecture diagram still shows the platform as it was in March — a namespace, addresses and a cross-cluster proxy that no longer exist (Chapters 10 and 12). Documentation, like a gauge, describes the factory only until the factory changes.</p>
+<h2 id="from-money-to-machinery">From money to machinery</h2>
+<p>Part I has argued from the invoice outwards: that renting stops being obviously cheaper for steady work (Chapter 1); that every landlord controls something you need (Chapter 2); and that for some organizations, where data and AI live is not a preference but a constraint (Chapter 3). This chapter is the bridge: a way to own the brain of your clusters, declaring them in files and manufacturing them on hardware you control.</p>
+<p>The rest of the book is the machinery, measured. <strong>Part II, The Factory</strong>, is how the clusters are made, and how long it takes. <strong>Part III, The Fabric</strong>, is how they talk to each other. <strong>Part IV, The Brain</strong>, is what AI agents can safely do with them. <strong>Part V, The Dividend</strong>, returns to the money.</p>
+<p>For a CxO, four questions carry through all of it. How long does the factory take to build? How long to destroy? What exactly does the order say? And how do you know the gauges are telling the truth?</p>
+<hr class="scene-break" />
+<p class="dateline dateline-fiction">Meridian · the same Saturday, forty minutes later</p>
+<p>The board did not choose a road. It chose a test.</p>
+<p>"Small," the chair said. "Owned hardware, open-source software, a single team. Show us that the factory can build an environment from a written order faster than we can rent one, and show us how you measured it. Then we'll talk about roads."</p>
+<p>Anita wrote the commitment into the minutes herself, in words the board could hold her to.</p>
+<p><em>The platform team will build a small cluster factory on hardware Meridian owns, using open-source Cluster API. It will demonstrate an environment built from a written declaration, and report how long it takes, measured, by February.</em></p>
+<p>Vikram read it over her shoulder. "<em>Measured</em> is doing a lot of work in that sentence."</p>
+<p>"It's the only word in it I care about," Anita said.</p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<ul>
+<li><strong>The idea (briefing):</strong> Cluster API extends Kubernetes' declaration-and-reconciliation model to whole clusters, run from a management cluster, with providers for different infrastructure.</li>
+<li><strong>The spectrum (briefing):</strong> Tanzu, CAPZ and KKP as markers from convenience to control, and a fourth option — self-managed on open standards. The labels are the deck's opinions.</li>
+<li><strong>Virtual machines (build log):</strong> KubeVirt runs VMs as Kubernetes objects; this platform's workload clusters run on VMs. There is no VMware migration tooling in the repository.</li>
+<li><strong>The factory, 17 September 2026 (build log):</strong> Cluster API v1.14.2, CAPK v0.11.2, k3s providers v0.3.0, KubeVirt v1.9.0, CDI v1.66.0. A 258-line declaration of seven objects produces two VM-backed machines, ready in 33.7 s median and torn down in 18.9 s.</li>
+<li><strong>Found:</strong> Cluster API reported the working cluster as <code>Available=False</code>; the repository's architecture diagram still shows March.</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>Can we point to the file that describes each of our production environments — and does the environment still match it?</strong></li>
+<li><strong>Which of our virtual machines will never become containers, and what is our plan for running them next to the ones that will?</strong></li>
+<li><strong>When a status screen says an environment is healthy or unavailable, how do we know it is right?</strong></li>
+</ol>
+<h2 id="open-the-repo">Open the repo</h2>
+<ul>
+<li><code>03-target-cluster/target-cluster-warm.yaml</code> — the order: seven objects, 258 lines.</li>
+<li><code>kubectl --context kind-cluster2 get clusters,machines,kubevirtmachines -A</code> and <code>kubectl --context kind-cluster2 get vm -A</code> — the factory and what it built.</li>
+<li><code>kubectl --context kind-cluster2 get clusters.cluster.x-k8s.io target-cluster -o wide</code> — the gauge.</li>
+<li><code>02-capi-init/init-management-cluster.sh</code> — how the factory itself is set up.</li>
+<li><code>README.md</code> — the architecture diagram, and how far it has drifted.</li>
+<li><code>~/marketing/Reclaiming Margins with Sovereign Cloud.pptx</code>, slides 14–16; <code>~/marketing/capi.mp4</code> (8 min 56 s), the factory demonstrated end to end.</li>
+</ul>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>Versions and objects</strong> were read live on 17 September from cluster2's controller images, the KubeVirt/CDI status, and <code>kubectl get</code> on the Cluster API resources.</li>
+<li><strong><code>Available=False</code></strong> was read at about 09:00 on 17 September, about 143 minutes after the cluster was built. The target cluster served Chapter 10's measurement at 08:10; Chapter 11's measurements ran on cluster1 and cluster2, not on the target cluster. The cause is not investigated. The KThreesControlPlane also showed <code>Ready=False</code>, <code>ControlPlaneComponentsHealthy=False</code>, and <code>initialized=true</code>. It is plausibly a health check that expects separate control-plane component pods, which k3s does not run. Check the cluster-api-k3s issue tracker before implying a cause.</li>
+<li><strong>"No VMware migration tooling"</strong> was checked by searching the repository (excluding <code>book/</code> and <code>.worktrees/</code>) for vsphere, forklift, virt-v2v, vmdk and ovf. The only match was an unrelated substring in <code>scripts/render-demo-video.sh</code>.</li>
+<li><strong>Product descriptions</strong> (Tanzu, CAPZ, KKP) are quoted from the deck, not independently verified. KKP is a Kubermatic product. Keep the chapter from endorsing or disparaging any vendor beyond the deck's quoted labels.</li>
+<li><strong>The README diagram</strong> shows <code>mc-demo</code>, the <code>sample</code> namespace, VM addresses 10.244.0.60/.61 and the <code>.216</code> proxy. Redraw it for the book's figure 4.1 rather than reproducing it.</li>
+<li><strong>Figures.</strong> 4.1: management cluster → declaration → workload cluster on VMs. 4.2: the deck's spectrum, relabelled neutrally. 4.3: the two gauges side by side — <code>Available=False</code> here and <code>Ready</code> in Chapter 5.</li>
+<li><strong>The Meridian board scene is fiction.</strong> It sets up Chapter 5's "demo that won the pilot its funding in February".</li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
+</ul></aside>
+</article>

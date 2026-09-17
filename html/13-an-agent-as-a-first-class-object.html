@@ -1,0 +1,586 @@
+<title>An Agent as a First-Class Object</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part IV — The Brain</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="ch-number" aria-hidden="true">13</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 13: </span>An Agent as a First-Class Object</h1>
+    <blockquote class="epigraph"><p><em>Every <code>AgentRun</code> remains queryable as a first-class Kubernetes object.</em></p>
+<p>— Architecture Constraint 6, <code>Sovereign_Cloud_Agentic_Strategy.md</code></p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
+      <dt>Length</dt>
+      <dd>About 3,100 words · about 13 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Wednesday in August · the CTO's office</p>
+<p>The vendor's last slide said <em>AI SRE copilot — connected in minutes</em>, and the account executive let it sit on the screen while she waited for questions.</p>
+<p>Anita Rao had three, written on a pad before the meeting started.</p>
+<p>"Where does the model run?"</p>
+<p>"In our cloud. Your cluster connects out to us through a lightweight agent. Nothing inbound."</p>
+<p>"What did it do last Tuesday — exactly?"</p>
+<p>"Every action is in the activity feed in our console, retained according to your plan, and exportable."</p>
+<p>"If we cancel, what do we keep?"</p>
+<p>"Your exports."</p>
+<p>Anita thanked her, and waited for the door to close. Then she turned to Vikram Iyer, who had said nothing for forty minutes. "Same three questions. Ours."</p>
+<p>He put a terminal on the wall screen and typed.</p>
+<pre><code>$ kubectl get agents.sympozium.ai -n sympozium-system
+NAME                   PHASE     ACTIVE AGENTS   TOTAL RUNS   AGE
+cluster2-agent         Serving   1                            12h
+mesh-sre-agent         Serving   1                            12h
+target-cluster-agent   Serving   1                            12h
+</code></pre>
+<p>"Where does the model run? On a machine in this building. What did it do last Tuesday? Every conversation creates an object in the cluster — the task, the answer, how many commands it ran, how many tokens it used, which account it ran as. You list them with the same command you'd use to list anything else. And if we cancel —" he shrugged. "There's nothing to cancel. It's our cluster's API."</p>
+<p>Anita looked at the table for a while.</p>
+<p>"So the agent isn't a service we call," she said. "It's a workload we run."</p>
+<p>"Under the same permission system as everything else we run."</p>
+<p>"Then I'm not choosing an AI vendor," she said. "I'm choosing rules."</p>
+<hr class="scene-break" />
+<p class="dateline dateline-record">Build log · February–September 2026</p>
+<h2 id="from-a-chat-window-to-an-object">From a chat window to an object</h2>
+<p>The platform's AI tab did not start as a control plane. In February 2026 it was a chat window backed by kagent, talking over an agent-to-agent JSON-RPC protocol. In April the first Sympozium personas appeared — a cost analyzer and an incident responder, written as demo agents. By late June, the tab's chat proxy had been switched to Sympozium and spoke the OpenAI Chat Completions format, the request shape nearly every AI client library already understands. By August the AI tab no longer rendered its own chat at all; it embedded Sympozium's console directly.</p>
+<p>Each step moved the agent further from being a feature of the UI and closer to being a thing in the cluster. That is the idea this chapter is about, and the strategy document states the ambition behind it in one sentence:</p>
+<p><em>"You are not building 'Claude for Kubernetes.' You are building a sovereign, air-gap-capable, VM-native, mesh-aware agentic control plane — a category that barely exists in the open-source world today."</em></p>
+<p>The same document names the three assumptions this platform breaks. Most agentic Kubernetes work assumes pod-native workloads on a single cluster with cloud models. Here, virtual machines are first-class; there are <em>"two control planes"</em>, and an incident on one is not an incident on the other; and <em>"sovereignty is a hard constraint. External LLM egress is often forbidden."</em> An agent that operates this platform has to live inside the same boundary as the platform.</p>
+<h2 id="five-nouns">Five nouns</h2>
+<p>Sympozium describes agents the way Kubernetes describes everything else: as custom resources, reconciled by controllers. Five matter for this part of the book.</p>
+<ul>
+<li><strong><code>Agent</code></strong> — a persona. Which model, where to reach it, which tools, which policy, and a standing briefing about the environment.</li>
+<li><strong><code>AgentRun</code></strong> — one execution of that persona. It behaves like a Job: it is created, it runs a pod, it finishes, and its result stays behind.</li>
+<li><strong><code>SkillPack</code></strong> — a bundle of tools, delivered as a sidecar container with its own permissions.</li>
+<li><strong><code>SympoziumPolicy</code></strong> — the rules an execution is admitted under. Chapter 14 is about these.</li>
+<li><strong><code>SympoziumSchedule</code></strong> — a trigger that creates runs on a timer.</li>
+</ul>
+<p>Here is <code>cluster2-agent</code>, the agent that operates the management cluster, as it sits in the repository:</p>
+<pre><code class="language-yaml">apiVersion: sympozium.ai/v1alpha1
+kind: Agent
+metadata:
+  name: cluster2-agent
+  namespace: sympozium-system
+spec:
+  agents:
+    default:
+      model: qwen2.5:7b
+      baseURL: http://host-ollama.sympozium-system.svc.cluster.local:11434/v1
+  authRefs:
+    - provider: ollama
+      secret: llm-credentials
+  skills:
+    - skillPackRef: web-endpoint   # serve it as an HTTP endpoint
+    - skillPackRef: k8s-ops        # give its runs kubectl
+  policyRef: sandbox-restricted
+  memory:
+    enabled: false
+    systemPrompt: |
+      You operate &quot;cluster2&quot;, the management cluster of a KubeVirt
+      multi-cluster platform. ...
+</code></pre>
+<p>Read it as a CxO would read a contract. The model is a 7-billion-parameter model served by Ollama on hardware inside the building, reached through an in-cluster address. The tools are named. The policy is named. The briefing is text anyone can review in a pull request. None of it is a setting in someone else's console.</p>
+<h3 id="the-object-the-documentation-described">The object the documentation described</h3>
+<p>The chapter would be dishonest without the correction that sits at the center of the repository's Sympozium labs. The strategy document's own table of these nouns lists the persona object as a <code>SympoziumInstance</code>, and for months the repository kept its agents in exactly that form.</p>
+<p>In July, while building the labs, the team listed the controllers actually running inside Sympozium's controller manager: <code>Agent</code>, <code>AgentRun</code>, <code>Ensemble</code>, <code>MCPServer</code>, <code>SkillPack</code>, <code>SympoziumPolicy</code>, <code>SympoziumSchedule</code>. No <code>SympoziumInstance</code>. The resource definition existed and accepted objects, but nothing reconciled them. The labs index calls it <em>"the one correction that matters most"</em>: the objects the repository had been editing were <em>"inert documentation of intent."</em> The agents worked only because a separate <code>Agent</code> object with the same name happened to exist beside each one.</p>
+<p>It got stranger. The resource definition existed on that cluster only because an older release had installed it; the current chart does not ship it at all. And typing the obvious command, <code>kubectl get agent</code>, did not return Sympozium agents — it resolved to a definition left behind by kagent, the platform's previous agent framework, because two products had each defined something called <em>agent</em>. The labs have used the fully qualified name, <code>agents.sympozium.ai</code>, ever since.</p>
+<blockquote>
+<p>A name is not an identity. In Kubernetes, the API group is part of the name — and in a platform that has changed vendors, it is the part that matters.</p>
+</blockquote>
+<h2 id="one-execution-one-object">One execution, one object</h2>
+<p>An <code>AgentRun</code> is where the idea becomes concrete, and lab 02 is built around one. On 17 September it was run again on the current versions — Sympozium 0.10.75 on Kubernetes 1.37 — to check that its lessons still hold.</p>
+<p>The first lesson is that the schema flatters you. It suggests that naming an agent and giving it a task is enough. Asked to validate exactly that, the cluster refused, just as the lab recorded two releases earlier:</p>
+<pre><code>The AgentRun &quot;book-ch13-dryrun&quot; is invalid:
+* spec.agentId: Required value
+* spec.model: Required value
+* spec.sessionKey: Required value
+</code></pre>
+<p>That check was a server-side dry run; it created nothing. When a controller creates a run on your behalf — for a chat message, a schedule, an ensemble — it fills these fields in. When you write a run yourself, you supply them.</p>
+<p>With the fields supplied, lab 02's run asks the agent to list the cluster's nodes and virtual machines and summarize their health. It finished in about thirty seconds, and everything worth knowing about it was recorded on the object and the pod it created:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase</td>
+<td><code>Succeeded</code></td>
+</tr>
+<tr>
+<td>Containers in the pod</td>
+<td><code>agent</code>, <code>ipc-bridge</code>, <code>skill-k8s-ops</code></td>
+</tr>
+<tr>
+<td>Identity it ran as</td>
+<td><code>sympozium-run-lab-agentrun-health</code></td>
+</tr>
+<tr>
+<td>Tool calls</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Tokens</td>
+<td>7,418 in, 226 out</td>
+</tr>
+<tr>
+<td>Model time</td>
+<td>21.4 s</td>
+</tr>
+</tbody>
+</table></div>
+<p>Its answer was a small table — nodes ✅, KubeVirt VMs ✅ — and a sentence: <em>"The cluster appears healthy with no issues reported for nodes or KubeVirt VirtualMachines."</em> It was true: one node, <code>Ready</code>; two virtual machines, <code>Running</code>. It also contained no detail the model could not have guessed, which is exactly the problem Chapter 15 takes up. For this chapter, the point is different. The record exists, and anyone with read access to the namespace can inspect it.</p>
+<p>The lab's history holds the more instructive run. The first time it ran, back on release 0.10.38, the <code>skills</code> list was left out on the assumption that the run would inherit it from the agent. It did not. The pod came up with two containers instead of three, and the model's six attempts to run <code>kubectl</code> were written to a channel no tool was listening on:</p>
+<pre><code>04:54:05 tool_call [1]: execute_command args={&quot;command&quot;:&quot;kubectl get nodes; ...&quot;}
+04:54:05 Wrote exec request 1782968045241295119: kubectl get nodes; ...
+... (6 tool calls, all silently dropped) ...
+04:58:25 LLM call succeeded (tokens: in=11457 out=752, tool_calls=6)
+</code></pre>
+<p>After 262 seconds and 12,209 tokens, the model concluded: <em>"Given the persistent issues with command execution, let's assume there is a connectivity or availability problem with the skill sidecar."</em> The lab's verdict is one line: <em>"It was right."</em></p>
+<h2 id="how-a-model-gets-hands">How a model gets hands</h2>
+<p>That failed run shows how tools actually reach a model, and it is worth understanding, because it decides what an agent can touch.</p>
+<p>The model never runs a command itself. It emits a structured request — <code>execute_command</code>, with a command string. The <code>ipc-bridge</code> container writes that request to a shared channel. A separate sidecar container, supplied by a <code>SkillPack</code>, picks it up, runs <code>kubectl</code> with its own credentials, and writes the output back. Only then does the model see anything real.</p>
+<p>So what an agent can do is not decided by what it is told. It is decided by which sidecar containers its run receives, and by the permissions those containers hold. Remove the sidecar and the model is talking into an empty room, however confident it sounds. Narrow the sidecar's permissions and the model's reach narrows with them.</p>
+<p>That design paid for itself twice in this repository, and cost twice.</p>
+<p>It paid when permissions turned out to be too narrow. The built-in <code>k8s-ops</code> tool pack could read nodes and pods but not virtual machines — its bundled permissions include no <code>kubevirt.io</code> group. The fix was an additive grant, reviewed in a file (<code>06-sympozium/agent-kubevirt-rbac.yaml</code>), not an instruction to the model. The service-mesh agent needed the same for Istio's resources.</p>
+<p>It cost when the rules for delivering sidecars changed between releases. On 0.10.38, runs created through Sympozium's API received no tools at all, so the repository added a small admission webhook to attach the right tool pack to each agent's runs. On 0.10.47, the API began copying the agent's own skills list onto the runs it created. The agents listed only the serving skill at the time, so their runs now carried a non-empty skills list with no tool in it — and the webhook, which only filled <em>empty</em> lists, stood aside. Every tool call failed with <em>"the Kubernetes sidecar container is not currently running."</em> The fix was to list the tool packs on the <code>Agent</code> itself, which is why <code>cluster2-agent</code> names <code>k8s-ops</code> today. The webhook is still deployed, and now does nothing.</p>
+<h2 id="an-agent-that-speaks-the-standard-protocol">An agent that speaks the standard protocol</h2>
+<p>The first skill in <code>cluster2-agent</code>'s list, <code>web-endpoint</code>, is not a tool. It turns the agent into a service. The skill pack is marked as requiring a server, so listing it makes the controller create a long-running run in <code>server</code> mode and a Deployment named <code>cluster2-agent-web-endpoint-server</code>. The agent gets its own access key, stored in a Secret the platform generates, and an endpoint that answers the same requests as a commercial model API.</p>
+<p>Asked what models it offers, on the current release, it answers:</p>
+<pre><code class="language-json">{&quot;object&quot;:&quot;list&quot;,&quot;data&quot;:[{&quot;id&quot;:&quot;qwen2.5:7b&quot;,&quot;object&quot;:&quot;model&quot;,&quot;owned_by&quot;:&quot;sympozium&quot;}]}
+</code></pre>
+<p>The integration consequence is the one the lab emphasizes: <em>"anything that already speaks the OpenAI protocol … can use a Sympozium agent as a drop-in backend."</em> An existing client library, pointed at a different address, is now talking to a model running inside the building.</p>
+<p>The lab also records the catch, and it is the right catch to know: <em>"You're talking to an agent, not a bare LLM."</em> Asked to count from one to five, the agent did not print five digits. It wrote them to a file called <code>/tmp/count.txt</code> in its sandbox and reported that it had done so. An endpoint that looks like a model API is attached to something that acts.</p>
+<p>Behind the endpoint, every chat message becomes a short-lived <code>AgentRun</code> of its own. A conversation is not a stream of text that disappears. It is a series of objects.</p>
+<h2 id="three-windows-onto-the-same-objects">Three windows onto the same objects</h2>
+<p>The platform's web UI has three modes, and each is a different window onto the same cluster.</p>
+<p><strong>SRE mode</strong> is the operator's dashboard: nodes, pods, virtual machines, events, the cluster-deployment flow, and a web terminal.</p>
+<p><strong>AI mode</strong> embeds Sympozium's own console. The backend runs a small reverse proxy on a separate port, 8081, which hides the vendor's top bar and pre-loads the login token and the right namespace. Both details came from experience. The console's single-page app uses absolute paths that would collide with the UI's own routes, which is why it needs its own port. And the console defaults to a namespace where nothing lives, so without the pre-loaded setting its agent, run, and schedule panels simply appear empty. The proxy is also unauthenticated — acceptable for a demo platform, and recorded as such in its own comments.</p>
+<p><strong>Visual mode</strong> is the service-mesh view, and its command center still carries the platform's original chat panel. That panel talks to agents through the backend: a two-minute limit per request, a streaming reader sized for large responses, and each agent's key read from its Secret. It can also do one thing more than chat. If an agent's answer contains a structured proposal for an action, the backend turns it into something a person can act on, and it will only ever execute actions on an explicit allowlist. Today that allowlist has one entry:</p>
+<pre><code class="language-go">// Keeping this tight: any new agent-driven action must be added explicitly.
+var allowedActions = map[string]bool{
+    &quot;deploy_target_cluster&quot;: true,
+}
+</code></pre>
+<p>One honest defect belongs here. The agent picker in that panel still asks the cluster for <code>SympoziumInstance</code> objects, which no longer exist, gets an error, and falls back to listing only the default agent. The service-mesh agent is running and serving; the picker cannot see it.</p>
+<h2 id="why-it-matters-that-it-is-an-object">Why it matters that it is an object</h2>
+<p>Return to Anita's three questions, because the architecture answers each of them without a vendor in the room.</p>
+<p><em>Where does the model run?</em> On an Ollama server on the platform's own host, reached through an in-cluster address. No prompt, no tool output, and no answer leaves the boundary on the way.</p>
+<p><em>What did it do last Tuesday?</em> Every execution is an <code>AgentRun</code>: the task it was given, the answer it produced, its phase, its token and tool-call counts, its duration, the pod it ran in, and — since the upgrade described in Chapter 15 — a service account created for that run alone. Access to those records is governed by the same role-based permissions as every other object in the cluster, and they can be created by the same GitOps pipelines. There is no second audit system to buy, learn, or trust.</p>
+<p><em>If we cancel, what do we keep?</em> Everything. There is no separate service to cancel.</p>
+<p>That is what <em>first-class object</em> buys: the agent inherits the governance machinery the organization already runs, instead of arriving with its own.</p>
+<p>It does not buy immortality, and this is where the build log has to be exact. The strategy document's sixth constraint says the trail is append-only: <em>"No design may erase, short-circuit, or replace that trail."</em> Nothing enforces that. The labs delete their runs when they clean up. The repository's own repair script for serving agents works by deleting their runs so the controller will recreate them. And on 16 September, when both host clusters were deleted and rebuilt for the upgrade in Chapter 17, every run record that existed that morning — fifty-three of them, the oldest nearly four weeks old — was deleted with the cluster that held it.</p>
+<p>An object is auditable for exactly as long as it exists. The same constraint already names the answer — durable storage off the cluster that <em>"mirrors <code>AgentRun</code>s, it does not replace them"</em> — and it has not been built.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-fiction">Meridian · the following Monday</p>
+<p>Anita's approval for the agent pilot ran to four lines.</p>
+<p><em>No external model. No vendor copilot. Every agent run stays a cluster object, and every run is copied off the cluster before anything is allowed to delete it. Access to the run records is reviewed like access to production.</em></p>
+<p>Vikram read the third line twice. "The copy doesn't exist yet."</p>
+<p>"Then the pilot starts when it does," she said. "An agent we can't list is an agent we can't answer for."</p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<ul>
+<li><strong>Built:</strong> three serving agents as <code>Agent</code> objects — <code>cluster2-agent</code>, <code>target-cluster-agent</code>, and <code>mesh-sre-agent</code> — each with a Deployment, an endpoint in the standard chat-completions format, and its own access key.</li>
+<li><strong>Measured on 17 September, current release:</strong> one hand-written run — three containers, a per-run identity, 4 tool calls, 7,418 input and 226 output tokens, 21.4 seconds of model time.</li>
+<li><strong>Learned the hard way:</strong> the persona object the documentation described had no controller; runs a controller creates for you and runs you write yourself get different defaults; and tools reach a run only through its skills list, whose delivery rules changed between releases.</li>
+<li><strong>Kept:</strong> every run as a queryable object, governed by existing permissions — for exactly as long as nobody deletes it.</li>
+<li><strong>Lost:</strong> fifty-three run records in the 16 September rebuild.</li>
+<li><strong>Still owed:</strong> an off-cluster copy of the run records; authentication on the embedded console; an agent picker that can see the service-mesh agent; a strategy document that still names the old persona object.</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>Where does our AI model run, and what crosses our boundary when an agent answers a question?</strong> Ask for the network path, not the vendor's assurance.</li>
+<li><strong>Can we list every action an agent took last week — with the identity it used and what it cost — without asking a vendor?</strong> If not, who can?</li>
+<li><strong>What can our agents touch, and is that decided by a permission system or by a prompt?</strong> Only one of those is a control.</li>
+</ol>
+<h2 id="open-the-repo">Open the repo</h2>
+<ul>
+<li><code>06-sympozium/cluster2-agent.yaml</code> — an agent, declared: model, skills, policy, and briefing, with the history of skills delivery in its comments.</li>
+<li><code>06-sympozium/labs/01-chat-serving/</code> — the standard chat endpoint, including a 30-line client.</li>
+<li><code>06-sympozium/labs/02-agentrun/</code> — one execution as an object: the required fields, and the run whose tools never arrived.</li>
+<li><code>kubectl get agents.sympozium.ai,agentruns.sympozium.ai -n sympozium-system</code> — the live records, by their fully qualified names.</li>
+<li><code>ui/backend/handlers/ai.go</code> (the chat proxy and its action allowlist) and <code>ui/backend/handlers/dashboard_proxy.go</code> (the embedded console).</li>
+<li><code>06-sympozium/labs/README.md</code> — "the one correction that matters most."</li>
+</ul>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>Re-verified on 17 September</strong> (Sympozium 0.10.75, Kubernetes 1.37): the three required <code>AgentRun</code> fields (server dry run, nothing created); lab 02's run and every figure in its table; the models endpoint. <strong>Not re-verified:</strong> lab 01's streaming behavior and the count-to-five file-writing anecdote, which date from 0.10.38.</li>
+<li><strong>The strategy document is stale in three places this chapter quotes around.</strong> Its object table lists <code>SympoziumInstance</code> as the persona; Constraint 1 names llama3.2 at <code>172.18.0.1</code>, while the agents run <code>qwen2.5:7b</code> through the in-cluster <code>host-ollama</code> Service; Constraints 4 and 7 bind policy through <code>SympoziumInstance.spec.policyRef</code>, which must live on the <code>Agent</code>. Update it, or quote it explicitly as a historical document.</li>
+<li><strong>Dates.</strong> The kagent-to-Sympozium timeline comes from commit history: kagent in February, Sympozium personas in April, the chat proxy's switch landing in a late-June checkpoint commit, and the embedded console in August. The exact switch date is not recorded.</li>
+<li><strong>Fifty-three records.</strong> Counted from the run list captured on the morning of 16 September, before the rebuild; the oldest was 26 days old.</li>
+<li><strong>Known defects named in the chapter:</strong> <code>HandleListAgents</code> in <code>ui/backend/handlers/ai.go</code> still queries <code>sympoziuminstances</code>; the console proxy on port 8081 is unauthenticated; the skills webhook is still deployed although it has done nothing since 0.10.47.</li>
+<li><strong>Chapter 15 overlap.</strong> This chapter now owns the sidecar explanation; trim the opening of Chapter 15's "Where the truth goes missing" to a back-reference.</li>
+<li><strong>Meridian's vendor</strong> is deliberately generic. Keep it from resembling any real product.</li>
+<li><strong>Figures.</strong> 13.1: the object map — <code>Agent</code> → <code>AgentRun</code> → pod (<code>agent</code>, <code>ipc-bridge</code>, skill sidecar) → per-run identity and permissions → model endpoint. 13.2: the three UI modes as windows onto one set of objects.</li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
+</ul></aside>
+</article>

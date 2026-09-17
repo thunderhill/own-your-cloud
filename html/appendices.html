@@ -1,0 +1,1271 @@
+<title>The Owner's Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Reference</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="bookend-label">Appendices</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Appendices: </span>The Owner's Reference</h1>
+    <blockquote class="epigraph"><p><em>Every check asserts on a value read back from the cluster or an HTTP response code. No check passes on the absence of an error, and no screenshot counts as evidence.</em></p>
+<p>— <code>07-istio-advanced/verify.sh</code></p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
+      <dt>Length</dt>
+      <dd>About 4,500 words · about 20 minutes to read</dd>
+    </dl>
+  </header>
+
+<p>Six appendices, for readers who want to check the book rather than take its word. Each was checked against the repository and the running platform on 17 September 2026. Where the repository's own documentation disagrees with what was running, both are shown.</p>
+<ul>
+<li><strong>A. The repo, stage by stage</strong> — what each directory does, and the <code>make</code> targets that matter.</li>
+<li><strong>B. Addresses that must not move</strong> — the network address plan, as reserved and as found.</li>
+<li><strong>C. The failure-mode catalog</strong> — every documented failure, grouped by what you would see.</li>
+<li><strong>D. The measurement protocol</strong> — the figures as last measured, and the rules for measuring them again.</li>
+<li><strong>E. The ten labs</strong> — the agent-platform labs, with their original honesty markers and what this book re-checked.</li>
+<li><strong>F. A glossary for the boardroom</strong> — one plain-English sentence per term.</li>
+</ul>
+<h2 id="appendix-a-the-repo-stage-by-stage">Appendix A — The repo, stage by stage</h2>
+<p class="dateline dateline-record">Build log · 17 September 2026</p>
+<p>The numbered directories run in order. Four prerequisites are <strong>not</strong> created by any script, and are easy to forget when reproducing the platform: the two Kind clusters themselves (<code>cluster1</code> and <code>cluster2</code>); KubeVirt (v1.9.0) and CDI (v1.66.0) on <code>cluster2</code>; and the <code>ubuntu-noble-dv</code> base disk image the golden-image bake starts from.</p>
+<h3 id="00-prereqs">00-prereqs</h3>
+<p><code>install-clusterctl.sh</code> installs <code>clusterctl</code>, the Cluster API command-line tool. <em>Target:</em> <code>make prereqs</code>.</p>
+<h3 id="01-metallb">01-metallb</h3>
+<p>Installs MetalLB, which gives Services on the laptop's Docker network real IP addresses, and configures the address pool for <code>cluster2</code> (now <code>.211–.225</code>, widened by <code>07-istio-advanced</code>). <strong>Do not run it against <code>cluster1</code></strong>: it tries to substitute a placeholder that does not exist in its configuration file, so it would advertise <code>cluster2</code>'s range on the shared network (Appendix B). <em>Target:</em> <code>make metallb</code>.</p>
+<h3 id="02-capi-init">02-capi-init</h3>
+<p><code>init-management-cluster.sh</code> turns <code>cluster2</code> into a cluster factory. It installs Cluster API v1.14.2, the KubeVirt infrastructure provider (CAPK) v0.11.2, and the k3s bootstrap and control-plane providers v0.3.0. It then replaces a dead proxy image those providers ship (Chapter 17), and runs <code>scripts/configure-kubevirt-perf.sh</code>, which applies the CPU setting that cut eight seconds from every VM start (Chapter 8). That auto-run can silently do nothing if KubeVirt is still initializing, so check afterwards that the setting landed. <em>Targets:</em> <code>make capi-init</code>, <code>make kubevirt-perf</code>.</p>
+<h3 id="03-target-cluster">03-target-cluster</h3>
+<p>The cluster declarations. <code>target-cluster-warm.yaml</code> is the default: seven objects in 258 lines, parallel worker boot, fixed demonstration certificate authorities in <code>warm-ca/</code> (Chapter 4). <code>target-cluster-lite.yaml</code>, <code>target-cluster.yaml</code> and <code>target-cluster-parallel.yaml</code> are older, slower paths on the <code>:latest</code> image. <code>generate-cluster.sh</code> and the <code>.tmpl.yaml</code> files render variants. The golden-image tooling sits at the top level (<code>bake-common.sh</code>, <code>bake-golden-image*.sh</code>, <code>build-containerdisk.sh</code>) and in <code>scripts/</code> (<code>seed-cluster-secrets.sh</code>, <code>gen-warm-ca.sh</code>, <code>fix-registry-hosts.sh</code>). <em>Targets:</em> <code>make target-cluster</code> (which runs <code>registry-fix</code>, then <code>ensure-warm-image</code>, then seeds the secrets and applies the warm manifest); <code>make clean</code>.</p>
+<p><em>Caution:</em> <code>ensure-warm-image</code> checks that the image <em>tag</em> exists, not what is inside it. After the September upgrade, the <code>:latest</code> and <code>:preinit</code> images still carried the old k3s binary (Chapter 17).</p>
+<h3 id="04-verify">04-verify</h3>
+<p><code>verify-cluster.sh</code> waits for the target cluster's virtual machines and checks its health. It also refreshes the agents' copy of the target cluster's credentials. <em>Target:</em> <code>make verify</code>.</p>
+<h3 id="05-istio">05-istio</h3>
+<p>The "before" picture, kept on purpose (Chapter 10). <code>install-istio-ambient.sh</code> installs Istio 1.28 on the target cluster — outside Istio's tested range on Kubernetes 1.37. <code>cross-cluster-demo.sh</code> is the eight-step hand-plumbed demo, and <code>cross-cluster-mindmap.html</code> is its diagram. <em>Target:</em> <code>make istio</code>.</p>
+<h3 id="06-sympozium">06-sympozium</h3>
+<p>The agent platform. <code>install-sympozium.sh</code> pins chart 0.10.75. The three serving agents are <code>cluster2-agent.yaml</code>, <code>target-cluster-agent.yaml</code> and <code>mesh-sre-agent.yaml</code>. Their extra permissions are <code>agent-kubevirt-rbac.yaml</code> and <code>agent-istio-rbac.yaml</code>, now bound to a group rather than one account (Chapter 15). Their network rule is <code>agent-egress-ollama.yaml</code>. The <code>fix-*.sh</code> scripts each answer a pitfall in Appendix C; <code>labs/</code> holds the ten labs (Appendix E); <code>demo-mesh-sre.sh</code> is the recorded agent demo. <code>cost-analyzer.yaml</code> and <code>incident-responder.yaml</code> cannot be applied on the current chart (Chapter 16). <em>Targets:</em> <code>make sympozium-install</code>, <code>make sympozium-lb</code>.</p>
+<h3 id="07-istio-advanced">07-istio-advanced</h3>
+<p>The "after" picture: five acts on Istio 1.31 across <code>cluster1</code> and <code>cluster2</code> — Gateway API, waypoints, multicluster, the AI gateway, and observability — plus <code>verify.sh</code> (22 checks) and <code>clean.sh</code> (Chapters 11 and 12). <em>Targets:</em> <code>make istio-adv-prereqs</code>, <code>istio-adv-install</code>, <code>istio-adv-act1</code> to <code>act5</code>, <code>istio-adv-demo</code>, <code>istio-adv-verify</code>, <code>istio-adv-clean</code>.</p>
+<h3 id="scripts">scripts/</h3>
+<p>The measurement instruments <code>phase-timings.sh</code> and <code>time-to-ready.sh</code> (Appendix D), along with <code>configure-kubevirt-perf.sh</code>, <code>fix-registry-hosts.sh</code>, <code>seed-cluster-secrets.sh</code>, <code>gen-warm-ca.sh</code>, <code>render-cluster.sh</code>, <code>render-demo-video.sh</code> and <code>import-base-images.sh</code>.</p>
+<h3 id="ui">ui/</h3>
+<p>The web console: a React frontend and a Go backend (port 8080), with SRE, AI and Visual modes (Chapters 12 and 13). <code>run-ui.sh</code> starts both for development. The production manifest in <code>ui/k8s/</code> was not deployed on 17 September: the <code>kubeui</code> namespace did not exist. <em>Targets:</em> <code>make ui</code>, <code>make ui-build</code>.</p>
+<h3 id="docs-and-the-top-level">docs/, and the top level</h3>
+<p><code>docs/sub-60s-cluster-strategy.md</code> records the cluster-speed work and its dead ends (Chapters 7 and 8). <code>docs/warm-pool-strategy.md</code> covers the standby (Chapter 9), and <code>docs/demo/</code> holds the recorded agent demo. At the top level: <code>CLAUDE.md</code>, the platform's operating memory and pitfall list; <code>Sovereign_Cloud_Agentic_Strategy.md</code>, the agent strategy (Chapters 3, 14 and 16); <code>demo.sh</code> and <code>show-cluster.sh</code>, the original demo, whose narration has drifted (Chapter 5); and <code>target-cluster-kubeconfig</code>, the target cluster's credentials file.</p>
+<h3 id="the-make-targets-that-matter">The make targets that matter</h3>
+<p>The Makefile defines 65 targets. These are the ones this book used.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Target</th>
+<th>What it does</th>
+<th>Note, 17 September 2026</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>make all</code></td>
+<td><code>prereqs</code> → <code>metallb</code> → <code>capi-init</code> → <code>target-cluster</code></td>
+<td>Assumes the four unscripted prerequisites above</td>
+</tr>
+<tr>
+<td><code>make target-cluster</code></td>
+<td>Builds the default warm cluster</td>
+<td>33.7 s to both nodes ready (Appendix D)</td>
+</tr>
+<tr>
+<td><code>make clean</code></td>
+<td>Deletes the target cluster</td>
+<td>18.9 s until every VM is gone</td>
+</tr>
+<tr>
+<td><code>make verify</code></td>
+<td>Checks the target cluster and refreshes agent credentials</td>
+<td></td>
+</tr>
+<tr>
+<td><code>make kubevirt-perf</code></td>
+<td>Applies the KubeVirt CPU setting</td>
+<td>Cluster state, not manifest state: re-run after rebuilding <code>cluster2</code></td>
+</tr>
+<tr>
+<td><code>make phase-timings</code></td>
+<td>Per-phase breakdown of a cluster build</td>
+<td>Counts nodes, not names — see Appendix D</td>
+</tr>
+<tr>
+<td><code>make registry-fix</code></td>
+<td>Maps the registry alias for containerd</td>
+<td>See Appendix C.5</td>
+</tr>
+<tr>
+<td><code>make istio</code></td>
+<td>Istio 1.28 on the target cluster</td>
+<td>The legacy path; unsupported on Kubernetes 1.37</td>
+</tr>
+<tr>
+<td><code>make sympozium-install</code> / <code>sympozium-lb</code></td>
+<td>Installs the agent platform; gives its Services addresses</td>
+<td>Re-run <code>sympozium-lb</code> after any serving Deployment is regenerated</td>
+</tr>
+<tr>
+<td><code>make sympozium-warm</code></td>
+<td>One-shot model warm-up</td>
+<td>Its help text still names llama3.2</td>
+</tr>
+<tr>
+<td><code>make sympozium-demo-agents</code></td>
+<td>Applies the April cost and incident personas</td>
+<td>Fails on the current chart (Chapter 16)</td>
+</tr>
+<tr>
+<td><code>make ui</code></td>
+<td>Starts the web console</td>
+<td></td>
+</tr>
+<tr>
+<td><code>make istio-adv-demo</code> / <code>istio-adv-verify</code></td>
+<td>Runs the five acts / the 22 checks</td>
+<td>22 passed on 17 September; the Act 3 checks test configuration, not failover (Chapter 11)</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>make help</code> lists most targets, not all. It omits <code>kubevirt-perf</code>, <code>phase-timings</code> and every <code>istio-adv-*</code> target, and it still describes the default cluster as a <em>"~40s target."</em></p>
+<h2 id="appendix-b-addresses-that-must-not-move">Appendix B — Addresses that must not move</h2>
+<p class="dateline dateline-record">Build log · 17 September 2026</p>
+<p>Both Kind clusters live on one Docker network, <code>172.18.0.0/16</code>, and both run MetalLB announcing addresses on that same network. If their pools overlapped, two clusters would answer for one address, and traffic would go to whichever answered first. So each cluster has its own pool, and every Service that needs a stable address pins one inside its own pool.</p>
+<p><strong>Pools:</strong> <code>cluster1</code> has <code>172.18.255.200–.210</code>, installed by <code>07-istio-advanced/00-prereqs/</code>. <code>cluster2</code> has <code>172.18.255.211–.225</code>, originally <code>.211–.220</code>, widened by <code>07-istio-advanced</code>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Address</th>
+<th>Reserved for</th>
+<th>Cluster</th>
+<th>Allocated, 17 Sept</th>
+<th>Files naming it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.200</code></td>
+<td><code>httpbin-lb</code> — legacy <code>05-istio</code> demo</td>
+<td>cluster1</td>
+<td>No</td>
+<td>9</td>
+</tr>
+<tr>
+<td><code>.201</code></td>
+<td>Act 1 edge gateway</td>
+<td>cluster1</td>
+<td>Yes</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>.202</code></td>
+<td>Act 3 east-west gateway</td>
+<td>cluster1</td>
+<td>Yes</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>.203</code></td>
+<td>Act 4 AI gateway</td>
+<td>cluster1</td>
+<td>Yes</td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>.204</code></td>
+<td>Kiali</td>
+<td>cluster1</td>
+<td>Yes</td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>.211</code></td>
+<td>Web console frontend</td>
+<td>cluster2</td>
+<td>No — not deployed</td>
+<td>10</td>
+</tr>
+<tr>
+<td><code>.212</code></td>
+<td>Sympozium API and dashboard</td>
+<td>cluster2</td>
+<td>Yes</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>.213</code></td>
+<td><code>cluster2-agent</code></td>
+<td>cluster2</td>
+<td>Yes</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>.214</code></td>
+<td><code>target-cluster-agent</code></td>
+<td>cluster2</td>
+<td>Yes</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>.215</code></td>
+<td>Target cluster API server</td>
+<td>cluster2</td>
+<td>Yes</td>
+<td>18</td>
+</tr>
+<tr>
+<td><code>.216</code></td>
+<td>Target-cluster nginx proxy — legacy <code>05-istio</code>, only while it runs</td>
+<td>cluster2</td>
+<td>No</td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>.217</code></td>
+<td>Security agent</td>
+<td>cluster2</td>
+<td>No</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>.218</code></td>
+<td><code>cost-analyzer</code></td>
+<td>cluster2</td>
+<td>No</td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>.219</code></td>
+<td><code>incident-responder</code></td>
+<td>cluster2</td>
+<td>No</td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>.220</code></td>
+<td>Host Ollama load balancer (optional)</td>
+<td>cluster2</td>
+<td>No</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>.221</code></td>
+<td>Act 3 east-west gateway</td>
+<td>cluster2</td>
+<td>Yes</td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>.222</code></td>
+<td><code>mesh-sre-agent</code></td>
+<td>cluster2</td>
+<td>Yes</td>
+<td>3</td>
+</tr>
+</tbody>
+</table></div>
+<p>"Files naming it" counts shell, YAML, Go, TypeScript, env and Makefile files outside <code>book/</code>. Seven of the seventeen reserved addresses were not in use on 17 September, and every one of them is still written into between three and ten files.</p>
+<p>The node addresses on the same network matter too. <code>172.18.0.1</code> is the host, where the models run. <code>.2</code>, <code>.3</code> and <code>.4</code> were <code>cluster1-control-plane</code>, <code>cluster2-control-plane</code> and the image registry — in that order <em>on that day</em>. Docker hands those addresses out in the order containers join the network, which is why <code>172.18.0.2:5000</code>, the registry address baked into image references, is an alias that only containerd resolves (Appendix C.5).</p>
+<h3 id="pool-discipline">Pool discipline</h3>
+<ul>
+<li><strong>Never overlap pools.</strong> One cluster's installer must never advertise another's range.</li>
+<li><strong>Pin, don't request.</strong> Every Service that anything else depends on names its address in an annotation. Both MetalLB annotation spellings appear in the repository, <code>metallb.universe.tf/loadBalancerIPs</code> and <code>metallb.io/loadBalancerIPs</code>; both worked on 17 September.</li>
+<li><strong>Change all three places.</strong> The project's rule: never reassign an address without updating its source file, <code>sympozium-lb-setup.sh</code> and <code>run-ui.sh</code>.</li>
+<li><strong>A regenerated Service forgets its address.</strong> When the agent platform regenerates its serving Deployments, their Services come back without MetalLB addresses; re-run <code>make sympozium-lb</code>.</li>
+<li><strong>An idle reservation is still a reservation.</strong> <code>.216</code> stays free for the legacy demo; when <code>cluster2</code> needed another address, the pool was widened instead (Chapter 10).</li>
+<li><strong>Retire addresses on purpose.</strong> A reservation nobody uses, named in ten files, is a future collision waiting for someone who reads only the table.</li>
+</ul>
+<h2 id="appendix-c-the-failure-mode-catalog">Appendix C — The failure-mode catalog</h2>
+<p class="dateline dateline-record">Build log · February–September 2026</p>
+<p>The platform's operating notes list 23 pitfalls, and the chapters of this book found more. They are grouped here by <strong>what you would see</strong>, because that is what an engineer has at 2 a.m. The most expensive group is not the crashes. It is the failures that look like success.</p>
+<h3 id="c1-a-crash-loop-with-exit-code-2-and-no-log-output">C.1 A crash loop with exit code 2 and no log output</h3>
+<p>One sidecar — the agent platform's <code>web-proxy</code> — produced this identical symptom from four different causes.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>When</th>
+<th>Fix or status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The image could not run with a read-only root filesystem</td>
+<td>Chart 0.10.38</td>
+<td>Fixed upstream in 0.10.47; <code>fix-web-proxy-rootfs.sh</code> retired</td>
+</tr>
+<tr>
+<td>The sidecar image was pinned to a moving <code>:latest</code> tag and drifted to an incompatible version (observed at about 5,680 restarts)</td>
+<td>0.10.47 era</td>
+<td><code>fix-web-proxy-image.sh</code> pins it to the chart version and purges the cached image</td>
+</tr>
+<tr>
+<td>The chart turned on NATS authentication, but the serving sidecar was never given credentials</td>
+<td>0.10.57</td>
+<td><code>nats.auth.enabled: false</code> in <code>06-sympozium/values.yaml</code></td>
+</tr>
+<tr>
+<td>Two long-running crash loops (600+ restarts), cause not diagnosed</td>
+<td>Before the 0.10.75 upgrade</td>
+<td>Cleared when the post-upgrade re-pin regenerated the Deployments</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="c2-the-script-reported-success-nothing-happened">C.2 The script reported success; nothing happened</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Where</th>
+<th>Fix or status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A provider shipped a proxy image that no longer exists; readiness waits timed out into an <code>&#124;&#124; true</code> fallback, so setup reported success</td>
+<td><code>make capi-init</code> (Chapter 17)</td>
+<td>Image patched automatically in <code>init-management-cluster.sh</code></td>
+</tr>
+<tr>
+<td>The KubeVirt CPU setting raced KubeVirt's own start-up and silently did not apply</td>
+<td><code>configure-kubevirt-perf.sh</code> auto-run</td>
+<td>Check <code>supportContainerResources</code> after any <code>capi-init</code>; re-run <code>make kubevirt-perf</code></td>
+</tr>
+<tr>
+<td>A documented <code>K3S_VERSION</code> override never reached the image being baked</td>
+<td><code>bake-common.sh</code> (Chapter 17)</td>
+<td>Both version literals updated and commented</td>
+</tr>
+<tr>
+<td>Image checks tested whether a tag existed, not what it contained</td>
+<td><code>ensure-warm-image</code>, <code>pre-pull</code></td>
+<td><code>:warm</code> rebaked; <code>:latest</code> and <code>:preinit</code> still stale</td>
+</tr>
+<tr>
+<td>Built-in SkillPacks "silently dropped" at install — really the chart applying them before its own admission webhook was serving</td>
+<td><code>helm install</code></td>
+<td><code>fix-missing-builtin-skillpacks.sh</code></td>
+</tr>
+<tr>
+<td>Agent runs created in quick succession raced into a terminal <code>Failed</code>, which the controller never retries</td>
+<td>Serving re-pin</td>
+<td>Delete the failed run and let the controller recreate it</td>
+</tr>
+<tr>
+<td>A failover check counted any non-empty body as success, so a total outage printed <code>success=20 failed=0</code></td>
+<td>Act 3 <code>run.sh</code> (Chapter 11)</td>
+<td>Not fixed; the console's failover action counts HTTP 200</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="c3-the-status-says-healthy-it-is-not">C.3 The status says healthy; it is not</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Where</th>
+<th>Fix or status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The worker node was <code>Ready</code> but tainted as uninitialized, so it accepted no workloads</td>
+<td>Target cluster (Chapter 5)</td>
+<td>Not fixed</td>
+</tr>
+<tr>
+<td>A ghost node baked into the golden image satisfied "2 nodes Ready" before the worker joined</td>
+<td>Both timing scripts (Chapter 7)</td>
+<td>Measure by name (Appendix D); scripts not fixed</td>
+</tr>
+<tr>
+<td>A missing worker timestamp was treated as zero, so "both nodes" meant the control plane only</td>
+<td><code>phase-timings.sh</code> (Chapter 7)</td>
+<td>Not fixed</td>
+</tr>
+<tr>
+<td>The deterministic permission check tested an identity running pods no longer used</td>
+<td>Agent RBAC after 0.10.75 (Chapter 15)</td>
+<td>Bindings moved to a group; check the live pod's account</td>
+</tr>
+<tr>
+<td>A topology view labelled <code>live</code> drew 14 nodes that did not exist, 13 of them healthy</td>
+<td>Visual mode (Chapter 12)</td>
+<td>Not fixed</td>
+</tr>
+<tr>
+<td>A tenant's listener was refused, but the act printed its status instead of asserting it</td>
+<td>Act 1 ListenerSet (Chapter 11)</td>
+<td>Not fixed</td>
+</tr>
+<tr>
+<td>"Locality-aware routing prefers in-cluster endpoints" was printed without comparing counts; measured traffic split 30/30</td>
+<td>Act 3 (Chapter 11)</td>
+<td>Not fixed</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="c4-the-status-says-broken-it-is-not">C.4 The status says broken; it is not</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Where</th>
+<th>Fix or status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cluster API reported <code>Available=False</code> (<code>WaitingForKthreesServer</code>) for a working cluster</td>
+<td>k3s control-plane provider v0.3.0 (Chapter 4)</td>
+<td>Not investigated</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="c5-unreachable-from-here-reachable-from-there">C.5 Unreachable from here, reachable from there</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Where</th>
+<th>Fix or status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>172.18.0.2:5000</code> is a registry alias only containerd can resolve; plain HTTP clients get connection refused</td>
+<td>Web console Registry tab</td>
+<td>Backend dials a real address, displays the alias</td>
+</tr>
+<tr>
+<td>A host-network probe looked for Ollama on <code>127.0.0.1</code>; the redirect that fixed it was lost on reboot</td>
+<td>Sympozium node probe</td>
+<td>Redirect re-asserted every 60 s by a DaemonSet</td>
+</tr>
+<tr>
+<td>A VM's pod address is reachable from its node but not from other pods, costing a 10 s timeout</td>
+<td>Worker joining the control plane (Chapter 8)</td>
+<td><code>advertise-address</code> set on the control plane</td>
+</tr>
+<tr>
+<td>Remote-cluster credentials embedded <code>127.0.0.1:&lt;port&gt;</code>, so the peer sat at <code>timeout</code> while all else looked healthy</td>
+<td><code>istioctl create-remote-secret</code> on Kind</td>
+<td>Pass <code>--server https://&lt;node-ip&gt;:6443</code>; Act 3 asserts <code>synced</code></td>
+</tr>
+<tr>
+<td><code>host.docker.internal</code> does not resolve inside Kind pods</td>
+<td>Model endpoint</td>
+<td>Use <code>172.18.0.1</code> through an in-cluster shim Service</td>
+</tr>
+<tr>
+<td>Both Kind clusters number pods from <code>10.244.0.0/24</code>, so a pod address means different machines in each</td>
+<td>Cross-cluster calls (Chapter 10)</td>
+<td>Hand-plumbed proxy (before); east-west gateways (after)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="c6-the-model-gave-a-confident-wrong-answer">C.6 The model gave a confident, wrong answer</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Where</th>
+<th>Fix or status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stale target-cluster credentials made the tool fail TLS quietly; llama3.2 invented plausible output</td>
+<td><code>target-cluster-agent</code> (Chapter 15)</td>
+<td><code>refresh-target-kubeconfig.sh</code>, auto-run by verify and deploy paths</td>
+</tr>
+<tr>
+<td>Chat runs got no tool sidecar, so the model gave up or improvised</td>
+<td>Sympozium 0.10.38</td>
+<td>Skills declared on the <code>Agent</code>; the webhook workaround is now redundant</td>
+</tr>
+<tr>
+<td>A refusal rule in the system prompt was not reliably obeyed</td>
+<td><code>mesh-sre-agent</code>, qwen2.5:7b (Chapter 14)</td>
+<td>Enforce below the model, not in the prompt</td>
+</tr>
+<tr>
+<td>A tool denied by policy was used anyway</td>
+<td>Lab 04 (Chapter 14)</td>
+<td>Not fixed on 0.10.75</td>
+</tr>
+<tr>
+<td>After the per-run identity change, the agent reported a plausible "permission issue"</td>
+<td><code>mesh-sre-agent</code> after 0.10.75</td>
+<td>Group binding (C.3)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="c7-503-on-every-request-with-every-component-healthy">C.7 503 on every request, with every component healthy</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Where</th>
+<th>Fix or status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>An in-mesh route pinned traffic to non-global backends, overriding cross-cluster routing</td>
+<td>Act 2's <code>echo-internal-split</code> during Act 3</td>
+<td>Act 3 deletes the route; still reproduces on Istio 1.31 (Chapter 11)</td>
+</tr>
+<tr>
+<td>A waypoint resolved only local endpoints</td>
+<td>Istio 1.30.3</td>
+<td>Did not reproduce on 1.31; the console's opt-out label is now harmless (Chapter 11)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="c8-it-waits-forever-though-the-thing-is-done">C.8 It waits forever, though the thing is done</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Where</th>
+<th>Fix or status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kubectl wait --for=condition=Accepted</code> reads top-level conditions; a route's live under <code>status.parents</code></td>
+<td>HTTPRoute</td>
+<td><code>wait_route_accepted</code> in <code>07-istio-advanced/lib/common.sh</code></td>
+</tr>
+<tr>
+<td><code>helm upgrade --wait</code> polls an intentionally suspended example MCPServer</td>
+<td>Sympozium upgrades</td>
+<td>Drop <code>--wait</code>; verify by hand</td>
+</tr>
+<tr>
+<td>Gateway API CRDs exceed the annotation size limit of client-side apply</td>
+<td>Gateway API install</td>
+<td>Apply with <code>--server-side</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="c9-the-screen-is-empty-or-shows-the-wrong-thing">C.9 The screen is empty, or shows the wrong thing</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Where</th>
+<th>Fix or status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The dashboard's namespace picker defaults to <code>default</code>, where nothing lives</td>
+<td>Sympozium dashboard</td>
+<td>Switch to <code>sympozium-system</code> (stored per browser)</td>
+</tr>
+<tr>
+<td>The GPU detector shells out to <code>nvidia-smi</code>, which is not in its container, so it reports the integrated GPU</td>
+<td>Model-fit hardware view</td>
+<td><code>fix-llmfit-nvidia-smi.sh</code> replay shim</td>
+</tr>
+<tr>
+<td>The agent drop-down queries a resource type the chart no longer ships</td>
+<td>Web console AI mode</td>
+<td>Falls back to the default agent only; not fixed</td>
+</tr>
+<tr>
+<td>Model calls through the AI gateway are absent from the mesh request metric and from Kiali</td>
+<td>Observability (Chapter 12)</td>
+<td>Not fixed</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="c10-it-changed-its-name-or-its-shape">C.10 It changed its name or its shape</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>What changed</th>
+<th>Where</th>
+<th>Consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SympoziumInstance</code> stopped being reconciled, then stopped shipping</td>
+<td>Sympozium 0.10.38 → 0.10.47</td>
+<td>Agents must be <code>Agent</code> resources</td>
+</tr>
+<tr>
+<td>Skill sidecars moved from one shared account to one account per run</td>
+<td>Sympozium 0.10.75</td>
+<td>Permissions bound to a single account silently stopped applying</td>
+</tr>
+<tr>
+<td><code>XListenerSet</code> graduated to <code>ListenerSet</code></td>
+<td>Gateway API v1.5</td>
+<td>Most write-ups use the old name, which fails</td>
+</tr>
+<tr>
+<td><code>istioctl verify-install</code> was removed</td>
+<td>Istio 1.30</td>
+<td>Use <code>istioctl analyze</code></td>
+</tr>
+<tr>
+<td><code>--server-side</code> started requiring a value</td>
+<td>Helm 4</td>
+<td>A bare <code>--server-side --force-conflicts</code> fails</td>
+</tr>
+<tr>
+<td>The three GatewayClasses name their generated Services differently; the Prometheus container is <code>prometheus-server</code></td>
+<td>Istio add-ons</td>
+<td>Look Services up by label; name the container explicitly</td>
+</tr>
+<tr>
+<td>VM networking moved from masquerade to bridge, in the same commit as the diagram describing masquerade</td>
+<td>March 2026 (Chapter 10)</td>
+<td>The mind map and README diagram still describe the old network</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="appendix-d-the-measurement-protocol">Appendix D — The measurement protocol</h2>
+<p class="dateline dateline-record">Build log · June–September 2026</p>
+<h3 id="d1-the-figures-as-last-measured">D.1 The figures, as last measured</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Measurement</th>
+<th>Value</th>
+<th>When, and how</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cluster bring-up, both nodes ready</td>
+<td><strong>33.7 s</strong> median (30.4 / 35.1 / 33.7)</td>
+<td>17 September, by node name, warm manifest, Kubernetes 1.37</td>
+</tr>
+<tr>
+<td>Control plane alone</td>
+<td><strong>24.7 s</strong> median</td>
+<td>Same runs</td>
+</tr>
+<tr>
+<td>Teardown</td>
+<td>Delete command returned at <strong>10.15 s</strong>; every VM and machine gone at <strong>18.9 s</strong></td>
+<td>17 September, a single run</td>
+</tr>
+<tr>
+<td>Standby claim</td>
+<td><strong>194 ms</strong></td>
+<td>June; not re-measured since</td>
+</tr>
+<tr>
+<td>Model load, cold vs warm</td>
+<td>2.3–2.6 s cold; 0.14–0.17 s warm</td>
+<td>17 September, GPU, qwen2.5:7b and llama3.2 (Chapter 9)</td>
+</tr>
+<tr>
+<td>Local model energy</td>
+<td>1.19 J per generated token; 0.33 kWh per million tokens (GPU only)</td>
+<td>17 September, qwen2.5:7b (Chapter 18)</td>
+</tr>
+<tr>
+<td>Cross-cluster failover</td>
+<td>30 of 30 HTTP 200, all from <code>cluster2</code></td>
+<td>17 September, Istio 1.31 (Chapter 11)</td>
+</tr>
+</tbody>
+</table></div>
+<p>And the history behind the headline number:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Median</th>
+<th>Runs</th>
+<th>Spread</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Baseline (June)</td>
+<td>50.0 s</td>
+<td>52.7 / 50.0 / 46.6</td>
+<td>6.1 s</td>
+</tr>
+<tr>
+<td>+ <code>advertise-address</code></td>
+<td>42.7 s</td>
+<td>42.7 / 42.8 / 41.2</td>
+<td>1.6 s</td>
+</tr>
+<tr>
+<td>+ <code>supportContainerResources</code></td>
+<td>34.5 s</td>
+<td>34.5 / 34.2 / 34.7</td>
+<td>0.5 s</td>
+</tr>
+<tr>
+<td>After the Kubernetes 1.37 upgrade</td>
+<td>33.7 s</td>
+<td>30.4 / 35.1 / 33.7</td>
+<td>4.7 s</td>
+</tr>
+</tbody>
+</table></div>
+<p>Notice the last column. The spread that had collapsed to half a second is back to 4.7 seconds after the rebuild. With three runs, a change smaller than about five seconds cannot be seen.</p>
+<h3 id="d2-the-instrument">D.2 The instrument</h3>
+<p><code>scripts/phase-timings.sh</code> attributes a build's wall clock to its phases, read-only and without logging in to the guests. Its sources, in its own words:</p>
+<ul>
+<li>Cluster API and CAPK object creation timestamps — the controller chain.</li>
+<li>VM instance phase transitions — scheduling to running.</li>
+<li>The launcher container's start time — disk unpack and hypervisor start.</li>
+<li>The guest serial console (<code>kubectl logs -c guest-console-log</code>) — kernel, initramfs, systemd, cloud-init, and k3s start.</li>
+<li>Node <code>Ready</code> transitions — the metric itself.</li>
+<li>A host-side probe loop — the API server's first TCP accept, and its first healthy answer.</li>
+</ul>
+<p>Guest console timestamps count seconds since boot, not time of day. The script anchors them to the wall clock using cloud-init's own log lines, which carry both: <em>"running 'init' at Wed, 09 Sep 2026 06:44:19 +0000. Up 6.81 seconds."</em> Subtract the uptime from the date, and every console line lands on the same clock as the Kubernetes objects.</p>
+<p><code>./scripts/phase-timings.sh --collect-only</code> rebuilds the table for whatever is running now, and changes nothing. <code>--runs N</code> deploys and measures <code>N</code> clean runs.</p>
+<h3 id="d3-the-rules">D.3 The rules</h3>
+<ol>
+<li><strong>Instrument before you optimise.</strong> Two dead ends each cost a full image bake to disprove before the phases were measured (Chapter 8).</li>
+<li><strong>Name what you count.</strong> Wait for the control-plane node and the worker node <em>by name</em>, never for "two nodes". A stale node object inside the golden image satisfied the count (Chapter 7).</li>
+<li><strong>Missing is not zero.</strong> An absent timestamp must fail the measurement, not add nothing to it (Chapter 7).</li>
+<li><strong>Publish every run and the spread, not just the median.</strong> With a six-second spread, three runs cannot resolve a lever smaller than about five seconds. Use seven or more runs, a quiet host, or both.</li>
+<li><strong>When a number improves, check the instrument first.</strong> The 23.9-second figure was the control plane alone (Chapter 7).</li>
+<li><strong>Keep the raw data.</strong> The raw files behind the 9 September phase table no longer exist to re-check.</li>
+<li><strong>Judge a request by its status code, never its body.</strong> An error page is a body (Chapter 11).</li>
+<li><strong>Watch every check fail once, on purpose,</strong> before it goes on a dashboard (Chapter 11).</li>
+<li><strong>Measure use against reservation.</strong> On owned hardware, reservations set capacity (Chapter 18).</li>
+<li><strong>For models, separate cold from warm, and meter energy against tokens.</strong> Read the model server's own <code>load_duration</code>, and sample GPU power every 200 ms alongside its <code>eval_count</code> (Chapters 9 and 18).</li>
+<li><strong>Record what you changed, and put it back.</strong> Every live experiment in this book ran with a restore step, and was checked afterwards.</li>
+</ol>
+<h3 id="d4-measuring-bring-up-by-name">D.4 Measuring bring-up by name</h3>
+<p>The repository's two timing scripts still wait for a node <em>count</em>. Until they are fixed, the 33.7-second figure was measured this way, three times:</p>
+<ol>
+<li>Delete the cluster, and wait until no virtual machine or VM instance named <code>target-cluster</code> remains.</li>
+<li>Seed the fixed certificate and token secrets (<code>scripts/seed-cluster-secrets.sh</code>).</li>
+<li>Start the clock, and apply <code>03-target-cluster/target-cluster-warm.yaml</code>.</li>
+<li>Every half-second, fetch the target kubeconfig if you don't have it yet, and list nodes with their <code>Ready</code> condition.</li>
+<li>Record, separately, the first moment a node whose name contains <code>-cp-</code> is <code>Ready</code>, and the first moment a node whose name contains <code>-workers-</code> is <code>Ready</code>.</li>
+<li>Cross-check both against each node's <code>Ready</code> <code>lastTransitionTime</code> from the API.</li>
+<li>Afterwards, refresh the agents' copy of the target credentials (<code>06-sympozium/refresh-target-kubeconfig.sh</code>).</li>
+</ol>
+<h2 id="appendix-e-the-ten-labs">Appendix E — The ten labs</h2>
+<p class="dateline dateline-record">Build log · July–September 2026</p>
+<p>The labs in <code>06-sympozium/labs/</code> were written in July against Sympozium 0.10.38. Each one is standalone, cleans up after itself, and shows real captured output. Their index marks every lab ✅ or ⚠️, and explains every ⚠️ in the lab's own README. Those markers are preserved below. The last column is what this book re-checked on 0.10.75 and Kubernetes 1.37.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Lab</th>
+<th>What it shows</th>
+<th>Marker (July, 0.10.38)</th>
+<th>Re-checked in this book</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01</td>
+<td><code>chat-serving</code></td>
+<td>An agent as an OpenAI-compatible chat endpoint</td>
+<td>✅ works</td>
+<td>Serving endpoints answered on 17 September (<code>verify.sh</code>); live completions through all three agents on 16 September (Chapter 17)</td>
+</tr>
+<tr>
+<td>02</td>
+<td><code>agentrun</code></td>
+<td>A one-shot task as a Kubernetes object</td>
+<td>✅ works — needs explicit <code>agentId</code>, <code>model</code>, <code>sessionKey</code>, <code>skills</code></td>
+<td>Re-run; required fields confirmed by a server dry run (Chapter 13)</td>
+</tr>
+<tr>
+<td>03</td>
+<td><code>schedule</code></td>
+<td>Timed agent work</td>
+<td>⚠️ prompt-only tasks work; skill-using tasks don't</td>
+<td>The platform's warm-up schedule was found stopped (Chapters 9 and 14)</td>
+</tr>
+<tr>
+<td>04</td>
+<td><code>policy</code></td>
+<td>Tool gating, egress, sandbox</td>
+<td>⚠️ explicit override blocked; default deny not enforced; network policy inert</td>
+<td>Override still refused; denied tool still used; network policy <em>is</em> now enforced, but the sandbox policy selects no pods (Chapter 14)</td>
+</tr>
+<tr>
+<td>05</td>
+<td><code>mcpserver</code></td>
+<td>External tool servers</td>
+<td>✅ discovery works; ⚠️ tool calls flaky with the model</td>
+<td>Not re-checked</td>
+</tr>
+<tr>
+<td>06</td>
+<td><code>ensemble</code></td>
+<td>Agents handing work to each other</td>
+<td>✅ works — <code>spec.enabled: true</code> required</td>
+<td>Re-run end to end and cleaned up (Chapter 16)</td>
+</tr>
+<tr>
+<td>07</td>
+<td><code>model-fit</code></td>
+<td>Which models fit the hardware</td>
+<td>✅ works</td>
+<td>Re-run: 1,365 candidate models scored against the host (Chapter 16)</td>
+</tr>
+<tr>
+<td>08</td>
+<td><code>capstone</code></td>
+<td>A real task under policy</td>
+<td>✅ works, partially — an RBAC gap surfaces</td>
+<td>Not re-checked</td>
+</tr>
+<tr>
+<td>09</td>
+<td><code>metrics</code></td>
+<td>Tokens, tool calls and latency compared across models</td>
+<td>✅ works</td>
+<td>Not re-run; figures predate three chart upgrades (Chapter 15)</td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>sre-triage</code></td>
+<td>A scored diagnosis of a broken workload</td>
+<td>✅ works — 3/3 root-caused an ImagePullBackOff</td>
+<td>Not re-run (Chapter 15)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Two statements in the labs index are now out of date. It describes <code>SympoziumInstance</code> objects in the agent manifests, and that resource type no longer ships with the chart. And its conventions describe <em>"observed 0.10.38 behavior"</em>, three upgrades ago.</p>
+<h2 id="appendix-f-a-glossary-for-the-boardroom">Appendix F — A glossary for the boardroom</h2>
+<ul>
+<li><strong>Agent</strong> (Sympozium) — an AI assistant declared as a Kubernetes object: its model, its tools, its policy, and its briefing, all in one reviewable file.</li>
+<li><strong>AgentRun</strong> — one piece of work given to an agent, recorded as an object with its result, its token usage and its duration.</li>
+<li><strong>Agentic control plane</strong> — software that lets AI agents observe and operate infrastructure through the same permissions, policies and audit trail as people.</li>
+<li><strong>Air-gapped</strong> — able to run with no connection to the internet.</li>
+<li><strong>Ambient mesh</strong> — Istio's service-mesh design with no proxy inside each application; a shared component on each machine handles encryption and identity.</li>
+<li><strong>CAPK</strong> — the Cluster API provider for KubeVirt: the plug-in that lets the cluster factory build machines as virtual machines.</li>
+<li><strong>CDI</strong> (Containerized Data Importer) — the KubeVirt companion that imports and prepares virtual-machine disk images.</li>
+<li><strong>Cluster API (CAPI)</strong> — open-source software that uses one Kubernetes cluster to build and maintain others from written declarations.</li>
+<li><strong>Container</strong> — a packaged application with everything it needs to run, lighter than a virtual machine because it shares the host's operating system.</li>
+<li><strong>Control plane</strong> — the part of a Kubernetes cluster that decides what should run where; the cluster's brain.</li>
+<li><strong>Declaration and reconciliation</strong> — writing down what should exist, and software continuously making reality match it.</li>
+<li><strong>Depreciation</strong> — spreading the cost of hardware over its useful life; the landlords themselves disagree on whether a server lasts five years or six.</li>
+<li><strong>East-west gateway</strong> — the door one cluster's mesh uses to reach another's, carrying encrypted, identity-bearing traffic between them.</li>
+<li><strong>Egress</strong> — traffic leaving a system; also the fee some providers charge for data leaving them.</li>
+<li><strong>Gateway API</strong> — the Kubernetes standard for declaring how traffic enters and moves between services, with ownership split between platform and application teams.</li>
+<li><strong>Golden image</strong> — a pre-built machine image with everything a cluster node needs baked in, so nothing is downloaded at boot.</li>
+<li><strong>Istio</strong> — the open-source service mesh this platform uses.</li>
+<li><strong>k3s</strong> — a small, single-binary distribution of Kubernetes.</li>
+<li><strong>Kind</strong> — "Kubernetes in Docker": complete Kubernetes clusters running as containers on one machine; used here as the laptop's data centre.</li>
+<li><strong>KubeVirt</strong> — open-source software that runs virtual machines as Kubernetes objects, beside containers.</li>
+<li><strong>Kubernetes</strong> — the open-source system that runs and manages containers across many machines.</li>
+<li><strong>Local-LLM-first</strong> — the rule that AI models run on hardware the organization controls, with hosted models used only where explicitly allowed.</li>
+<li><strong>Management cluster / workload cluster</strong> — the factory, and the clusters it builds.</li>
+<li><strong>MetalLB</strong> — software that gives Kubernetes Services real network addresses on ordinary networks.</li>
+<li><strong>mTLS</strong> (mutual TLS) — encryption in which <em>both</em> sides prove their identity, not just the server.</li>
+<li><strong>NetworkPolicy</strong> — a Kubernetes rule stating which workloads may talk to which, enforced by the network layer.</li>
+<li><strong>Ollama</strong> — the open-source server that runs AI models on the platform's own GPU.</li>
+<li><strong>Repatriation</strong> — moving workloads from a rented cloud back onto infrastructure the organization owns.</li>
+<li><strong>ServiceEntry</strong> — an Istio record that tells the mesh about a service outside it; the "before" picture of cross-cluster discovery.</li>
+<li><strong>SkillPack</strong> — a bundle of tools an agent may use, with the permissions those tools need.</li>
+<li><strong>Sovereign cloud</strong> — infrastructure whose data, technology and operations stay under the control of the organization and the jurisdiction it chooses.</li>
+<li><strong>SPIFFE identity</strong> — a standard, cryptographically verifiable name for a workload, such as <code>spiffe://cluster.local/ns/demo-apps/sa/trusted</code>.</li>
+<li><strong>Switching charges</strong> — fees for moving to another provider; banned in the EU from 12 January 2027 under the Data Act.</li>
+<li><strong>Token</strong> — the unit AI models read and write — roughly a short word — and the unit most AI is metered and billed in.</li>
+<li><strong>Total cost of ownership (TCO)</strong> — the full cost of an option over its life: purchase, operation, people, and exit.</li>
+<li><strong>Waypoint</strong> — an optional proxy that adds request-level rules (paths, methods, identities) to an ambient mesh, one per namespace.</li>
+<li><strong>Warm standby</strong> — a pre-built spare kept running so it can be handed over instantly; fast, but it holds capacity idle.</li>
+<li><strong>ztunnel</strong> — the ambient mesh's per-machine component: it encrypts traffic and carries identities, but sees connections, not individual requests.</li>
+</ul>
+<aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>Checked live on 17 September:</strong></li>
+<li>MetalLB pools and allocated LoadBalancer addresses on both clusters.</li>
+<li>The <code>kubeui</code> namespace (absent).</li>
+<li>Makefile target count (65) and the <code>make help</code> output.</li>
+<li>Controller image versions.</li>
+<li>The labs index text.</li>
+<li>"Files naming it" counts, from <code>grep -rl</code> over <code>*.sh *.yaml *.go *.ts *.tsx *.env Makefile</code>, excluding <code>book/</code>, <code>.worktrees/</code> and <code>node_modules</code>.</li>
+<li><strong>Node addresses</strong> (<code>.2</code>/<code>.3</code>/<code>.4</code>) are from <code>docker network inspect kind</code> on 17 September. <code>CLAUDE.md</code> still records <code>.2</code> as <code>cluster2-control-plane</code>.</li>
+<li><strong>The by-name procedure</strong> (D.4) is from a measurement script kept outside the repository during the writing of this book. Consider committing it as <code>scripts/time-to-ready-by-name.sh</code>, or fixing the two repository scripts, so Appendix D can point at the repo.</li>
+<li><strong>The spread of 4.7 s</strong> after the upgrade is computed from the three recorded runs (30.4 / 35.1 / 33.7). No chapter states it; consider adding it to Chapter 7's ledger.</li>
+<li><strong>Catalog rows marked "Not fixed"</strong> reflect the state on 17 September; revisit before publication. Rows sourced only from <code>CLAUDE.md</code> (C.1, C.8, C.9, most of C.10) were not re-reproduced for this appendix.</li>
+<li><strong>MetalLB annotations.</strong> Both spellings "worked on 17 September": <code>metallb.io/…</code> via the live Act 1/3/4 gateways, <code>metallb.universe.tf/…</code> via Chapter 10's re-plumb. Check whether the older spelling is deprecated in the installed MetalLB version.</li>
+<li><strong>Glossary</strong> definitions are deliberately non-technical. Have an engineer check that each is still true enough, and a non-engineer check that each is understandable.</li>
+</ul></aside>
+</article>

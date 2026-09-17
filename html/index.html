@@ -1,0 +1,680 @@
+<title>Own Your Cloud</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400,50;9..144,600,50;9..144,700,50&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #F3F4F1;
+    --surface: #FBFBF8;
+    --ink: #1B2430;
+    --ink-2: #4A5563;
+    --ink-3: #737C86;
+    --rule: #D6DAD3;
+    --rule-strong: #B8BFB6;
+    --accent: #1F5F4A;
+    --accent-soft: #E3EDE7;
+    --mono-bg: #EAEEE8;
+    --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    --body: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+    --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1720;
+      --surface: #151F2A;
+      --ink: #E6E8E3;
+      --ink-2: #A3ACB4;
+      --ink-3: #7E8892;
+      --rule: #2A3642;
+      --rule-strong: #3B4955;
+      --accent: #6FB79A;
+      --accent-soft: #17302A;
+      --mono-bg: #1B2732;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0F1720;
+    --surface: #151F2A;
+    --ink: #E6E8E3;
+    --ink-2: #A3ACB4;
+    --ink-3: #7E8892;
+    --rule: #2A3642;
+    --rule-strong: #3B4955;
+    --accent: #6FB79A;
+    --accent-soft: #17302A;
+    --mono-bg: #1B2732;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 56px 28px 96px;
+  }
+
+  /* ── title block ─────────────────────────────── */
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 22px;
+  }
+  h1 {
+    font-family: var(--display);
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+    font-weight: 700;
+    font-size: clamp(44px, 7vw, 72px);
+    line-height: 0.98;
+    letter-spacing: -0.015em;
+    margin: 0 0 18px;
+    text-wrap: balance;
+  }
+  .subtitle {
+    font-family: var(--display);
+    font-variation-settings: "opsz" 36, "SOFT" 50;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--ink-2);
+    margin: 0 0 12px;
+    max-width: 30em;
+    text-wrap: balance;
+  }
+  .alternates {
+    font-size: 14px;
+    color: var(--ink-3);
+    margin: 0 0 36px;
+  }
+  .alternates em { color: var(--ink-2); font-style: normal; }
+
+  .spine {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 22px;
+    align-items: baseline;
+    border-top: 1px solid var(--rule-strong);
+    border-bottom: 1px solid var(--rule);
+    padding: 14px 0;
+    margin: 0 0 52px;
+  }
+  .spine .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .spine .track {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    align-items: baseline;
+  }
+  .spine .track .arrow { color: var(--ink-3); }
+  .spine .track .now { color: var(--accent); font-weight: 500; }
+  .spine .note {
+    grid-column: 2;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+
+  /* ── section scaffolding ─────────────────────── */
+  section { margin: 0 0 56px; }
+  h2 {
+    font-family: var(--display);
+    font-variation-settings: "opsz" 72, "SOFT" 50;
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 1.15;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  p { margin: 0; max-width: 65ch; }
+  p + p { margin-top: 0.8em; }
+
+  .readers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-top: 18px;
+  }
+  .reader h3 {
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 15px;
+    margin: 0 0 6px;
+  }
+  .reader p { font-size: 15px; color: var(--ink-2); }
+  .reader .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 8px;
+  }
+
+  .closers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--rule-strong);
+    background: var(--surface);
+    margin-top: 18px;
+  }
+  .closer { padding: 18px 20px; }
+  .closer + .closer { border-left: 1px solid var(--rule); }
+  .closer h3 {
+    font-family: var(--display);
+    font-variation-settings: "opsz" 36, "SOFT" 50;
+    font-weight: 600;
+    font-size: 18px;
+    margin: 0 0 6px;
+  }
+  .closer p { font-size: 14px; color: var(--ink-2); }
+  .voice {
+    margin-top: 18px;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .voice strong { color: var(--ink); font-weight: 600; }
+
+  /* ── contents ────────────────────────────────── */
+  .part {
+    border-top: 1px solid var(--rule-strong);
+    padding-top: 22px;
+    margin: 0 0 44px;
+  }
+  .part-head {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 0 18px;
+    align-items: baseline;
+    margin: 0 0 8px;
+  }
+  .part-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding-top: 6px;
+  }
+  .part-head h2 { margin: 0; font-size: 30px; }
+  .part-epigraph {
+    grid-column: 2;
+    font-family: var(--display);
+    font-variation-settings: "opsz" 24, "SOFT" 50;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink-2);
+    max-width: 60ch;
+    margin: 6px 0 22px;
+  }
+
+  ol.chapters { list-style: none; margin: 0; padding: 0; }
+  .chapter {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 0 18px;
+    padding: 18px 0;
+    border-top: 1px solid var(--rule);
+  }
+  .chapter:first-child { border-top: 0; }
+  .ch-num {
+    font-family: var(--display);
+    font-variation-settings: "opsz" 72, "SOFT" 50;
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 1;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+    padding-top: 3px;
+  }
+  .ch-title {
+    font-family: var(--display);
+    font-variation-settings: "opsz" 36, "SOFT" 50;
+    font-weight: 600;
+    font-size: 21px;
+    line-height: 1.2;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+  .ch-blurb { font-size: 15.5px; color: var(--ink-2); max-width: 65ch; }
+  .ch-blurb em { color: var(--ink); }
+  .ch-blurb .n {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .ch-source {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink-3);
+    max-width: 72ch;
+  }
+  .ch-source::before { content: "source  "; letter-spacing: 0.08em; text-transform: uppercase; }
+  code {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    background: var(--mono-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .ch-source code { background: transparent; padding: 0; color: var(--ink-2); }
+
+  .bookend .ch-num { font-size: 12px; font-family: var(--mono); font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; padding-top: 8px; }
+
+  /* ── appendices & notes ──────────────────────── */
+  .appendices { list-style: none; margin: 14px 0 0; padding: 0; }
+  .appendices li {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 0 18px;
+    padding: 10px 0;
+    border-top: 1px solid var(--rule);
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .appendices li:first-child { border-top: 0; }
+  .appendices .ltr {
+    font-family: var(--display);
+    font-variation-settings: "opsz" 36, "SOFT" 50;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--ink-3);
+  }
+  .appendices strong { color: var(--ink); font-weight: 600; }
+
+  .notes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px;
+    margin-top: 18px;
+  }
+  .note h3 {
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 14px;
+    margin: 0 0 8px;
+  }
+  .note ul, .note ol { margin: 0; padding-left: 1.1em; font-size: 14px; color: var(--ink-2); }
+  .note li + li { margin-top: 5px; }
+  .shorter {
+    margin-top: 22px;
+    padding: 14px 18px;
+    background: var(--accent-soft);
+    font-size: 14px;
+    color: var(--ink-2);
+    max-width: none;
+  }
+  .shorter strong { color: var(--ink); }
+
+  footer {
+    border-top: 1px solid var(--rule-strong);
+    padding-top: 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--ink-3);
+  }
+
+  @media (max-width: 720px) {
+    .page { padding: 40px 20px 72px; }
+    .readers, .notes { grid-template-columns: 1fr; }
+    .closers { grid-template-columns: 1fr; }
+    .closer + .closer { border-left: 0; border-top: 1px solid var(--rule); }
+    .part-head, .chapter, .appendices li { grid-template-columns: 44px 1fr; gap: 0 12px; }
+    .part-epigraph { grid-column: 1 / -1; }
+    .spine { grid-template-columns: 1fr; }
+    .spine .note { grid-column: 1; }
+  }
+</style>
+
+<div class="page">
+
+  <header>
+    <p class="eyebrow">Table of contents · working draft · 2026-09-17</p>
+    <h1>Own Your Cloud</h1>
+    <p class="subtitle">From Cloud Tenant to Infrastructure Owner — a sovereign-Kubernetes story told in chapters</p>
+    <p class="alternates">Working title. Alternates: <em>The Thirty-Four-Second Cluster</em> · <em>Reclaiming the Margin</em></p>
+
+    <div class="spine">
+      <span class="label">The spine number</span>
+      <span class="track">
+        <span>90–150 s</span><span class="arrow">→</span>
+        <span>50.0 s</span><span class="arrow">→</span>
+        <span>42.7 s</span><span class="arrow">→</span>
+        <span>34.5 s</span><span class="arrow">→</span>
+        <span class="now">33.7 s</span>
+      </span>
+      <span class="note">Time from <code>kubectl apply</code> to a ready two-node cluster, as measured on this platform across the book's timeline; the last figure is after the Kubernetes 1.37 rebuild. Every figure in Parts II–V traces to a script in the repository.</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>Two readers, one story</h2>
+    <div class="readers">
+      <div class="reader">
+        <p class="kicker">The CxO who signs the cloud bill</p>
+        <h3>Reads Parts I and V, plus every chapter's closing blocks</h3>
+        <p>No commands required. The stakes are in money and risk, and the numbers are the ones a board would ask about.</p>
+      </div>
+      <div class="reader">
+        <p class="kicker">The engineer who would build the alternative</p>
+        <h3>Reads Parts II–IV as a build-along</h3>
+        <p>Every chapter ends in a state that can be reproduced from the repository, with the numbers that were actually measured — dead ends included.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How the chapters are told</h2>
+    <p>A composite enterprise, <strong>Meridian</strong> — fifteen years of VMware estate, a cloud bill rising faster than revenue. A CTO and a platform lead recur throughout. Each Part opens in the boardroom and cuts to the build log.</p>
+    <div class="closers">
+      <div class="closer">
+        <h3>The ledger</h3>
+        <p>What it cost, what it saved, what it proved. Numbers only where they were measured.</p>
+      </div>
+      <div class="closer">
+        <h3>Ask your team</h3>
+        <p>Three questions a CxO can put to their own organization the next morning.</p>
+      </div>
+      <div class="closer">
+        <h3>Open the repo</h3>
+        <p>The path, <code>make</code> target, or lab that reproduces the chapter.</p>
+      </div>
+    </div>
+    <p class="voice"><strong>Honesty is the voice.</strong> Dead ends are recorded with their numbers. Unsupported combinations are labeled as such. Nothing is scripted output. That is the difference between this book and a vendor whitepaper.</p>
+  </section>
+
+  <!-- ── Contents ─────────────────────────────────────────────── -->
+
+  <div class="part">
+    <ol class="chapters">
+      <li class="chapter bookend">
+        <span class="ch-num">Prologue</span>
+        <div>
+          <h3 class="ch-title">The Invoice</h3>
+          <p class="ch-blurb">Meridian's CTO reads the monthly bill for its slope, not its total. The briefing deck's waste figures — <span class="n">35%</span> over-provisioned, <span class="n">28%</span> idle, <span class="n">18%</span> orphaned, a <span class="n">40%</span> markup — meet the published one (<span class="n">29%</span>, self-estimated), and the book explains how it keeps score. It ends on the question the book answers: what would it take to <em>own</em> this instead of rent it?</p>
+          <p class="ch-source"><code>~/marketing/Reclaiming Margins with Sovereign Cloud.pptx</code>, ch. 1–2</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="part">
+    <div class="part-head">
+      <span class="part-num">Part I</span>
+      <h2>The Bill</h2>
+      <p class="part-epigraph">Why. The CxO arc, adapted from the strategic briefing deck. Business first; the machinery arrives only at the end of the Part.</p>
+    </div>
+    <ol class="chapters">
+      <li class="chapter">
+        <span class="ch-num">1</span>
+        <div>
+          <h3 class="ch-title">The Great Cloud ROI Myth</h3>
+          <p class="ch-blurb">The promise versus the P&amp;L. The <em>Innovation Tax</em> — "paying a premium for the privilege of being stuck" — and the <em>Success Tax</em> — "the better you perform, the more you pay."</p>
+          <p class="ch-source">deck ch. 1</p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">2</span>
+        <div>
+          <h3 class="ch-title">The Landlord Problem</h3>
+          <p class="ch-blurb">Renting versus owning. <em>"You're playing in the vendor's sandbox, and they set the rules on how high you can build."</em> Control-plane opacity: "you cannot customize the brain of your cluster." The apartment-rental analogy, taken seriously.</p>
+          <p class="ch-source">deck ch. 2</p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">3</span>
+        <div>
+          <h3 class="ch-title">The Sovereign Imperative</h3>
+          <p class="ch-blurb">Data residency and the buyers who actually ask for it — "enterprise Europe / India / public sector." Sovereignty as a hard constraint, not a feature. <em>Local-LLM-first</em> introduced as a business decision before it becomes a technical one.</p>
+          <p class="ch-source">deck ch. 3 · <code>Sovereign_Cloud_Agentic_Strategy.md</code> §4 "Non-Negotiables", §7</p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">4</span>
+        <div>
+          <h3 class="ch-title">Kubernetes That Runs Kubernetes</h3>
+          <p class="ch-blurb">Cluster API explained for a board: a management cluster that manufactures workload clusters. The managed-Kubernetes spectrum — Tanzu, CAPZ, Kubermatic. Why an organization with a VMware estate should care that <em>VMs are first-class citizens</em> here. The bridge from money to machinery.</p>
+          <p class="ch-source">deck ch. 4, slides 14–16 · <code>README.md</code> architecture diagram · <code>~/marketing/capi.mp4</code> for figures</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="part">
+    <div class="part-head">
+      <span class="part-num">Part II</span>
+      <h2>The Factory</h2>
+      <p class="part-epigraph">The cluster-provisioning story. Every number in this Part was measured on this repository.</p>
+    </div>
+    <ol class="chapters">
+      <li class="chapter">
+        <span class="ch-num">5</span>
+        <div>
+          <h3 class="ch-title">The First Cluster</h3>
+          <p class="ch-blurb">From <code>make clean</code> to a k3s cluster whose control plane and worker <em>are</em> virtual machines — CAPI, CAPK, CDI, and KubeVirt explained as each step happens on screen. <code>show-cluster.sh</code> as the victory lap.</p>
+          <p class="ch-source"><code>demo.sh</code> · <code>show-cluster.sh</code> · stages <code>00-prereqs</code> → <code>04-verify</code></p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">6</span>
+        <div>
+          <h3 class="ch-title">Ten Minutes Becomes Two</h3>
+          <p class="ch-blurb">Golden images: bake, containerDisk, a local registry. And the trap that <code>172.18.0.2:5000</code> is an alias only containerd can resolve — the address that drifts, and the script that keeps it honest.</p>
+          <p class="ch-source"><code>bake-common.sh</code> · <code>build-containerdisk.sh</code> · <code>scripts/fix-registry-hosts.sh</code> · <code>CLAUDE.md</code> (registry alias)</p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">7</span>
+        <div>
+          <h3 class="ch-title">Thirty-Six Percent Before the Kernel</h3>
+          <p class="ch-blurb">Instrumentation first. Why <code>phase-timings.sh</code> exists — "two optimisation dead ends each cost a full bake cycle to disprove." Measuring a cluster you cannot log into. The measured phase budget, and the sentence the whole speed story hangs on: <em>"36% of the wall clock (<span class="n">16.6 s</span>) elapses before the guest kernel starts."</em> And the day the stopwatch itself was caught stopping early — fooled by a ghost node baked into the golden image.</p>
+          <p class="ch-source"><code>docs/sub-60s-cluster-strategy.md</code> (phase-level measurement) · <code>scripts/phase-timings.sh</code></p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">8</span>
+        <div>
+          <h3 class="ch-title">Two Lines and a CPU Quota</h3>
+          <p class="ch-blurb">Four documented dead ends — <code>:preinit</code>, <code>:warm</code>, gating the worker on control-plane readiness ("<span class="n">53.1 s</span> median, a <span class="n">3.1 s</span> REGRESSION. The premise was wrong"), the no-route-to-host dials — and the two one-line fixes that delivered <span class="n">−31%</span>: <code>advertise-address</code> (<span class="n">50.0 → 42.7 s</span>) and <code>supportContainerResources</code> (<span class="n">42.7 → 34.5 s</span>). Thesis: <em>"every attempt to make the image smarter failed, while the two things that worked were a bad advertised address and a CPU quota."</em> With the caveat that limits every claim: N=3 against a 6 s spread; N≥7 or a quiet host.</p>
+          <p class="ch-source"><code>docs/sub-60s-cluster-strategy.md</code> §3, §6 · <code>scripts/configure-kubevirt-perf.sh</code></p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">9</span>
+        <div>
+          <h3 class="ch-title">Warmth Is Mandatory</h3>
+          <p class="ch-blurb">The warm pool: a standby cluster claimed in <span class="n">194 ms</span> instead of built in <span class="n">~50 s</span>, and the stable-pod-IP constraint that makes it tractable. Then the same rule applied to models — llama3.2's <span class="n">28–30 s</span> CPU cold start is why "Warmth is mandatory" is an architecture constraint shared by VMs and LLMs alike.</p>
+          <p class="ch-source"><code>docs/warm-pool-strategy.md</code> · <code>ui/backend/handlers/pool.go</code> · strategy doc, constraint #5</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="part">
+    <div class="part-head">
+      <span class="part-num">Part III</span>
+      <h2>The Fabric</h2>
+      <p class="part-epigraph">The mesh. Before/after storytelling: <code>05-istio/</code> is the confession, <code>07-istio-advanced/</code> is the fix.</p>
+    </div>
+    <ol class="chapters">
+      <li class="chapter">
+        <span class="ch-num">10</span>
+        <div>
+          <h3 class="ch-title">Hardcoded IPs and Other Confessions</h3>
+          <p class="ch-blurb">The "before" picture: cross-cluster discovery hand-plumbed with a <code>ServiceEntry</code>, a hardcoded MetalLB IP, and a NodePort proxy. It worked. It was also a lie waiting to be found out. The eight-step demo from the cross-cluster mind map is the chapter's spine; the mind map is its figure.</p>
+          <p class="ch-source"><code>05-istio/cross-cluster-demo.sh</code> · <code>~/marketing/cross-cluster-mindmap.html</code></p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">11</span>
+        <div>
+          <h3 class="ch-title">One Label</h3>
+          <p class="ch-blurb">Acts 1–3. The Gateway API ownership split: a <code>rogue-tenant</code> route the API server <em>accepts</em> and the Gateway <em>refuses</em> — and a second refusal nobody checked, of the demo's own tenant. Waypoints enforcing L7 authorization on SPIFFE identity with no sidecar in any pod. Multicluster failover where <code>istio.io/global: "true"</code> replaces everything in chapter 10: measured by status code, it works — but the act's own tally prints "<span class="n">success=20 failed=0</span>" with both clusters down, and healthy traffic splits half-and-half across sites.</p>
+          <p class="ch-source"><code>07-istio-advanced/act1-gateway</code>, <code>act2-waypoint</code>, <code>act3-multicluster</code> · README "Gotchas"</p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">12</span>
+        <div>
+          <h3 class="ch-title">The Model Is Just Another Service</h3>
+          <p class="ch-blurb">Act 4: agentgateway puts one control point in front of the host GPU's models — at no measurable latency cost, but with no lock, no token meter, and none of the fleet's agents routed through it. The repo's own "HONEST LIMITATION, worth saying out loud on stage" describes a tier that never ran. Act 5: Kiali, Prometheus, and the UI's Visual mode — where a topology view labelled <em>live</em> draws <span class="n">fourteen</span> things that no longer exist. Seeing the mesh is a board-level deliverable; so is knowing what a screen actually checked.</p>
+          <p class="ch-source"><code>07-istio-advanced/act4-ai-gateway</code>, <code>act5-observability</code> · <code>ui/frontend/src/components/visual/</code></p>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="part">
+    <div class="part-head">
+      <span class="part-num">Part IV</span>
+      <h2>The Brain</h2>
+      <p class="part-epigraph">Agentic operations. Authored fresh — nothing in the marketing folder covers this. The strategy document is the backbone.</p>
+    </div>
+    <ol class="chapters">
+      <li class="chapter">
+        <span class="ch-num">13</span>
+        <div>
+          <h3 class="ch-title">An Agent as a First-Class Object</h3>
+          <p class="ch-blurb">Sympozium: an <code>Agent</code> is a Kubernetes object, an <code>AgentRun</code> is a one-shot job, a serving agent is a drop-in OpenAI-compatible endpoint. The three UI modes — SRE, AI, Visual. The thesis: <em>"You are not building 'Claude for Kubernetes.' You are building a sovereign, air-gap-capable, VM-native, mesh-aware agentic control plane — a category that barely exists."</em></p>
+          <p class="ch-source">labs 01–02 · <code>06-sympozium/cluster2-agent.yaml</code> · <code>ui/backend/handlers/ai.go</code> · strategy doc §1</p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">14</span>
+        <div>
+          <h3 class="ch-title">Rules the Model Cannot Break</h3>
+          <p class="ch-blurb">The eight architecture constraints as a story: local-LLM-first, a pinned model endpoint, MetalLB discipline, an egress allowlist, mandatory warmth, an append-only audit, namespace-as-tenant isolation, sandboxed chat. Policy and tool gating and their <em>real</em> limits — default-deny that is not enforced, network policy that is inert on this CNI. The hard lesson: <em>"Do not rely on the systemPrompt to enforce that… enforce it below the model."</em></p>
+          <p class="ch-source">strategy doc "Architecture Constraints" · lab 04 · <code>CLAUDE.md</code> (mesh-sre-agent)</p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">15</span>
+        <div>
+          <h3 class="ch-title">Trust, but Verify</h3>
+          <p class="ch-blurb">Seven scenes with a live agent, and the ethic behind them: <em>"Nothing here is scripted output. If a call fails, the failure is what gets recorded."</em> The day the deterministic check was checking the wrong identity. A model that confidently reported nodes that did not exist, and the pod that mounted the real kubeconfig and returned the truth. A scored triage — <span class="n">3 of 3</span> correct root causes, <span class="n">6–10k</span> tokens, <span class="n">14–29 s</span> — and a real model comparison in which one run marked <em>Succeeded</em> never ran a single command: qwen2.5:7b at <span class="n">11.0 tokens/s</span> against llama3.2 at <span class="n">4.0</span>.</p>
+          <p class="ch-source"><code>06-sympozium/demo-mesh-sre.sh</code> · <code>docs/demo/mesh-sre-agent-demo.mp4</code> · labs 09–10 · <code>CLAUDE.md</code> (0.10.75 entry)</p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">16</span>
+        <div>
+          <h3 class="ch-title">The Fleet</h3>
+          <p class="ch-blurb">The three-plane agent fleet — Infrastructure, Tenant, Mesh — plus Security, FinOps, DevEx, and Observability personas. Ensembles, model fit, the cost-analyzer and incident-responder, the IaC security scanner. The six-phase roadmap and its promise: <em>"Execute Phase 0–1 well and you have a credible demo. Execute Phase 2–3 well and you have a product."</em></p>
+          <p class="ch-source">strategy doc §2, §3, §5, §6 · labs 06–07 · <code>docs/superpowers/specs/</code></p>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="part">
+    <div class="part-head">
+      <span class="part-num">Part V</span>
+      <h2>The Dividend</h2>
+      <p class="part-epigraph">Back to the boardroom.</p>
+    </div>
+    <ol class="chapters">
+      <li class="chapter">
+        <span class="ch-num">17</span>
+        <div>
+          <h3 class="ch-title">The Day We Upgraded Everything</h3>
+          <p class="ch-blurb">Kubernetes 1.35 → 1.37, Istio 1.30 → 1.31, k3s 1.31 → 1.37; both clusters destroyed and rebuilt from nothing. What nobody had scripted — the clusters themselves, KubeVirt, CDI — and the base-image script that existed all along but that nobody could find. The dead image that reported success. The version variable that had never controlled anything. The Istio release rated for "up to 1.36" that passed <span class="n">22 of 22</span> checks anyway. And a cluster that seemed to come back ten seconds faster, until the stopwatch was checked: <span class="n">33.7 s</span> for both nodes, unchanged. The moral: <em>reproducibility is the real sovereignty</em>, and institutional memory is a balance-sheet asset.</p>
+          <p class="ch-source"><code>CLAUDE.md</code> (2026-09-16 entries) · <code>02-capi-init/init-management-cluster.sh</code> · <code>07-istio-advanced/README.md</code></p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">18</span>
+        <div>
+          <h3 class="ch-title">Reclaiming the Margin</h3>
+          <p class="ch-blurb">The briefing deck's <span class="n">$12.5M → $8.2M</span> five-year TCO, taken apart line by line: savings that add up exactly with no line for what owning costs, <span class="n">70%</span> of it in lines no invoice records, and a <span class="n">5–7 year</span> payback that fits only at the expensive end. Then what the platform measured — reservations against use, <span class="n">0.33 kWh</span> per million generated tokens, the effort in the repo — a TCO worksheet, the seven-step Sovereign Cloud Journey, a <em>"Cloud Owning Culture"</em>, and what to ask your vendors, including the one you become.</p>
+          <p class="ch-source">deck ch. 5, slide 19 · <code>~/marketing/SovereignCloud_Flyer_v2.pdf</code></p>
+        </div>
+      </li>
+      <li class="chapter bookend">
+        <span class="ch-num">Epilogue</span>
+        <div>
+          <h3 class="ch-title">Own Your Cloud</h3>
+          <p class="ch-blurb">Meridian's CTO, twelve months later. Short. It ends on the flyer's line.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <section class="part">
+    <h2>Appendices</h2>
+    <ul class="appendices">
+      <li><span class="ltr">A</span><span><strong>The repo, stage by stage</strong> — <code>00-prereqs</code> through <code>07-istio-advanced</code>, one paragraph each, and the <code>make</code> targets that matter.</span></li>
+      <li><span class="ltr">B</span><span><strong>Addresses that must not move</strong> — the MetalLB IP allocation table and pool discipline.</span></li>
+      <li><span class="ltr">C</span><span><strong>The failure-mode catalog</strong> — the pitfalls and the chapters' findings, reorganized by <em>symptom</em>: four causes behind one identical "exit 2, zero log output" crash; scripts that reported success; statuses wrong in both directions; the registry alias; the admission race; per-run identities.</span></li>
+      <li><span class="ltr">D</span><span><strong>The measurement protocol</strong> — <code>phase-timings.sh</code>, why N≥7 on a noisy host, counting nodes by name rather than by number, and the figures as last measured: teardown <span class="n">18.9 s</span>, bring-up <span class="n">33.7 s</span> for both nodes.</span></li>
+      <li><span class="ltr">E</span><span><strong>The ten labs</strong> — quick reference, with the ✅ / ⚠️ honesty markers preserved.</span></li>
+      <li><span class="ltr">F</span><span><strong>A glossary for the boardroom</strong> — CAPI, KubeVirt, ambient mesh, waypoint, SPIFFE, agentic control plane, sovereign cloud — one plain-English sentence each.</span></li>
+    </ul>
+  </section>
+
+  <section class="part">
+    <h2>Production notes</h2>
+    <div class="notes">
+      <div class="note">
+        <h3>Must be written from scratch</h3>
+        <ul>
+          <li>All of Part IV in CxO-readable prose — the repo holds the technical truth; nothing holds the narrative.</li>
+          <li>The TCO bridge in ch. 18: 24-second clusters, warm pools, and local models, in dollars. The deck's figures are industry-generic; Meridian needs real cost data.</li>
+          <li>The Meridian device and the recurring closers.</li>
+          <li>A boardroom-level case for KubeVirt and "why VMs still matter" (ch. 4) — absent from both sources.</li>
+        </ul>
+      </div>
+      <div class="note">
+        <h3>Figures to source</h3>
+        <ul>
+          <li>Deck slides 14–16 → ch. 4</li>
+          <li><code>cross-cluster-mindmap.html</code>, rendered to SVG → ch. 10</li>
+          <li><code>capi.mp4</code> (8m56s), <code>ai.mp4</code> (2m50s) → stills for ch. 5 and 13</li>
+          <li><code>mesh-sre-agent-demo.mp4</code> → frames for ch. 15</li>
+          <li><code>phase-timings.sh</code> tables → charts for ch. 7–8, App. D</li>
+          <li><code>README.md</code> ASCII architecture → redraw once, reuse</li>
+        </ul>
+      </div>
+      <div class="note">
+        <h3>Writing order</h3>
+        <ol>
+          <li>Parts II and IV — the richest material; writing them fixes the voice.</li>
+          <li>Part III — the acts are already scripted stories that end in assertions.</li>
+          <li>Part I — adapt the deck; keep it short so engineers don't bail.</li>
+          <li>Part V, prologue, epilogue — they need real cost numbers and finished Parts to point back to.</li>
+        </ol>
+      </div>
+    </div>
+    <p class="shorter"><strong>If it needs to be shorter:</strong> about ten chapters by merging 1+2, 5+6, 7+8, 11+12, 15+16, 17+18. The closers work with or without Meridian.</p>
+  </section>
+
+  <footer>
+    Sources: <code>/mnt/mil</code> (platform repository) · <code>~/marketing/</code> (briefing deck, three flyers, cross-cluster mind map, two screencasts).<br>
+    Canonical file: <code>/mnt/mil/book/TABLE_OF_CONTENTS.md</code>
+  </footer>
+
+</div>

@@ -1,0 +1,624 @@
+<title>Trust, but Verify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part IV — The Brain</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="ch-number" aria-hidden="true">15</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 15: </span>Trust, but Verify</h1>
+    <blockquote class="epigraph"><p><em>An LLM's answer is a claim, not evidence.</em></p>
+<p>— a comment in <code>06-sympozium/demo-mesh-sre.sh</code></p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
+      <dt>Length</dt>
+      <dd>About 3,700 words · about 16 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Thursday in September · the CTO's office</p>
+<p>Vikram had printed two answers and folded the top of each page over, so that the name of the agent that wrote it was hidden.</p>
+<p>"Same question to two agents," he said. "Two different clusters. List the nodes, and report exactly what the command printed."</p>
+<p>Anita read the first.</p>
+<pre class="agent-reply"><code>The `kubectl get nodes -o name` command printed:
+
+node/cluster2-control-plane
+
+This indicates that there is one node named `cluster2-control-plane` in the cluster.
+</code></pre>
+<p>Then the second.</p>
+<pre class="agent-reply"><code>After retrying, I was able to run the `kubectl get nodes -o name` command. Here is the output:
+
+target-node-1
+target-node-2
+
+This is the list of nodes in the target cluster.
+</code></pre>
+<p>"One of those is invented," Vikram said.</p>
+<p>Anita did not take long. She tapped the second page. "Not this one. It says it retried. It's being careful."</p>
+<p>"That's the invented one. There is no <code>target-node-1</code>. There never was."</p>
+<p>She looked at the page again, the way she had looked at the stopwatch printout a few weeks earlier.</p>
+<p>"Operations wants an agent on the pager by October," she said. "When it wakes someone at three in the morning and tells them which node is failing, how do they know it's true?"</p>
+<p>"From the answer? They don't. The answer is the one part of it we can't use as evidence."</p>
+<p>"Then what is?"</p>
+<p>"Everything around the answer."</p>
+<hr class="scene-break" />
+<p class="dateline dateline-record">Build log · 16 September 2026</p>
+<h2 id="two-answers-one-of-them-invented">Two answers, one of them invented</h2>
+<p>Both answers were collected on the same day, during the platform rebuild described in Chapter 17, while checking that every agent could still reach what it was meant to reach. The prompt was identical — <em>"Use your kubectl tool: kubectl get nodes -o name. Report exactly what it printed."</em> — sent to two agents with two different jobs.</p>
+<p>The first came from <code>cluster2-agent</code>, which operates the management cluster. It was correct: that cluster has exactly one node, <code>cluster2-control-plane</code>.</p>
+<p>The second came from <code>target-cluster-agent</code>, whose tools reach inside the k3s cluster that runs as virtual machines. That cluster had two nodes, and their real names were <code>target-cluster-cp-9x5sr</code> and <code>target-cluster-workers-x79t2-tlzn9</code>. The agent got the count right and every name wrong. Its answer also described a process — <em>"After retrying, I was able to run…"</em> — for which there is no evidence at all.</p>
+<p>The first thing checked was not the model. It was the path the model's tool would have used. This agent reaches the target cluster through credentials stored as a Kubernetes Secret, and those credentials go stale whenever the target cluster is rebuilt. The repository already warns about exactly this, because when it happens the tool's TLS handshake fails <em>silently</em> and the model is left to fill the gap. So the certificate authority recorded in the Secret was compared with the one in the live kubeconfig. They matched. Then a throwaway pod, with no model anywhere near it, mounted the same Secret and ran the same command:</p>
+<pre><code>NAME                                 STATUS   ROLES           AGE   VERSION
+target-cluster-cp-9x5sr              Ready    control-plane   33m   v1.37.0+k3s1
+target-cluster-workers-x79t2-tlzn9   Ready    &lt;none&gt;          33m   v1.37.0+k3s1
+</code></pre>
+<p>The path worked, and the credentials were good. The invented answer was not caused by any plumbing that could be checked from outside. Whether the model called its tool at all in that run was never established.</p>
+<p>What <em>is</em> on record is a comment in the agent's own manifest, from an earlier day: <em>"Verified: a chat run returned both real target node names, matching a kubeconfig-mounting probe pod byte for byte."</em> Same agent, same kind of question. Truth one day, invention another.</p>
+<p>Earlier on 16 September, <code>cluster2-agent</code> — the one that got it right — had been asked a slightly different question: run <code>kubectl get nodes</code> and <em>"report the node name back to me in one short sentence."</em> Its entire reply was <code>ronics-01</code>. There is no such node anywhere on the platform. Asked again, this time for the exact output, it answered correctly.</p>
+<p>One pair of runs proves nothing about phrasing. It does prove something about confidence: a wrong answer and a right one arrive in the same voice.</p>
+<h2 id="where-the-truth-goes-missing">Where the truth goes missing</h2>
+<p>A Sympozium agent does not run <code>kubectl</code> itself. The model asks a sidecar container to run the command, the sidecar returns the output, and the model writes its answer from that output. That gives the truth three places to go missing, and from the outside, all three look like an answer.</p>
+<ul>
+<li><strong>The tool never runs.</strong> On the older 0.10.38 release, chat runs were created with no tool sidecar at all, so the model had nothing to call. Its reply in that state — <em>"It seems there might be an issue with the skill sidecar…"</em> — was the model giving up, not a real sidecar crash, and it took an investigation to tell the difference.</li>
+<li><strong>The tool runs and fails quietly.</strong> Stale credentials make the TLS handshake fail without a clear error, and the repository records what the smaller model did next: <em>"llama3.2 then confabulates plausible namespace output."</em> That is why <code>mesh-sre-agent</code> runs <code>qwen2.5:7b</code> instead, and the repository says so in as many words: not llama3.2, because <em>"it confabulates kubectl output when a tool call fails silently."</em></li>
+<li><strong>The tool runs, and the model mishandles the output.</strong> The demo script lists the failure modes it has seen on this exact setup: empty replies, and tool calls leaked into the answer as raw text instead of being executed. It notes a quieter one too — the model <em>"often mistakes tool output for user-supplied input and answers 'it looks like you provided…'"</em> — and puts the underlying reliability bluntly: <em>"tool-call reliability on a 7B model is roughly a coin flip."</em></li>
+</ul>
+<p>None of this is lying. A language model's job is to produce the most plausible continuation of what it has been given. When the evidence does not arrive, a plausible cluster is what it produces. The failure is not in the model's character. It is in any process that treats the model's output as the evidence.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-record">Build log · August 2026</p>
+<h2 id="seven-scenes-no-edits">Seven scenes, no edits</h2>
+<p>In August the team built a demo for <code>mesh-sre-agent</code>, an agent that answers one question — <em>is the service mesh healthy?</em> — from live cluster state. Demos of AI agents are often the least trustworthy artifacts in a project: recorded until the model behaves, cut to the good take. This one was written to be the opposite, and its rules sit in the header of <code>06-sympozium/demo-mesh-sre.sh</code>:</p>
+<p><em>"Nothing here is scripted output: every kubectl result and every agent answer is captured live at run time. If a call fails, the failure is what gets recorded — do not hand-edit the transcript to make a nicer demo."</em></p>
+<p>The script does allow retries, and the rule for them is the most important design decision in the file. A question is asked again only when the reply is <em>structurally</em> broken: empty, a transport error, or a tool call leaked as raw text. A reply that is well-formed but unhelpful is kept.</p>
+<p><em>"This is a retry, NOT a filter for answers we dislike… A well-formed but unhelpful answer is kept as-is — the demo shows what the agent actually said."</em></p>
+<p>The seven scenes run in a deliberate order: what the agent is; that it is an ordinary object in the cluster; the permissions gap that had to be closed before it could see the mesh at all; two live questions; a scene titled <em>Trust, but verify</em> that puts ground truth next to the agent's answer; and a closing scene on what the agent is <em>not</em> — including the admission that its instruction to refuse questions about metrics is <em>"a nudge and not a control."</em></p>
+<p>The recording from 29 August is in the repository as a 51-second video. Here is what it actually shows.</p>
+<p>In scene 4, the agent was asked whether the mesh's control plane was healthy. It answered:</p>
+<pre class="agent-reply"><code>It seems there was an issue with the `kubectl` command. Let's try the command again to ensure we are using it correctly. Could you please provide me with the specific `kubectl` command you were trying to execute? If you're not sure, I can provide a common example based on typical usage.
+</code></pre>
+<p>That is a failure, on camera, in the showcase recording — and it stayed in, because it was well-formed. The script's rule held against the script's own author.</p>
+<p>In scene 5, the agent was told to run one specific command and show its output. It answered:</p>
+<pre class="agent-reply"><code>It seems like the response you provided is related to Istio East-West Gateway, which appears to be functioning since the &quot;PROGRAMMED&quot; column shows &quot;True&quot; and it has been operational for 8 days. Is there a specific action or information you need regarding this gateway? …
+</code></pre>
+<p>There is the quirk the script's comments warned about — <em>"the response you provided"</em> — the model treating its own tool output as something the user had pasted in. Scene 6 then put the ground truth beside it, fetched straight from the Kubernetes API:</p>
+<pre><code>NAMESPACE      NAME             CLASS             ADDRESS          PROGRAMMED   AGE
+istio-system   istio-eastwest   istio-east-west   172.18.255.221   True         8d
+</code></pre>
+<p>Did the tool really run? Scene 6's narration tells the viewer to check <em>"the pod-name suffixes and the gateway address,"</em> because those are unguessable. But the answer in scene 5 contains neither. The gateway's name does not count as proof either: the agent's briefing names <code>istio-eastwest</code> outright, so the model could have produced it from its instructions without looking at the cluster. The one detail in the answer that could only have come from the live API is the age — <em>8 days</em>.</p>
+<p>That is enough. But the proof sat in a different detail from the one the narration, written before the run, said to look for.</p>
+<p>The honest scorecard of the showcase demo, then, is one failed answer and one correct answer with a quirk. Roughly a coin flip — just as the script's own comments predicted.</p>
+<blockquote>
+<p>An unguessable detail proves that a tool ran. "Unguessable" has to be judged against what the agent was told, not against what looks obscure.</p>
+</blockquote>
+<h2 id="scoring-the-work">Scoring the work</h2>
+<p>A demo shows a sample of two. The labs that close the repository's Sympozium learning series were built to answer the question a demo cannot: <em>does the agent do useful work, and how reliably?</em></p>
+<p>Lab 10 plants a fault. It deploys a workload whose container image tag does not exist — <code>nginx:this-tag-does-not-exist-9z9z9</code> — so that its pods sit in <code>ImagePullBackOff</code>, with the reason written plainly in their events. Then it gives <code>cluster2-agent</code> only a symptom: a workload in the namespace is unhealthy; find it, determine the root cause from the actual cluster state, propose a fix. <em>"Do not guess — inspect the cluster."</em></p>
+<p>The scoring is deliberately strict and entirely mechanical. A run passes only if its answer names the broken workload <em>and</em> the image-pull cause. An agent that says <em>"a pod is unhealthy, try restarting it"</em> without identifying the image <em>"is a fail — that's the difference between useful triage and noise."</em></p>
+<p>Three runs, on <code>qwen2.5:7b</code>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align: right;">Run</th>
+<th>Verdict</th>
+<th style="text-align: right;">Tool calls</th>
+<th style="text-align: right;">Input tokens</th>
+<th style="text-align: right;">Output tokens</th>
+<th style="text-align: right;">Seconds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>PASS</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6,228</td>
+<td style="text-align: right;">416</td>
+<td style="text-align: right;">14</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>PASS</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">7,136</td>
+<td style="text-align: right;">837</td>
+<td style="text-align: right;">29</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>PASS</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">10,390</td>
+<td style="text-align: right;">520</td>
+<td style="text-align: right;">25</td>
+</tr>
+</tbody>
+</table></div>
+<p>Three for three. And the cost of one investigation, in the lab's own words: <em>"~6–10k input tokens and 14–29s — the number to multiply by your alert volume when sizing this."</em> On this platform, that multiplication does not land on an invoice. The model runs on hardware the organization owns, so tokens are paid for in CPU and GPU time on that hardware. The arithmetic still decides how much hardware to buy.</p>
+<p>The table rewards a second look. The same task, on the same model, took one tool call on the first run and four on the third. Run 3 dug deepest and named the exact image tag that does not exist. Run 1 passed with a single call; the part of its answer the lab recorded names the pod and its <code>ErrImagePull</code> status, and infers from that status that the image could not be pulled. That is true — but the lab's own reading guide treats two or more calls, a <code>get</code> followed by a <code>describe</code> or <code>events</code>, as the sign of a real investigation. The scorer is a pattern match, and it gives both runs the same PASS.</p>
+<p>The scorer verifies the agent. Nothing yet verifies the scorer.</p>
+<h2 id="the-success-that-looked-at-nothing">The success that looked at nothing</h2>
+<p>Lab 09 asks a different question: <em>which model?</em> It runs the same three real tasks — count the pods in a namespace, report node readiness, list the virtual machines — on two local models, with the model as the only variable. Every figure but one comes from the platform's own record of each run; only tokens per second is derived.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Model</th>
+<th style="text-align: right;">Runs succeeded</th>
+<th style="text-align: right;">Avg tool calls</th>
+<th style="text-align: right;">Avg duration</th>
+<th style="text-align: right;">Avg tokens/s (whole run)</th>
+<th style="text-align: right;">Avg tokens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>llama3.2</td>
+<td style="text-align: right;">3 / 3</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">22.4 s</td>
+<td style="text-align: right;">4.0</td>
+<td style="text-align: right;">4,146</td>
+</tr>
+<tr>
+<td>qwen2.5:7b</td>
+<td style="text-align: right;">3 / 3</td>
+<td style="text-align: right;">1.3</td>
+<td style="text-align: right;">15.1 s</td>
+<td style="text-align: right;">11.0</td>
+<td style="text-align: right;">7,355</td>
+</tr>
+</tbody>
+</table></div>
+<p>On the summary line, both models are perfect: three runs, three successes. The per-run table underneath says otherwise. One of llama3.2's runs — the one about nodes — is marked <code>Succeeded</code> with <strong>zero tool calls</strong>. It answered a question about the live cluster without running a single command. The lab's README calls it what it is: <em>"it answered the node question without running kubectl, so that 'success' is untrustworthy."</em> The same prompt on <code>qwen2.5:7b</code> made one tool call.</p>
+<p><code>Succeeded</code>, it turns out, meant <em>the run finished</em>. It did not mean <em>the answer is true</em>, and nothing in that field could have said so.</p>
+<p>The fix costs almost nothing, which is what makes it worth a paragraph. The tool-call count is recorded on every run by the platform, not by the model. An alarm on <em>succeeded with zero tool calls</em> is one query. It would not catch every invention — the node list at the start of this chapter might have come from a run that called its tool and ignored the output — but it catches the cheapest kind for free.</p>
+<p>The rest of the table is a trade-off, not a verdict. <code>qwen2.5:7b</code> used its tools more, finished sooner, and produced output about 2.7 times as fast over the whole run — and consumed about 77% more tokens doing it. More rigor, more cost. That is a decision to make per workload, with the numbers in front of you.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-record">Build log · 16 September 2026</p>
+<h2 id="the-day-the-check-was-wrong">The day the check was wrong</h2>
+<p>Everything so far has been about checking the model. This section is about checking the check.</p>
+<p>On 16 September, the agent platform itself — Sympozium — was upgraded from chart version 0.10.57 to 0.10.75. The repository's standing instruction for confirming that <code>mesh-sre-agent</code> could still see the mesh was a single deterministic command, with no model involved, run as the agent's service account:</p>
+<pre><code>kubectl get gateways.gateway.networking.k8s.io -A \
+  --as=system:serviceaccount:sympozium-system:sympozium-agent
+</code></pre>
+<p>It returned the east-west gateway. Access confirmed.</p>
+<p>Then the agent itself was asked to list the gateways. It answered, in part:</p>
+<pre class="agent-reply"><code>It appears that the service account `sympozium-run-mesh-sre-agent-web-x76fk` does not have the necessary permissions to list resources of type `gateways` in the API group `gateway.networking.k8s.io` at the cluster scope. This error suggests a permissions issue.
+</code></pre>
+<p>This time the model was right and the deterministic check was wrong. The agent had reported a real error, accurately — and in doing so it named an account the check had never tested.</p>
+<p>The explanation came from reading a live run's pod rather than any document. Somewhere between chart versions 0.10.58 and 0.10.75, Sympozium stopped running every agent task under one shared service account. Each run now gets its own, named <code>sympozium-run-&lt;run-name&gt;</code>, created with the run, given its own narrowly scoped role, and deleted when the run finishes. The repository's extra permissions for reading the mesh had been granted to the old shared account by name, so every new run arrived under a name that grant had never heard of. Meanwhile the verification command kept asking about the shared account, which still had its access, and kept answering yes.</p>
+<p>The check had been right when it was written. A week earlier, after the previous upgrade, the repository recorded that the account had been <em>"verified via the actual <code>spec.serviceAccountName</code> on live pods before and after."</em> A verification is true on the day it runs.</p>
+<p>The fix rebound both permission grants — for the mesh and for the virtual machines — from one account name to the group Kubernetes automatically assigns to every service account in the namespace, so each new per-run account inherits read access the moment it exists. It was then verified the way it should have been verified in the first place: by reading the account name off a live run's pod, and checking <em>as that account</em>.</p>
+<pre><code>kubectl get gateways.gateway.networking.k8s.io -A \
+  --as=system:serviceaccount:sympozium-system:sympozium-run-mesh-sre-agent-web-twt55
+</code></pre>
+<p>Then the agent was asked again:</p>
+<pre class="agent-reply"><code>It appears that you have an Istio East-West Gateway service running in the `istio-system` namespace with the name `istio-eastwest`. The service is accessible at `172.18.255.221` and has been configured to be active since 26 days.
+</code></pre>
+<p>The address is not in the agent's briefing, and the age — twenty-six days — matched the cluster exactly. The tool ran.</p>
+<p>The fix has a cost, and it belongs in the ledger. Per-run accounts are a <em>better</em> security design than one shared account: each run holds only what that run needs. Binding the namespace's whole service-account group restored the agent's reach, and at the same time gave read access to the mesh and virtual-machine configuration to every service account in that namespace, agent or not. It is read-only, and this is a demo platform. It is still a trade someone should make on purpose rather than inherit from an upgrade-day fix.</p>
+<p>One more loose end, recorded because this chapter would be hypocritical without it. The demo script's own verification scenes still check as <code>sympozium-agent</code>. They pass, because the group binding covers that name too, so nothing on screen would look wrong. But they no longer test the identity the agent actually runs as. For now, the scene called <em>Trust, but verify</em> is verifying the wrong thing.</p>
+<h2 id="a-ladder-of-evidence">A ladder of evidence</h2>
+<p>Taken together, this chapter's incidents sort into five levels of evidence, from weakest to strongest. Each rung costs more than the one below it, and each catches something the rung below cannot.</p>
+<ol>
+<li><strong>The answer.</strong> A claim, nothing more. Tone carries no information: of the two node lists, the invented one sounded more careful.</li>
+<li><strong>The run's own record.</strong> Did the agent call a tool at all? A success with zero tool calls is a red flag, and the platform records it for free.</li>
+<li><strong>A detail it could not have guessed.</strong> An age, an address, a generated suffix — judged against what the agent was <em>told</em>. The gateway's name was in its briefing; its age was not.</li>
+<li><strong>Independent ground truth, as the identity the agent really runs as.</strong> The same query, run by something that is not the model, using an account name read off a live pod — not remembered from a runbook.</li>
+<li><strong>A score against a known answer, repeated, with the cost recorded.</strong> A planted fault, a strict pass rule, several runs, tokens and seconds for each — and then a look at what the scorer cannot see.</li>
+</ol>
+<p>A typical demo stops at the first rung. Rungs 2 and 4 can run automatically on every answer that matters. Rung 5 is how you decide whether to deploy an agent at all, and how you notice when a model update, a prompt change, or a platform upgrade quietly makes it worse.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-fiction">Meridian · the following Monday</p>
+<p>Anita had written the rules for the October pilot herself, on one page.</p>
+<p>The agent may triage alerts. It may not act on them. Every answer it gives reaches the on-call engineer with the raw tool output attached underneath — not summarized, attached. A run that reports success with no tool calls pages a human with a warning instead of an answer. Once a week, the triage scorecard runs against a planted fault, and its pass rate goes on the operations dashboard next to the cost of one investigation. And the access check reads the agent's identity off a live pod, every time it runs.</p>
+<p>Vikram read it twice. "That's five rules for one agent."</p>
+<p>"It's one rule," Anita said, "written out five ways."</p>
+<p>She took the page back and wrote a line across the top.</p>
+<p><em>No receipt, no claim.</em></p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<ul>
+<li><strong>Measured:</strong> 3 of 3 correct triages of a planted fault on <code>qwen2.5:7b</code>, at 6,228–10,390 input tokens and 14–29 seconds each, using anywhere from 1 to 4 tool calls for the same task.</li>
+<li><strong>Compared:</strong> <code>qwen2.5:7b</code> against llama3.2 on the same three tasks — 1.3 against 0.7 tool calls per run, 15.1 against 22.4 seconds, 11.0 against 4.0 tokens per second over the whole run, 7,355 against 4,146 tokens.</li>
+<li><strong>Caught:</strong> a run marked <code>Succeeded</code> that never ran a tool; two invented node lists; a showcase demo answer asking the user which command they meant; a verification command testing an identity the agent had stopped using.</li>
+<li><strong>Fixed:</strong> the agent's read access, rebound from one account name to the namespace's service-account group — restoring its reach, and widening who else holds that read access.</li>
+<li><strong>Still owed:</strong> a demo whose own verification scenes check the old identity; a scorer that cannot tell a one-call pass from a four-call pass; lab figures captured on an older release and not yet re-run; and samples of three.</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>When an agent reports a fact, what evidence travels with it?</strong> Ask to see the tool output next to the answer, not the answer on its own.</li>
+<li><strong>How would we know that a "successful" agent run looked at anything at all?</strong> Is there an alarm on zero tool calls?</li>
+<li><strong>When did we last check an agent's access as the identity it runs as today?</strong> Not the one written in the runbook.</li>
+</ol>
+<h2 id="open-the-repo">Open the repo</h2>
+<ul>
+<li><code>06-sympozium/demo-mesh-sre.sh</code> — the seven scenes and their retry rule. <code>SCENE_DIR=&lt;dir&gt;</code> writes a transcript; <code>scripts/render-demo-video.sh &lt;dir&gt; &lt;out.mp4&gt;</code> renders it. The August recording is <code>docs/demo/mesh-sre-agent-demo.mp4</code>.</li>
+<li><code>bash 06-sympozium/labs/10-sre-triage/run-triage.sh</code> — the scored triage. Add <code>LAB_MODEL=llama3.2</code> to run it on the other model.</li>
+<li><code>bash 06-sympozium/labs/09-metrics/run-metrics.sh</code> — the model comparison, read from each run's <code>status.tokenUsage</code>.</li>
+<li><code>kubectl get pod &lt;run-pod&gt; -n sympozium-system -o jsonpath='{.spec.serviceAccountName}'</code> — the identity to verify against. <code>06-sympozium/agent-istio-rbac.yaml</code> explains the group binding and its history.</li>
+<li><code>CLAUDE.md</code>, the <code>target-cluster-agent</code> pitfall — the probe pod that mounts the agent's kubeconfig Secret and runs <code>kubectl</code> with no model in the loop.</li>
+</ul>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>Correction made to the table of contents.</strong> It gave the lab 09 comparison as "llama3.2 at 22.4 tok/s against qwen2.5:7b at 15.1." Those are average run durations in seconds. Throughput was 4.0 against 11.0 tokens per second. Fixed in <code>book/TABLE_OF_CONTENTS.md</code>.</li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders, as in Chapter 8.</li>
+<li><strong>Evidence not yet in the repo.</strong> The 16 September answers (<code>ronics-01</code>, <code>target-node-1</code>/<code>target-node-2</code>, and the per-run-account permission error) come from the session record of the upgrade, not from a committed file. Commit a verification log before print, or the chapter's opening exhibit fails its own "Open the repo" promise.</li>
+<li><strong>Demo script is out of date.</strong> Scenes 3 and 6 of <code>demo-mesh-sre.sh</code> verify as <code>sympozium-agent</code>; since chart 0.10.75 the agent's runs use per-run accounts. Derive the account from a live run pod instead. Separately, scene 6's narration points to "pod-name suffixes and the gateway address"; in the August recording, the only unguessable detail the agent actually produced was the age.</li>
+<li><strong><code>CLAUDE.md</code> needs two corrections.</strong> Its <code>mesh-sre-agent</code> section still recommends verifying as <code>sympozium-agent</code>. Its 0.10.75 entry says the agent was "confabulating a 'permission issue' writeup"; the recorded answer was accurate and named the real per-run account.</li>
+<li><strong>The group binding is broader than the agent.</strong> It grants read on mesh and VM configuration to every service account in <code>sympozium-system</code>. Decide whether the book should recommend a narrower design, or present this as the demo-grade trade-off it is.</li>
+<li><strong>Lab 10's scorer.</strong> Its README treats two or more tool calls as a real investigation, but run 1 passed with one. Consider requiring the literal missing tag in the answer.</li>
+<li><strong>Lab figures predate later upgrades.</strong> Labs 09 and 10 were captured on the 0.10.38 release, before the 0.10.47, 0.10.57, and 0.10.75 upgrades and the Kubernetes 1.37 rebuild. Re-run both before print.</li>
+<li><strong>Prompt-phrasing anecdotes conflict.</strong> The demo script's comments say asking for a judgment gets more real content than asking for a relay; on 16 September, asking for exact output beat asking for a sentence. Both are single observations — keep either from hardening into advice.</li>
+<li><strong>Dependencies.</strong> The sidecar explanation overlaps Chapter 13, and the "nudge, not a control" refusal finding is Chapter 14's; trim whichever repeats once those are written.</li>
+<li><strong>Figures.</strong> 15.1: the two node lists beside the probe pod's output. 15.2: the ladder of evidence. 15.3: stills of scenes 5 and 6 side by side (extractable from the video with <code>ffmpeg</code>).</li>
+</ul></aside>
+</article>

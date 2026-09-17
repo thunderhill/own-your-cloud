@@ -1,0 +1,461 @@
+<title>Own Your Cloud</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>After Part V</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="bookend-label">Epilogue</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Epilogue: </span>Own Your Cloud</h1>
+    <blockquote class="epigraph"><p><em>Open standards. Your data, your platform, your rules — always.</em></p>
+<p>— Sovereign Cloud campaign flyer, March 2026</p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
+      <dt>Length</dt>
+      <dd>About 1,200 words · about 5 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Monday in September 2026 · the CTO's office</p>
+<p>The invoice came on the first working day of the month, as it always did.</p>
+<p>Anita read the slope before the total, as she always did. It had not changed much. Nothing in production had moved. The pilot was a pilot, and she had refused, more than once, to let anyone call it anything else. Twelve months ago she had written a question above the total. The answer, so far, was a platform on a single rack in the basement and a folder of measurements.</p>
+<p>Under the invoice was a proof from the marketing team: a one-page flyer for the internal launch, due out on Friday. Across the top it said <em>Sovereign Cloud</em>. Down the page were six promises, each with a short line of copy, and a band at the bottom: <em>Save $Millions — Creating a Cloud Owning Culture.</em> Across the bottom right corner, in the largest type on the page: <em>Own Your Cloud.</em></p>
+<p>She uncapped a pen and read it the way she had learned to read everything this year: one claim at a time, against something measured.</p>
+<p><strong>AI-Driven Intelligence</strong> — <em>"Built-in AI models and automated workflows that learn, adapt, and act."</em></p>
+<p>She underlined <em>act</em>. In September she had written the rule for the agent pilot herself: the agent may triage alerts; it may not act on them. The models ran on hardware in the building. The smallest had once invented a cluster's output when its tool failed quietly. The better one had got a planted fault right three times out of three. She crossed out <em>and act</em> and wrote in the margin: <em>and advise — every answer checked.</em></p>
+<p><strong>Service Mesh Visualization</strong> — <em>"Live visual map of your service mesh — traffic, health and topology."</em></p>
+<p>She remembered the evening before the board meeting: a map labelled <em>live</em> on which fourteen of twenty-one things did not exist, thirteen of them drawn green. The mesh itself was real; failover between the clusters had been measured by status code, thirty calls out of thirty. She wrote: <em>live where checked. Every box traceable to a lookup that could come back empty.</em></p>
+<p><strong>Zero Vendor Lock-In</strong> — <em>"Open standards. Your data, your platform, your rules — always."</em></p>
+<p>That one was nearly true, and she let it stand. Every component was open source. But she added a note underneath, because the year had earned it: <em>no vendor lock-in is not the same as no dependency.</em> A young provider had reported a working cluster as unavailable. A moving version tag had crashed a service thousands of times. An upgrade had taken a week. <em>Our rules — and our maintenance.</em></p>
+<p><strong>Sovereign &amp; Secure</strong> — <em>"Data center-grade security. Meets residency, privacy and compliance mandates."</em></p>
+<p>The models were local. A new cluster booted without touching the internet. The mesh's root of trust had been generated in-house. And the model gateway had shipped without a lock, the observability stack was still downloaded from a public repository at install time, and some demonstration keys were sitting in version control. She wrote: <em>sovereign: yes, audited quarterly. Secure: in progress — list attached.</em></p>
+<p><strong>Autonomous Operations</strong> — <em>"Self-healing infra with auto-scaling and hands-free management."</em></p>
+<p>She struck out <em>hands-free</em> with one line, and did not replace it.</p>
+<p><strong>Full Observability</strong> — <em>"Deep telemetry across compute, network and storage layers."</em></p>
+<p>Deep, yes. But the model traffic — the traffic the board asked about most — had been counted in a metric nobody displayed, with no model name and no token count. She wrote: <em>add: tokens, by model. That's the bill.</em></p>
+<p>Then she came to the band at the bottom, and stopped.</p>
+<p><em>Save $Millions.</em></p>
+<p>Nobody had measured that. The platform could build a cluster from a written order with both machines ready in a median of 33.7 seconds, and tear it down in 18.9. It could keep a spare cluster warm and hand it over in a fifth of a second. Those were measurements. The savings were a projection from a deck that gave no sources, and from other companies' accounts. Meridian's own number would come from Meridian's own invoice, workload by workload. It did not exist yet.</p>
+<p>She drew a box around <em>Save $Millions</em> and wrote inside it: <em>not yet measured.</em></p>
+<hr class="scene-break" />
+<p>Vikram knocked on the open door, saw the flyer, and winced at the amount of ink on it.</p>
+<p>"Marketing wants it back by Wednesday," he said.</p>
+<p>"They'll have it." She turned the page round so he could read the margins. "Most of it is right. It's just written as if we'd finished."</p>
+<p>He read it from the top. "You kept <em>Open standards</em>."</p>
+<p>"It's true."</p>
+<p>"And the band at the bottom?"</p>
+<p>"<em>Creating a Cloud Owning Culture</em> stays." She tapped it. "But I want to know what we mean by it before we print it. I don't think we mean the hardware."</p>
+<p>"What, then?"</p>
+<p>Anita thought about the year. A dashboard that said <em>Ready</em> about a machine that couldn't work, and the rule that followed: say <em>working</em>, and only when something has worked. A demo whose success didn't depend on the step before it, kept on purpose and labelled as the before picture. A failover check that could not fail, and the rule that no check reaches a dashboard until someone has watched it fail. A warm standby nobody exercised. An AI control point the AI didn't use.</p>
+<p>"Owning isn't the servers," she said. "Anybody can buy servers. Owning is knowing what's true about them, and being able to show someone else how you know. Renting lets you skip that. It's most of what the rent pays for." She capped the pen. "The culture is the checking."</p>
+<p>Vikram looked at the flyer for a while, at the crossings-out and the boxes and the margin notes that now took up more of the page than the copy.</p>
+<p>"So what's left, once you've taken out everything we haven't proved?"</p>
+<p>Anita turned the page back round, and put her finger on the line in the corner that she had not marked at all.</p>
+<p><strong>Own Your Cloud.</strong></p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<p><em>The year, measured — collected from the chapters of this book.</em></p>
+<ul>
+<li><strong>The factory:</strong> a two-machine Kubernetes cluster built from a written declaration, both machines ready in a median of 33.7 s and torn down in 18.9 s, on open-source Cluster API and KubeVirt, on owned hardware (Chapters 4, 7 and 8).</li>
+<li><strong>The fabric:</strong> failover between two clusters measured by status code, 30 calls out of 30, with one label replacing hand-written cross-cluster plumbing (Chapters 10 and 11).</li>
+<li><strong>The brain:</strong> AI agents on models hosted in the building; a planted fault triaged correctly in 3 runs out of 3; a smaller model that invented output when its tool failed quietly (Chapters 13–16).</li>
+<li><strong>The gauges:</strong> a worker reported <code>Ready</code> that could not run work; a cluster reported unavailable while it served workloads; a map labelled <code>live</code> drawing fourteen things that did not exist; a failover check that printed success during a total outage (Chapters 4, 5, 11 and 12).</li>
+<li><strong>The money:</strong> not yet measured against Meridian's own invoice. Part V is where that happens.</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>Which of the claims we make about our own platform have we measured — and which are we still printing?</strong></li>
+<li><strong>When did each of our important checks last fail, on purpose, in front of someone?</strong></li>
+<li><strong>If we owned it all tomorrow, who would know what is true about it — and how would they show us?</strong></li>
+</ol>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>Flyer text</strong> is from <code>~/marketing/SovereignCloud_Flyer_v2.pdf</code> (the unbranded flyer; the "Save $Millions" and "Creating a Cloud Owning Culture" band appears only in v2). The six pillar lines are quoted verbatim from its extracted text. Do not quote the separately branded flyer.</li>
+<li><strong>Every measured claim in the scene</strong> traces to a drafted chapter:</li>
+<li>33.7 s / 18.9 s — Chapter 7.</li>
+<li>Standby claim "a fifth of a second" — 194 ms in June, Chapter 9, not re-measured.</li>
+<li>Worker <code>Ready</code> that couldn't work — Chapter 5.</li>
+<li>Before picture kept and labelled — Chapter 10.</li>
+<li>Failover 30/30, and the check that couldn't fail — Chapter 11.</li>
+<li>Map with 14 of 21 non-existent nodes; gateway without a lock; model traffic without model or token labels — Chapter 12.</li>
+<li>Agents may triage, not act — Chapter 15.</li>
+<li>3-of-3 triage and llama3.2 confabulation — Chapter 15.</li>
+<li><code>Available=False</code> — Chapter 4.</li>
+<li>Week-long upgrade — Chapter 17.</li>
+<li>Moving-tag crash — Chapter 2.</li>
+<li>Committed demo keys — Chapter 3.</li>
+<li><strong>"A single rack in the basement"</strong> is Meridian fiction. The real platform in the build logs runs on one laptop, and the prologue says so. Keep the two distinct.</li>
+<li><strong>Chapter 18 is not yet drafted.</strong> The epilogue promises only that Part V is "where that happens". Revisit once Chapter 18 exists, especially the savings line.</li>
+<li><strong>"Anybody can buy servers… It's most of what the rent pays for"</strong> is an opinion in Anita's voice. Keep it as dialogue, not narration.</li>
+<li><strong>The Meridian scene is fiction.</strong></li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
+</ul></aside>
+</article>
