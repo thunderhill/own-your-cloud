@@ -72,7 +72,7 @@ Four documented dead ends — `:preinit`, `:warm`, gating the worker on control-
 > Source: `docs/sub-60s-cluster-strategy.md` §3, §6; `scripts/configure-kubevirt-perf.sh`.
 
 **9. Warmth Is Mandatory**
-The warm pool: a standby cluster **claimed in 194 ms** instead of built in ~50 s, and the stable-pod-IP constraint that makes it tractable. Then the same rule applied to models — llama3.2's **28–30 s CPU cold start** is why *"Warmth is mandatory"* is an architecture constraint shared by VMs and LLMs alike.
+The warm pool: a standby cluster **claimed in 467 ms** (18 September; was 194 ms in June, unmeasured since — re-measured after fixing the pool's own ghost-node readiness bug) instead of built in ~34 s, and the stable-pod-IP constraint that makes it tractable. Then the same rule applied to models — llama3.2's **28–30 s CPU cold start** is why *"Warmth is mandatory"* is an architecture constraint shared by VMs and LLMs alike.
 > Source: `docs/warm-pool-strategy.md`, `ui/backend/handlers/pool.go`, `Sovereign_Cloud_Agentic_Strategy.md` constraint #5.
 
 ---

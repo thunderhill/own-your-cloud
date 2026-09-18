@@ -150,7 +150,7 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | Cause | Where | Fix or status |
 |---|---|---|
 | A provider shipped a proxy image that no longer exists; readiness waits timed out into an <code>&#124;&#124; true</code> fallback, so setup reported success | `make capi-init` (Chapter 17) | Image patched automatically in `init-management-cluster.sh` |
-| The KubeVirt CPU setting raced KubeVirt's own start-up and silently did not apply | `configure-kubevirt-perf.sh` auto-run | Check `supportContainerResources` after any `capi-init`; re-run `make kubevirt-perf` |
+| The KubeVirt CPU setting's applying step never ran because the setup script itself was killed by an external time limit mid-readiness-wait (corrected 18 September; first misdiagnosed as a race with KubeVirt's own start-up) | `configure-kubevirt-perf.sh` auto-run (Chapter 17) | Check `supportContainerResources` after any `capi-init`; re-run `make kubevirt-perf` |
 | A documented `K3S_VERSION` override never reached the image being baked | `bake-common.sh` (Chapter 17) | Both version literals updated and commented |
 | Image checks tested whether a tag existed, not what it contained | `ensure-warm-image`, `pre-pull` | `:warm` rebaked; `:latest` and `:preinit` still stale |
 | Built-in SkillPacks "silently dropped" at install — really the chart applying them before its own admission webhook was serving | `helm install` | `fix-missing-builtin-skillpacks.sh` |
@@ -162,7 +162,7 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | Cause | Where | Fix or status |
 |---|---|---|
 | The worker node was `Ready` but tainted as uninitialized, so it accepted no workloads | Target cluster (Chapter 5) | Not fixed |
-| A ghost node baked into the golden image satisfied "2 nodes Ready" before the worker joined | Both timing scripts (Chapter 7) | Measure by name (Appendix D); scripts not fixed |
+| A ghost node baked into the golden image satisfied "2 nodes Ready" before the worker joined | Both timing scripts, and (found 18 September) the UI backend's own `targetNodesReady` — used by both the on-demand deploy path and the warm pool (Chapter 7, Chapter 9) | Measure/count by name (Appendix D); fixed in `pool.go` 18 September, standalone scripts still not fixed |
 | A missing worker timestamp was treated as zero, so "both nodes" meant the control plane only | `phase-timings.sh` (Chapter 7) | Not fixed |
 | The deterministic permission check tested an identity running pods no longer used | Agent RBAC after 0.10.75 (Chapter 15) | Bindings moved to a group; check the live pod's account |
 | A topology view labelled `live` drew 14 nodes that did not exist, 13 of them healthy | Visual mode (Chapter 12) | Not fixed |
@@ -243,7 +243,7 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | Cluster bring-up, both nodes ready | **33.7 s** median (30.4 / 35.1 / 33.7) | 17 September, by node name, warm manifest, Kubernetes 1.37 |
 | Control plane alone | **24.7 s** median | Same runs |
 | Teardown | Delete command returned at **10.15 s**; every VM and machine gone at **18.9 s** | 17 September, a single run |
-| Standby claim | **194 ms** | June; not re-measured since |
+| Standby claim | **467 ms** median (1.059 / 0.467 / 0.465) | 18 September, by name-based readiness check, warm-image standby; was 194 ms in June |
 | Model load, cold vs warm | 2.3–2.6 s cold; 0.14–0.17 s warm | 17 September, GPU, qwen2.5:7b and llama3.2 (Chapter 9) |
 | Local model energy | 1.19 J per generated token; 0.33 kWh per million tokens (GPU only) | 17 September, qwen2.5:7b (Chapter 18) |
 | Cross-cluster failover | 30 of 30 HTTP 200, all from `cluster2` | 17 September, Istio 1.31 (Chapter 11) |

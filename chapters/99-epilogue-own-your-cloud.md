@@ -42,7 +42,7 @@ Then she came to the band at the bottom, and stopped.
 
 *Save $Millions.*
 
-Nobody had measured that. The platform could build a cluster from a written order with both machines ready in a median of 33.7 seconds, and tear it down in 18.9. It could keep a spare cluster warm and hand it over in a fifth of a second. Those were measurements. The savings were a projection from a deck that gave no sources, and from other companies' accounts. Meridian's own number would come from Meridian's own invoice, workload by workload. It did not exist yet.
+Nobody had measured that. The platform could build a cluster from a written order with both machines ready in a median of 33.7 seconds, and tear it down in 18.9. It could keep a spare cluster warm and hand it over in under half a second. Those were measurements. The savings were a projection from a deck that gave no sources, and from other companies' accounts. Meridian's own number would come from Meridian's own invoice, workload by workload. It did not exist yet.
 
 She drew a box around *Save $Millions* and wrote inside it: *not yet measured.*
 
@@ -99,7 +99,7 @@ Anita turned the page back round, and put her finger on the line in the corner t
 - **Flyer text** is from `~/marketing/SovereignCloud_Flyer_v2.pdf` (the unbranded flyer; the "Save $Millions" and "Creating a Cloud Owning Culture" band appears only in v2). The six pillar lines are quoted verbatim from its extracted text. Do not quote the separately branded flyer.
 - **Every measured claim in the scene** traces to a drafted chapter:
   - 33.7 s / 18.9 s — Chapter 7.
-  - Standby claim "a fifth of a second" — 194 ms in June, Chapter 9, not re-measured.
+  - Standby claim "under half a second" — 467 ms median, three runs, 18 September, Chapter 9 (was 194 ms in June, resolved 18 September).
   - Worker `Ready` that couldn't work — Chapter 5.
   - Before picture kept and labelled — Chapter 10.
   - Failover 30/30, and the check that couldn't fail — Chapter 11.

@@ -112,7 +112,7 @@ Put the two kinds of warmth side by side and they turn out to have the same shap
 | | A cluster | A model |
 |---|---|---|
 | Cold | 33.7 s, both nodes | 2.3–2.6 s on the GPU (28–30 s on CPU) |
-| Warm | 194 ms claim (June; not re-measured) | 0.14–0.17 s |
+| Warm | 467 ms median (18 Sept, 3 runs; was 194 ms in June) | 0.14–0.17 s |
 | What warmth holds | 8 cores and 14 GiB of memory, idle | most of a 6 GB GPU |
 | How deep | one standby | one model at a time |
 | What keeps it warm today | a background loop that is off by default | a host setting outside the repository |
@@ -145,11 +145,34 @@ Anita read it twice. "The model costs two and a half seconds cold now, not thirt
 
 "Anything we keep warm, we exercise," Anita said. "Otherwise we are paying for idle hardware to hold a promise nobody has checked."
 
+## Turned on, and timed
+
+*Build log · 18 September 2026*
+
+The mandate was carried out the next day, and it found the same ghost that Chapter 7 found in the timing scripts, waiting in the same shape.
+
+`targetNodesReady`, the function both the on-demand deploy path and the pool controller use to decide "are both nodes up," counted Ready nodes without checking their names. A standby built from the `:warm` image would have been declared ready on the control plane plus the leftover bake-VM ghost node, before the real worker ever joined — exactly the bug that made Chapter 7's stopwatch stop early, now confirmed live in `ui/backend/handlers/pool.go`, not just in the standalone scripts. Fixed the same way Chapter 7 recommends: count only nodes named `<cluster>-cp-*` or `<cluster>-workers-*`.
+
+With that fixed, `POOL_STANDBY_MANIFEST` moved from `target-cluster-parallel.yaml` (the March image, k3s v1.31.4) to the warm manifest — and the pool's build function gained the one step it was missing to use it safely: seeding the fixed CA and token secrets before applying, the same order the on-demand deploy path already used, so KThrees adopts the baked material instead of falling back to a slower path.
+
+Then the cycle Anita asked for — claim, delete, rebuild, claim — ran three times, timed from the `POST /api/v1/cluster/deploy` request to the stream's closing `done` event:
+
+| Run | Time |
+|---|---:|
+| 1 | 1.059 s |
+| 2 | 0.467 s |
+| 3 | 0.465 s |
+
+**Median: 467 milliseconds.** Not 194. The first run is reported rather than discarded — an unexplained outlier, kept on the same principle this book applies to every other number in it. Runs 2 and 3 agree closely, and the time is not free: of the roughly 465 milliseconds, about 265 is `clusterctl get kubeconfig` alone; relabeling the cluster and syncing the in-cluster kubeconfig Secret split most of the rest.
+
+Two and a half times the June figure, and still far faster than building from nothing: the claim now beats the 33.7-second cold build by a factor of about 72 — not the factor of two hundred the June number implied, but still the same conclusion Anita drew from the wrong number: handing over something already running beats building it, by nearly two orders of magnitude. The design held. The number on the page had simply gone stale, in exactly the way this chapter's own middle section warned that warmth does.
+
 ## The ledger
 
 - **Built (June):** a one-deep cluster standby, claimed in 194–195 ms instead of built from scratch, rebuilt in about 60 seconds in the background.
 - **Cost of that warmth:** one full cluster idle — eight cores and 14 GiB of memory.
 - **Today (17 September):** no standby running; the pool is opt-in and off by default; its manifest points at an image built on 3 March; the claim time has not been re-measured since June.
+- **Fixed and re-measured (18 September):** the pool's node-readiness check now counts by name, not by count (the same ghost-node bug Chapter 7 found, confirmed live in `pool.go`); its standby manifest switched to the warm image, with CA/token seeding added to the build path. Three claim-delete-rebuild-claim cycles: 1.059 s, 0.467 s, 0.465 s — **median 467 ms**, not 194. Still about 72x faster than a cold build. The pool remains opt-in — this fixes what happens when it's on, not the default.
 - **Model warmth, measured on the GPU (17 September):** 2.3–2.6 s cold, 0.14–0.17 s warm — against the 28–30 s CPU figure in the rule.
 - **Found:** the GPU holds one model at a time, and a lab run evicted the model two of the three agents use.
 - **Held by:** a host setting outside the repository, not the heartbeat the rule names, which stopped after two runs.
@@ -167,12 +190,13 @@ Anita read it twice. "The model costs two and a half seconds cold now, not thirt
 - `docs/superpowers/specs/2026-06-26-warm-pool-standby-design.md` — the acceptance gate.
 - `06-sympozium/ollama-warm.sh` and `06-sympozium/schedules/ollama-warm.yaml` — the first two ways the model was kept warm.
 - `curl -s localhost:11434/api/ps` on the host — which model is warm right now; the `load_duration` field of any `/api/generate` response shows whether a request paid for a cold start.
+- `POOL_ENABLED=true POOL_STANDBY_MANIFEST=03-target-cluster/target-cluster-warm.yaml` — the corrected pool config (18 September); `git log --oneline -- ui/backend/handlers/pool.go run-ui.sh` for the fix commits.
 
 ## Draft notes
 
 *For the author — remove before publication.*
 
-- **The 194 ms claim is from June** (k3s 1.31, recorded in the warm-pool design notes and the project's memory). It has not been re-measured. Before re-measuring, rebuild the `:latest` image or point `POOL_STANDBY_MANIFEST` at the warm manifest — and if you choose the warm manifest, fix the pool's node-count readiness check first (see Chapter 7's ghost node).
+- **Resolved 18 September — the 194 ms claim has been re-measured.** Was from June (k3s 1.31, recorded in the warm-pool design notes and the project's memory), unmeasured since. Both prerequisite fixes this note asked for were made: `POOL_STANDBY_MANIFEST` now points at the warm manifest, and the pool's node-count readiness check (`targetNodesReady` in `pool.go`) now counts by name. Re-measured median: 467 ms, three runs (1.059 / 0.467 / 0.465 s). See "Turned on, and timed" above.
 - **Model measurements (17 September):** `POST /api/generate` with a one-token limit, reading Ollama's own `load_duration`; RTX 4050 laptop GPU with 6 GB; every loaded model reported 100% on GPU. After measuring, `qwen2.5:7b` was left as the loaded model, matching the state before the Chapter 16 lab evicted it.
 - **The 28–30 s figure** is the CPU-era number from the architecture constraint and the repository's Ollama notes. It was not re-measured on CPU.
 - **Pool status wording.** The backend reported `state: none`. That status alone does not distinguish "disabled" from "enabled but idle beside an operator-managed cluster"; the chapter relies on the opt-in default in `run-ui.sh`.

@@ -82,7 +82,7 @@ Idle capacity costs money wherever it runs. The difference is who sends the bill
 
 If owning is going to compete with renting, it has to match the cloud's signature promise: capacity in seconds, not months. That is testable, and the rest of this book tests it.
 
-On the platform in this book, a complete Kubernetes cluster — a control plane and a worker, each running as its own virtual machine — is built from a written declaration to both machines ready in a median of **33.7 seconds**, measured on 17 September 2026 (Chapter 7). Tearing one down takes **18.9 seconds**. Claiming a pre-built standby took **194 milliseconds** when it was measured in June (Chapter 9).
+On the platform in this book, a complete Kubernetes cluster — a control plane and a worker, each running as its own virtual machine — is built from a written declaration to both machines ready in a median of **33.7 seconds**, measured on 17 September 2026 (Chapter 7). Tearing one down takes **18.9 seconds**. Claiming a pre-built standby took **467 milliseconds**, median of three runs measured 18 September 2026 — about 72 times faster than the cold build (Chapter 9).
 
 Speed, it turns out, is not something only a landlord can offer. But the same chapters also show what it cost to get there. The first measured build took 50 seconds. Four attempts to make it faster failed. The two changes that worked took months of instrumentation to find (Chapter 8). And the dashboard reported the worker as ready for months while it was unable to run anything (Chapter 5).
 
@@ -134,6 +134,6 @@ The CFO ran his finger down the first column. "Most of it is steady."
 - **Counter-arguments exist.** The a16z paper drew public rebuttals (for example a VentureBeat opinion piece). The chapter's caveats cover the substance; decide whether to name one.
 - **Deck figures not repeated as fact.** From slides 4 and 7: $3.86 ROI per $1, 94% of companies using cloud, 67% delaying deployments, 46% revenue loss, 30% fines. None has a source.
 - **"The price of an hour of computing didn't go up much"** is Anita's claim, in fiction. It was not verified, and it should stay in the character's voice unless it is sourced.
-- **The standby's cost** (8 cores, 14 GiB) and the 194 ms claim are from Chapter 9. The claim was measured in June and has not been re-measured.
+- **The standby's cost** (8 cores, 14 GiB) is from Chapter 9. **Resolved 18 September** — the claim time was re-measured (was 194 ms in June, unmeasured since; now 467 ms median, three runs); this chapter's figure is updated.
 - **The Meridian scenes are fiction.** No Meridian figure is quantified.
 - **Character names.** Anita Rao and Vikram Iyer remain placeholders.
