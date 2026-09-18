@@ -108,7 +108,7 @@ On owned hardware, capacity is set by what is **reserved**, not what is used. On
 
 Multiply that by any electricity price between 10 and 50 cents a kilowatt-hour, and the power for a million generated tokens costs roughly **3 to 17 cents**. The lesson is not that local AI is nearly free. It is that for local AI, the electricity is a rounding error. The cost is the hardware — which, on this GPU, holds one model at a time (Chapter 9) — and the people who run and check it.
 
-**The people.** The repository behind this book holds 81 commits, from 11 February to 9 September 2026, from **a single committer, Mahipal**. **63 of those 81 commits** carry an AI coding assistant as co-author. The platform's operating notes run to 612 lines, including 23 entries in a list of pitfalls — most of them a failure that looked like success.
+**The people.** The repository behind this book holds **88 commits, on 18 distinct days**, from 11 February to 18 September 2026, from **a single committer, Mahipal**. **70 of those 88 commits** carry an AI coding assistant as co-author. (The count moved while this chapter was being written, because writing the book added commits to the platform — which is its own small lesson about measuring a thing you are standing on.) The platform's operating notes run to 612 lines, including 23 entries in a list of pitfalls — most of them a failure that looked like success.
 
 Read that carefully, because it is the easiest number in this book to misuse. It describes a lab: no on-call rota, no service-level agreement, no production users, no auditors. It says nothing about the cost of *operating* a sovereign platform at Meridian's scale. What it does suggest is narrower, and still worth a line in the model: in 2026, the effort to *build* such a platform is not the effort a 2021 estimate would assume. And the cost that never appears on a TCO slide is the one those 23 pitfalls describe: the continuous work of knowing what is true.
 
@@ -126,7 +126,7 @@ Put the slide's shape and the platform's measurements together, and the chapter'
 | Leaving | Switching fees (banned in the EU from 2027) and rebuilding proprietary services | Migration project, and paying for both during it | No migration tooling in the repository (Chapter 4) |
 | Power and facilities | Inside the rent | Power, cooling, space | 0.33 kWh per million generated tokens, GPU only |
 | AI inference | Per token, hosted | Hardware sized for the models | 34–37 tokens/s; one model at a time on a 6 GB GPU |
-| People | The supplier's staff | Platform team, on-call, training | A lab: one committer (Mahipal), 63 of 81 commits AI-co-authored |
+| People | The supplier's staff | Platform team, on-call, training | A lab: one committer (Mahipal), 70 of 88 commits AI-co-authored, over 18 days |
 | Upgrades | A button and a maintenance window | Yours | A week, for one major upgrade (Chapter 18) |
 | Knowing what's true | The supplier's status page | Your own checks | Gauges found wrong in Chapters 4, 5, 11 and 12 |
 

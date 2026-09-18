@@ -451,7 +451,7 @@ td strong { color: var(--accent); font-weight: 600; }
 +                    - bridge: {}
 </code></pre>
 <p>It also deleted the firewall rule that translated traffic for <code>10.0.2.2</code>. So the hop the diagram draws had already been removed before the diagram reached the repository. It is still absent today. The target cluster's control-plane node reports its internal address as <code>10.244.0.115</code>, exactly the address of the pod that hosts it. There is no <code>10.0.2.2</code>, and no translation step. The script's narration says "masquerade NAT" anyway, once at the start of the demo and again in the closing summary.</p>
-<p>Nothing failed, which is exactly why nobody noticed: a wrong diagram of a working system raises no error. And diagrams travel. The copy of the mind map in the marketing folder is the same file, byte for byte.</p>
+<p>Nothing failed, which is exactly why nobody noticed: a wrong diagram of a working system raises no error. And diagrams travel. The copy of the mind map kept with the briefing material is the same file, byte for byte.</p>
 <h2 id="step-six-did-not-need-step-five">Step six did not need step five</h2>
 <p>Look again at the demo's logic. Step 4 tries the <em>name</em>, and fails. Step 5 teaches the mesh the name. Step 6 succeeds. The audience draws the obvious conclusion: the ServiceEntry made the call possible.</p>
 <p>But Step 6 does not call the name. It calls the address:</p>

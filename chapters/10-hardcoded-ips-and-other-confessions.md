@@ -76,7 +76,7 @@ The same commit that added the diagram switched the target cluster from one to t
 
 It also deleted the firewall rule that translated traffic for `10.0.2.2`. So the hop the diagram draws had already been removed before the diagram reached the repository. It is still absent today. The target cluster's control-plane node reports its internal address as `10.244.0.115`, exactly the address of the pod that hosts it. There is no `10.0.2.2`, and no translation step. The script's narration says "masquerade NAT" anyway, once at the start of the demo and again in the closing summary.
 
-Nothing failed, which is exactly why nobody noticed: a wrong diagram of a working system raises no error. And diagrams travel. The copy of the mind map in the marketing folder is the same file, byte for byte.
+Nothing failed, which is exactly why nobody noticed: a wrong diagram of a working system raises no error. And diagrams travel. The copy of the mind map kept with the briefing material is the same file, byte for byte.
 
 ## Step six did not need step five
 

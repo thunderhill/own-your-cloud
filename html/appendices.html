@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 7,300 words · about 32 minutes to read</dd>
+      <dd>About 7,800 words · about 34 minutes to read</dd>
     </dl>
   </header>
 
@@ -1139,7 +1139,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>Record what you changed, and put it back.</strong> Every live experiment in this book ran with a restore step, and was checked afterwards.</li>
 </ol>
 <h3 id="d4-measuring-bring-up-by-name">D.4 Measuring bring-up by name</h3>
-<p>The repository's two timing scripts still wait for a node <em>count</em>. Until they are fixed, the 33.7-second figure was measured this way, three times:</p>
+<p>The repository's two original timing scripts, <code>time-to-ready.sh</code> and <code>phase-timings.sh</code>, still wait for a node <em>count</em>, which a ghost node can satisfy before the worker joins. The procedure below is now committed as <strong><code>scripts/time-to-ready-by-name.sh</code></strong> (<code>make time-to-ready-by-name</code>), which waits by name, ignores and <em>names</em> any node matching neither pattern, and fails loudly on a missing timestamp rather than reporting it as zero. The 33.7-second figure was measured this way, three times:</p>
 <ol>
 <li>Delete the cluster, and wait until no virtual machine or VM instance named <code>target-cluster</code> remains.</li>
 <li>Seed the fixed certificate and token secrets (<code>scripts/seed-cluster-secrets.sh</code>).</li>
@@ -1149,6 +1149,12 @@ td strong { color: var(--accent); font-weight: 600; }
 <li>Cross-check both against each node's <code>Ready</code> <code>lastTransitionTime</code> from the API.</li>
 <li>Afterwards, refresh the agents' copy of the target credentials (<code>06-sympozium/refresh-target-kubeconfig.sh</code>).</li>
 </ol>
+<p>Run it directly:</p>
+<pre><code>make time-to-ready-by-name RUNS=3
+</code></pre>
+<h3 id="d5-the-parallel-metering-run">D.5 The parallel-metering run</h3>
+<p>Chapter 19's cost comparison was measured on 18 September 2026 with <code>measurements/ch19-meter.sh</code>: an <code>nginx</code> deployment on the target cluster, sampled every 20 seconds for ten minutes, recording the host container's CPU and memory, the GPU's power draw, the target control plane's CPU and memory, and one HTTP probe of the workload per sample. All 30 samples returned <code>200</code>.</p>
+<p>The raw samples are kept at <code>measurements/ch19-parallel-metering-20260918.tsv</code>, and <code>measurements/README.md</code> holds the full assumptions table and the dated price sources. Two things could not be measured on this host and are therefore assumptions, not figures: whole-host power (<code>/sys/class/powercap/intel-rapl:0/energy_uj</code> is root-only on this kernel, and the battery reads zero on AC) and the hardware's purchase price.</p>
 <h2 id="appendix-e-the-ten-labs">Appendix E — The ten labs</h2>
 <p class="dateline dateline-record">Build log · July–September 2026</p>
 <p>The labs in <code>06-sympozium/labs/</code> were written in July against Sympozium 0.10.38. Each one is standalone, cleans up after itself, and shows real captured output. Their index marks every lab ✅ or ⚠️, and explains every ⚠️ in the lab's own README. Those markers are preserved below. The last column is what this book re-checked on 0.10.75 and Kubernetes 1.37.</p>
@@ -1704,7 +1710,58 @@ done
 <p>The cross-cluster mind map in Chapter 10 was previously cited from this material as well. It is in the repository, at <code>05-istio/cross-cluster-mindmap.html</code>, and the book now cites it there. The briefing copy is byte-identical, which is exactly Chapter 10's point: a diagram duplicated into two places goes stale in both.</p>
 <h3 id="h3-the-public-record">H.3 The public record</h3>
 <p><strong>Public record</strong> sections cite published, checkable sources: the Andreessen Horowitz cloud-cost paper (2021), Dropbox's 2018 IPO filing, 37signals' published cloud-exit accounts, Gartner's public-cloud spending forecast, Flexera's annual cloud reports, the EU Data Act, the AT&amp;T/Broadcom litigation coverage, Grand View Research's sovereign-cloud market sizing, and the hyperscalers' own server-depreciation disclosures. Each is named where it is used, with its date.</p>
-<p>Their verification status is recorded per chapter in the draft notes, and several are still marked <em>confirm against the primary source before publication</em> — a search summary or a news report is not the filing it describes.</p>
+<p>Their verification status, as re-checked on <strong>18 September 2026</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Andreessen Horowitz, <em>The Cost of Cloud, a Trillion-Dollar Paradox</em></td>
+<td><strong>Verified against the article itself</strong> — date (27 May 2021), authors, the 50%-of-cost-of-revenue benchmark, the one-third-to-one-half repatriation figure, and the $100B / &gt;$500B market-value estimates all confirmed as quoted</td>
+</tr>
+<tr>
+<td>37signals, <em>Our cloud exit savings will now top ten million over five years</em></td>
+<td><strong>Verified against the post itself</strong> — date (17 October 2024), $3.2M/year run rate, $1.3M, about $700,000 of servers, "well over ten million dollars over five years", and the "no hidden dragons" sentence all confirmed as quoted</td>
+</tr>
+<tr>
+<td>EU Data Act, Regulation (EU) 2023/2854</td>
+<td><strong>Partly verified, and one error corrected.</strong> In force 11 January 2024; obligations applicable 12 September 2025; charges withdrawn 12 January 2027. An earlier draft misread the in-force date as the date cost-only charging began (Chapter 2). Still to verify against the EUR-Lex text rather than commentary, and to have counsel review</td>
+</tr>
+<tr>
+<td>Gartner, worldwide public cloud end-user spending forecast for 2025</td>
+<td><strong>Not verified</strong> — the press release returns HTTP 403 to direct retrieval. The $723.4B figure comes from the citation as previously recorded. Confirm before publication</td>
+</tr>
+<tr>
+<td>Dropbox 2018 IPO filing ($74.6M Infrastructure Optimization saving)</td>
+<td><strong>Not re-verified</strong> — currently cited via secondary coverage. Cite the S-1 directly</td>
+</tr>
+<tr>
+<td>Flexera annual cloud reports (29% waste, 85%)</td>
+<td><strong>Not re-verified this pass</strong> — URLs recorded in the prologue's draft notes</td>
+</tr>
+<tr>
+<td>AT&amp;T / Broadcom litigation and settlement</td>
+<td><strong>Not re-verified</strong> — trade-press coverage only. Cite the court filing if possible</td>
+</tr>
+<tr>
+<td>Grand View Research, sovereign-cloud market sizing</td>
+<td><strong>Not verified</strong> — the report page returned HTTP 403 when attempted; figures come from a search-result summary</td>
+</tr>
+<tr>
+<td>Hyperscaler server-depreciation disclosures (Microsoft FY2022, Alphabet 2023, Amazon Feb 2025)</td>
+<td><strong>Not verified</strong> — secondary coverage summarising filings. Cite the 10-K/10-Q text</td>
+</tr>
+<tr>
+<td>GDPR, Schrems II, CLOUD Act, India DPDP Act</td>
+<td><strong>Not verified</strong> — stated from general knowledge. Have counsel review (Chapter 3)</td>
+</tr>
+</tbody>
+</table></div>
+<p>A search summary or a news report is not the filing it describes, and every row above marked <em>not verified</em> is a row where the book is currently trusting one.</p>
 <aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
 <p><em>For the author — remove before publication.</em></p>
 <ul>

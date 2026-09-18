@@ -811,7 +811,22 @@ The cross-cluster mind map in Chapter 10 was previously cited from this material
 
 **Public record** sections cite published, checkable sources: the Andreessen Horowitz cloud-cost paper (2021), Dropbox's 2018 IPO filing, 37signals' published cloud-exit accounts, Gartner's public-cloud spending forecast, Flexera's annual cloud reports, the EU Data Act, the AT&T/Broadcom litigation coverage, Grand View Research's sovereign-cloud market sizing, and the hyperscalers' own server-depreciation disclosures. Each is named where it is used, with its date.
 
-Their verification status is recorded per chapter in the draft notes, and several are still marked *confirm against the primary source before publication* — a search summary or a news report is not the filing it describes.
+Their verification status, as re-checked on **18 September 2026**:
+
+| Source | Status |
+|---|---|
+| Andreessen Horowitz, *The Cost of Cloud, a Trillion-Dollar Paradox* | **Verified against the article itself** — date (27 May 2021), authors, the 50%-of-cost-of-revenue benchmark, the one-third-to-one-half repatriation figure, and the $100B / >$500B market-value estimates all confirmed as quoted |
+| 37signals, *Our cloud exit savings will now top ten million over five years* | **Verified against the post itself** — date (17 October 2024), $3.2M/year run rate, $1.3M, about $700,000 of servers, "well over ten million dollars over five years", and the "no hidden dragons" sentence all confirmed as quoted |
+| EU Data Act, Regulation (EU) 2023/2854 | **Partly verified, and one error corrected.** In force 11 January 2024; obligations applicable 12 September 2025; charges withdrawn 12 January 2027. An earlier draft misread the in-force date as the date cost-only charging began (Chapter 2). Still to verify against the EUR-Lex text rather than commentary, and to have counsel review |
+| Gartner, worldwide public cloud end-user spending forecast for 2025 | **Not verified** — the press release returns HTTP 403 to direct retrieval. The $723.4B figure comes from the citation as previously recorded. Confirm before publication |
+| Dropbox 2018 IPO filing ($74.6M Infrastructure Optimization saving) | **Not re-verified** — currently cited via secondary coverage. Cite the S-1 directly |
+| Flexera annual cloud reports (29% waste, 85%) | **Not re-verified this pass** — URLs recorded in the prologue's draft notes |
+| AT&T / Broadcom litigation and settlement | **Not re-verified** — trade-press coverage only. Cite the court filing if possible |
+| Grand View Research, sovereign-cloud market sizing | **Not verified** — the report page returned HTTP 403 when attempted; figures come from a search-result summary |
+| Hyperscaler server-depreciation disclosures (Microsoft FY2022, Alphabet 2023, Amazon Feb 2025) | **Not verified** — secondary coverage summarising filings. Cite the 10-K/10-Q text |
+| GDPR, Schrems II, CLOUD Act, India DPDP Act | **Not verified** — stated from general knowledge. Have counsel review (Chapter 3) |
+
+A search summary or a news report is not the filing it describes, and every row above marked *not verified* is a row where the book is currently trusting one.
 
 ## Draft notes
 
