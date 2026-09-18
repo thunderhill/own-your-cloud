@@ -601,17 +601,25 @@
       <li class="chapter">
         <span class="ch-num">17</span>
         <div>
+          <h3 class="ch-title">From the Lab to the Data Centre</h3>
+          <p class="ch-blurb">The honest mapping: what a laptop platform transfers to a production data centre, and what it does not. High availability and failure domains; replicated storage and a restore nobody has run; networking beyond one Docker bridge; capacity planning built on Chapter 19's measured reservation-versus-use gap; secrets, identity, and GitOps as the direct answer to Chapter 18's "state that lives only in a running cluster"; observability retention; and a support policy for running outside a vendor's tested range. Every claim is labelled <em>design guidance</em>. <strong>Nothing in this chapter was built.</strong></p>
+          <p class="ch-source">the book's own chapters, re-read as requirements · no new measurements</p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">18</span>
+        <div>
           <h3 class="ch-title">The Day We Upgraded Everything</h3>
           <p class="ch-blurb">Kubernetes 1.35 → 1.37, Istio 1.30 → 1.31, k3s 1.31 → 1.37; both clusters destroyed and rebuilt from nothing. What nobody had scripted — the clusters themselves, KubeVirt, CDI — and the base-image script that existed all along but that nobody could find. The dead image that reported success. The version variable that had never controlled anything. The Istio release rated for "up to 1.36" that passed <span class="n">22 of 22</span> checks anyway. And a cluster that seemed to come back ten seconds faster, until the stopwatch was checked: <span class="n">33.7 s</span> for both nodes, unchanged. The moral: <em>reproducibility is the real sovereignty</em>, and institutional memory is a balance-sheet asset.</p>
           <p class="ch-source"><code>CLAUDE.md</code> (2026-09-16 entries) · <code>02-capi-init/init-management-cluster.sh</code> · <code>07-istio-advanced/README.md</code></p>
         </div>
       </li>
       <li class="chapter">
-        <span class="ch-num">18</span>
+        <span class="ch-num">19</span>
         <div>
           <h3 class="ch-title">Reclaiming the Margin</h3>
           <p class="ch-blurb">The briefing deck's <span class="n">$12.5M → $8.2M</span> five-year TCO, taken apart line by line: savings that add up exactly with no line for what owning costs, <span class="n">70%</span> of it in lines no invoice records, and a <span class="n">5–7 year</span> payback that fits only at the expensive end. Then what the platform measured — reservations against use, <span class="n">0.33 kWh</span> per million generated tokens, the effort in the repo — a TCO worksheet, the seven-step Sovereign Cloud Journey, a <em>"Cloud Owning Culture"</em>, and what to ask your vendors, including the one you become.</p>
-          <p class="ch-source">deck ch. 5, slide 19 · <code>~/marketing/SovereignCloud_Flyer_v2.pdf</code></p>
+          <p class="ch-source">deck ch. 5, slide 19 · the unbranded sovereign-cloud flyer, v2 (Appendix H)</p>
         </div>
       </li>
       <li class="chapter bookend">
@@ -633,6 +641,8 @@
       <li><span class="ltr">D</span><span><strong>The measurement protocol</strong> — <code>phase-timings.sh</code>, why N≥7 on a noisy host, counting nodes by name rather than by number, and the figures as last measured: teardown <span class="n">18.9 s</span>, bring-up <span class="n">33.7 s</span> for both nodes.</span></li>
       <li><span class="ltr">E</span><span><strong>The ten labs</strong> — quick reference, with the ✅ / ⚠️ honesty markers preserved.</span></li>
       <li><span class="ltr">F</span><span><strong>A glossary for the boardroom</strong> — CAPI, KubeVirt, ambient mesh, waypoint, SPIFFE, agentic control plane, sovereign cloud — one plain-English sentence each.</span></li>
+      <li><span class="ltr">G</span><span><strong>Key files, quoted</strong> — the load-bearing manifests and code, verbatim with their repo paths, so the book can be checked without the companion repository.</span></li>
+      <li><span class="ltr">H</span><span><strong>Sources</strong> — the companion repository, the author's briefing material, and the public record, each with its verification status.</span></li>
     </ul>
   </section>
 

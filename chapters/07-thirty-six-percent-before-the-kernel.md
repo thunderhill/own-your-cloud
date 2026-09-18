@@ -185,6 +185,10 @@ Anita looked at the display for a moment. "When a number improves and nobody can
 
 "Above them," she said. "An instrument is a claim too."
 
+![Stacked timeline of a fifty-second cluster build in six phases, with a bracket marking 16.6 seconds before the guest kernel starts.](../figures/fig-07-1-boot-timeline.svg)
+
+*Figure 7.1 — Where fifty seconds went, and where the golden image could not help.*
+
 ## The ledger
 
 - **Built:** a read-only, 320-line instrument that reconstructs a cluster build from records the platform already keeps — object timestamps, pod status, the guest's serial console, node transitions, and a host-side probe.

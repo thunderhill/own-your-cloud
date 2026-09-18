@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -487,7 +511,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <hr class="scene-break" />
 <p class="dateline dateline-record">Build log · 17 September 2026</p>
 <h2 id="the-stopwatch-that-stopped-early">The stopwatch that stopped early</h2>
-<p>After the platform upgrade in Chapter 17, the same instrument reported a cluster build of <strong>23.9 seconds</strong> — 23.9, 24.1, and 23.7 across three runs, a spread of only 0.4 seconds. Ten seconds faster than before the upgrade, and steadier. The number went into the platform's operating notes, into two chapters of this book, and into an answer about how the platform got under forty seconds.</p>
+<p>After the platform upgrade in Chapter 18, the same instrument reported a cluster build of <strong>23.9 seconds</strong> — 23.9, 24.1, and 23.7 across three runs, a spread of only 0.4 seconds. Ten seconds faster than before the upgrade, and steadier. The number went into the platform's operating notes, into two chapters of this book, and into an answer about how the platform got under forty seconds.</p>
 <p>It was wrong, and the instrument's own output said so to anyone who looked closely.</p>
 <p>In all three tables, and in a fourth run later that day, one row was empty:</p>
 <pre><code>  [WORKER]
@@ -553,6 +577,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>Anita looked at the display for a moment. "When a number improves and nobody can say why," she said, "it gets audited before it gets celebrated. Put that on the wall too."</p>
 <p>"Under the numbers?"</p>
 <p>"Above them," she said. "An instrument is a claim too."</p>
+<figure class="figure"><img alt="Stacked timeline of a fifty-second cluster build in six phases, with a bracket marking 16.6 seconds before the guest kernel starts." src="../figures/fig-07-1-boot-timeline.svg" /><figcaption>Figure 7.1 — Where fifty seconds went, and where the golden image could not help.</figcaption></figure>
 <div class="endmatter"><h2 id="the-ledger">The ledger</h2>
 <ul>
 <li><strong>Built:</strong> a read-only, 320-line instrument that reconstructs a cluster build from records the platform already keeps — object timestamps, pod status, the guest's serial console, node transitions, and a host-side probe.</li>
@@ -576,11 +601,12 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><code>docs/sub-60s-cluster-strategy.md</code> — "Phase-level measurement", with the 9 September budget.</li>
 <li><code>03-target-cluster/target-cluster-warm.yaml</code> — the <code>warm-ghost-node-cleanup</code> step, and why it must run first.</li>
 <li>The ghost, live: list the target cluster's nodes the moment the control plane turns <code>Ready</code>, and look for <code>ubuntu-bake-vm-warm</code>.</li>
+<li><strong>Without the repo:</strong> Appendix G.2 quotes the <code>warm-ghost-node-cleanup</code> step and the ordering comment above it.</li>
 </ul>
 </div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
 <p><em>For the author — remove before publication.</em></p>
 <ul>
-<li><strong>This discovery corrected earlier drafts in this pass.</strong> Chapter 8's postscript and Chapter 17's measurement section, ledger, and Meridian memo previously reported 23.9 s as a both-nodes time; the table of contents did too. All now carry the corrected 33.7 s. The 23.9 s figure in <code>CLAUDE.md</code>, added earlier at the author's request, is corrected as well.</li>
+<li><strong>This discovery corrected earlier drafts in this pass.</strong> Chapter 8's postscript and Chapter 18's measurement section, ledger, and Meridian memo previously reported 23.9 s as a both-nodes time; the table of contents did too. All now carry the corrected 33.7 s. The 23.9 s figure in <code>CLAUDE.md</code>, added earlier at the author's request, is corrected as well.</li>
 <li><strong>The scripts are not fixed yet.</strong> Both <code>scripts/phase-timings.sh</code> and <code>scripts/time-to-ready.sh</code> wait for "two nodes Ready" by count. Fix by naming the nodes (or excluding <code>ubuntu-bake-vm-warm</code>), by failing loudly when a node's timestamp is missing instead of treating it as zero, and by giving the worker's install path a "started" marker the instrument can find. Alternatively, remove the ghost from the image at bake time.</li>
 <li><strong>Measurement method for the corrected numbers:</strong> from just before <code>kubectl apply</code>, poll the target cluster's nodes every 0.5 s by name (<code>-cp-</code>, <code>-workers-</code>), then read each node's <code>Ready</code> <code>lastTransitionTime</code> from the API (1-second granularity). The table uses the API transition times; the polled observations agree within about a second (control plane 25.1 / 25.2 / 25.6 s, worker 31.0 / 36.3 / 34.5 s). Host load was 1.2–2.3. The measuring script lives outside the repository; consider adding it.</li>
 <li><strong>Cannot be re-checked:</strong> the 9 September runs (artifacts not kept) and June's 48.520 s from <code>time-to-ready.sh</code>, which may have included the ghost. The ghost cleanup dates from 23 June.</li>

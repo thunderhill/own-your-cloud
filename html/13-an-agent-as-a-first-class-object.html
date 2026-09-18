@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -538,7 +562,7 @@ var allowedActions = map[string]bool{
 <p><em>What did it do last Tuesday?</em> Every execution is an <code>AgentRun</code>: the task it was given, the answer it produced, its phase, its token and tool-call counts, its duration, the pod it ran in, and — since the upgrade described in Chapter 15 — a service account created for that run alone. Access to those records is governed by the same role-based permissions as every other object in the cluster, and they can be created by the same GitOps pipelines. There is no second audit system to buy, learn, or trust.</p>
 <p><em>If we cancel, what do we keep?</em> Everything. There is no separate service to cancel.</p>
 <p>That is what <em>first-class object</em> buys: the agent inherits the governance machinery the organization already runs, instead of arriving with its own.</p>
-<p>It does not buy immortality, and this is where the build log has to be exact. The strategy document's sixth constraint says the trail is append-only: <em>"No design may erase, short-circuit, or replace that trail."</em> Nothing enforces that. The labs delete their runs when they clean up. The repository's own repair script for serving agents works by deleting their runs so the controller will recreate them. And on 16 September, when both host clusters were deleted and rebuilt for the upgrade in Chapter 17, every run record that existed that morning — fifty-three of them, the oldest nearly four weeks old — was deleted with the cluster that held it.</p>
+<p>It does not buy immortality, and this is where the build log has to be exact. The strategy document's sixth constraint says the trail is append-only: <em>"No design may erase, short-circuit, or replace that trail."</em> Nothing enforces that. The labs delete their runs when they clean up. The repository's own repair script for serving agents works by deleting their runs so the controller will recreate them. And on 16 September, when both host clusters were deleted and rebuilt for the upgrade in Chapter 18, every run record that existed that morning — fifty-three of them, the oldest nearly four weeks old — was deleted with the cluster that held it.</p>
 <p>An object is auditable for exactly as long as it exists. The same constraint already names the answer — durable storage off the cluster that <em>"mirrors <code>AgentRun</code>s, it does not replace them"</em> — and it has not been built.</p>
 <hr class="scene-break" />
 <p class="dateline dateline-fiction">Meridian · the following Monday</p>
@@ -569,6 +593,7 @@ var allowedActions = map[string]bool{
 <li><code>kubectl get agents.sympozium.ai,agentruns.sympozium.ai -n sympozium-system</code> — the live records, by their fully qualified names.</li>
 <li><code>ui/backend/handlers/ai.go</code> (the chat proxy and its action allowlist) and <code>ui/backend/handlers/dashboard_proxy.go</code> (the embedded console).</li>
 <li><code>06-sympozium/labs/README.md</code> — "the one correction that matters most."</li>
+<li><strong>Without the repo:</strong> Appendix G.6 quotes the <code>cluster2-agent</code> Agent object whole, briefing included.</li>
 </ul>
 </div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
 <p><em>For the author — remove before publication.</em></p>

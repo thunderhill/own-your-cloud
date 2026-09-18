@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">

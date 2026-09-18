@@ -1,0 +1,599 @@
+<title>From the Lab to the Data Centre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300,50;9..144,600,50;9..144,700,50&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #F3F4F1;
+  --surface: #FBFBF8;
+  --ink: #1B2430;
+  --ink-2: #4A5563;
+  --ink-3: #737C86;
+  --rule: #D6DAD3;
+  --rule-strong: #B8BFB6;
+  --accent: #1F5F4A;
+  --accent-soft: #E3EDE7;
+  --code-bg: #EAEEE8;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --text: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+    --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #151F2A; --ink: #E6E8E3; --ink-2: #A9B2BA; --ink-3: #7E8892;
+  --rule: #2A3642; --rule-strong: #3B4955; --accent: #6FB79A; --accent-soft: #17302A; --code-bg: #1B2732;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-optical-sizing: auto;
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.chapter {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 28px 104px;
+}
+.chapter > p, .chapter > ul, .chapter > ol { max-width: 66ch; }
+
+/* header */
+.masthead { margin: 0 0 56px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.eyebrow .sep { color: var(--rule-strong); }
+.bookend-label {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.legend-public { color: var(--ink-2); font-weight: 600; }
+.ch-number {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 300;
+  font-size: 104px;
+  line-height: 0.8;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-variant-numeric: lining-nums;
+}
+h1 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-weight: 700;
+  font-size: clamp(40px, 6.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 34px;
+  text-wrap: balance;
+}
+.epigraph {
+  margin: 0 0 30px;
+  padding: 0;
+  max-width: 34em;
+}
+.epigraph p { margin: 0; }
+.epigraph p:first-child {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.epigraph p + p {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.epigraph code { font-size: 13px; }
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.meta dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.meta dd { margin: 0; }
+.legend-fiction { color: var(--accent); font-weight: 600; }
+.legend-record { color: var(--ink); font-weight: 600; }
+
+/* prose */
+p { margin: 0 0 1.05em; }
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 72, "SOFT" 50;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 2.1em 0 0.7em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+  text-wrap: balance;
+}
+strong { font-weight: 600; }
+code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0 0 1.4em;
+  padding: 16px 18px;
+  background: var(--code-bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13.5px;
+  overflow-wrap: normal;
+  white-space: pre;
+  color: var(--ink);
+}
+
+pre.agent-reply {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 20px 16px;
+  position: relative;
+}
+pre.agent-reply::before {
+  content: "agent reply";
+  position: absolute;
+  top: 9px;
+  left: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+pre.agent-reply code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dateline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.6em;
+}
+.dateline::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+}
+.dateline-fiction { color: var(--accent); }
+.dateline-record { color: var(--ink-3); }
+.dateline-public { color: var(--ink-2); }
+
+.scene-break {
+  border: 0;
+  height: auto;
+  margin: 3em 0;
+  text-align: center;
+}
+.scene-break::after {
+  content: "*   *   *";
+  white-space: pre;
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--ink-3);
+}
+
+blockquote {
+  margin: 1.8em 0 1.9em;
+  padding: 0 0 0 2.2em;
+  max-width: 34em;
+}
+blockquote p {
+  font-family: var(--display);
+  font-variation-settings: "opsz" 36, "SOFT" 50;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.4em 0 1.8em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  text-align: left;
+}
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+thead th {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+td[style*="right"], th[style*="right"] { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 1px solid var(--rule-strong); }
+td code { font-size: 12.5px; }
+td strong { color: var(--accent); font-weight: 600; }
+
+/* end matter */
+.endmatter {
+  margin: 4em 0 0;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 32px 20px;
+}
+.endmatter h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 24px 0 12px;
+}
+.endmatter h2 + ul, .endmatter h2 + ol { margin-top: 0; }
+.endmatter h2 ~ h2 {
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.endmatter ul, .endmatter ol {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 8px;
+  padding-left: 1.25em;
+  color: var(--ink-2);
+}
+.endmatter li { padding-left: 4px; }
+.endmatter li + li { margin-top: 8px; }
+.endmatter li strong { color: var(--ink); }
+.endmatter code { font-size: 13px; }
+
+.draft-notes {
+  margin: 40px 0 0;
+  border: 1px dashed var(--rule-strong);
+  padding: 8px 28px 20px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+.draft-notes h2 {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 20px 0 4px;
+}
+.draft-notes > p { font-size: 13.5px; color: var(--ink-3); margin: 0 0 14px; }
+.draft-notes ul { margin: 0; padding-left: 1.2em; }
+.draft-notes li + li { margin-top: 8px; }
+.draft-notes li strong { color: var(--ink); }
+.draft-notes code { font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  body { font-size: 17.5px; }
+  .chapter { padding: 40px 20px 72px; }
+  .ch-number { font-size: 76px; }
+  h2 { font-size: 26px; }
+  blockquote { padding-left: 1.2em; }
+  blockquote p { font-size: 21px; }
+  .endmatter { padding: 4px 20px 16px; }
+  .draft-notes { padding: 4px 18px 16px; }
+  .meta { grid-template-columns: 1fr; gap: 2px; }
+  .meta dd + dt { margin-top: 8px; }
+}
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
+</style>
+
+<article class="chapter">
+  <header class="masthead">
+    <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part V — The Dividend</span><span class="sep">/</span><span>Draft 1</span></p>
+    <p class="ch-number" aria-hidden="true">17</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 17: </span>From the Lab to the Data Centre</h1>
+    <blockquote class="epigraph"><p><em>That is not a data centre, and the book never pretends it is. What transfers from a laptop to a data centre is not scale. It is the pattern, the measurements, and — more often than the vendor brochures would suggest — the failures.</em></p>
+<p>— the prologue of this book</p>
+</blockquote>
+    <dl class="meta">
+      <dt>Two voices</dt>
+      <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
+      <dt>Length</dt>
+      <dd>About 3,900 words · about 17 minutes to read</dd>
+    </dl>
+  </header>
+
+<p class="dateline dateline-fiction">Meridian · a Wednesday in October · the fourth-floor boardroom</p>
+<p>The pilot had done what a pilot is for. Anita Rao put one slide up, and it had two columns rather than a number.</p>
+<p>"Everything on the left, we measured," she said. "Everything on the right, we would have to build. I am not asking the board to approve the right-hand column today. I am asking it to stop confusing the two."</p>
+<p>The chief financial officer read it twice. "The left column is a laptop."</p>
+<p>"One laptop. Twenty-nine gigabytes of memory, one consumer graphics card, one power supply, one of everything. It builds a Kubernetes cluster in thirty-four seconds and hands over a spare in under half a second, and both of those numbers are real."</p>
+<p>"And in a data centre?"</p>
+<p>"The same thirty-four seconds, probably. That part is the software, and the software does not care where it runs." She let that sit. "What changes is everything the laptop lets us skip. One of everything is fine until the one fails."</p>
+<p>"Give me the list."</p>
+<p>"That is the right-hand column. High availability. Storage that survives a disk. Backups we have restored from, not just taken. Addresses that work on a real network. Secrets that are not in Git." She paused. "Some of those we already know we are missing, because this year we went looking, and the looking is the part I would actually defend to you."</p>
+<p>The CFO turned to Vikram. "How much of the right-hand column is new engineering?"</p>
+<p>"Less than you would think. Most of it is choosing well-known components and wiring them in. The part that is genuinely new is the discipline, and we already have that. It is the only thing we built that I would call finished."</p>
+<p>"Then write it down as a design," Anita said, "and mark every line of it clearly as something we have not done. The moment this chapter reads like a status report, it becomes the thing we spent the year arguing against."</p>
+<hr class="scene-break" />
+<p><em>Design guidance · October 2026</em></p>
+<p><strong>A note on what this chapter is.</strong> Every other chapter in this book reports something that happened, with a date. This one does not. It is a design: an honest mapping of what the platform in the preceding sixteen chapters would need in order to run a production workload in a data centre. <strong>Nothing in it was built, measured, or tested.</strong> Where it draws on a real number, that number comes from an earlier chapter, and the chapter is named. Where it names a piece of software, that is a category illustrated by a well-known example, not a recommendation and not a verified fit.</p>
+<p>The reason for the chapter is the question that follows every demonstration in this book: <em>yes, but would it work for real?</em> The useful answer is not "yes." It is a list.</p>
+<h2 id="what-the-laptop-was-allowed-to-skip">What the laptop was allowed to skip</h2>
+<p>Start with what makes the lab a lab. Each of these is a real property of the platform described in this book, recorded in the chapter named.</p>
+<ul>
+<li><strong>One of everything.</strong> One machine. The management cluster runs as a single Kind node; the target cluster has one control-plane machine and one worker. There is no second copy of anything, anywhere.</li>
+<li><strong>One failure domain.</strong> A power cut, a kernel panic, or a full disk takes the entire platform — management cluster, workload cluster, models, agents, registry and console — at once.</li>
+<li><strong>Storage that is a directory.</strong> Virtual machine disks live on the laptop's filesystem. There is no replication, no snapshot policy, and no backup. The platform has never restored anything.</li>
+<li><strong>A network with no network in it.</strong> Everything shares one Docker bridge. Addresses are handed out by MetalLB in layer-2 mode from a hardcoded range, <code>172.18.255.200–225</code> (Appendix B). There is no router, no VLAN, no firewall, no external DNS.</li>
+<li><strong>Trust that was generated once and committed.</strong> The warm path's certificate authorities are fixed, and their private keys are in version control, labelled demo-only (Chapter 3). The mesh's root of trust was generated on the laptop.</li>
+<li><strong>No identity.</strong> The web console has no login. Neither does the agent console embedded in it. The one authenticated surface is the agent platform's own API, which does require a bearer token.</li>
+<li><strong>Capacity that is one deep.</strong> One warm standby cluster, one model resident on the GPU at a time (Chapter 9).</li>
+</ul>
+<p>None of this is a criticism of the platform. A lab that paid for all of it would have taught less, more slowly. But every item is a thing the data centre would have to supply, and a reader who skips this list will mistake thirty-four seconds for readiness.</p>
+<h2 id="high-availability-and-what-it-is-actually-for">High availability, and what it is actually for</h2>
+<p>The platform's control planes are single. Cluster API's own model is the first thing that changes: <code>KThreesControlPlane</code> takes a <code>replicas</code> field, and production practice is three, across three failure domains, so that the loss of one machine leaves a quorum. The same declaration that makes one machine makes three; the cost is not complexity in the manifest, it is having three real places to put them.</p>
+<p>Three points are worth a board's attention, because they are where the money and the mistakes are.</p>
+<p><strong>A failure domain is a physical claim, not a label.</strong> Three control-plane machines spread across three hypervisors in one rack, on one power feed, behind one top-of-rack switch, are three copies of one failure. The declaration will look correct. Chapter 5's lesson applies exactly: a status that says <code>Ready</code> is a claim, and the claim needs checking against what is actually true.</p>
+<p><strong>The management cluster becomes production infrastructure.</strong> In the lab it is scaffolding. In a data centre it manufactures and repairs workload clusters, so its own availability is now a dependency of everything it made. It needs the same treatment as the clusters it produces — which is the argument for keeping it small, boring, and rebuildable, rather than letting it accumulate.</p>
+<p><strong>Availability has to be tested by breaking things.</strong> This is the book's own rule, from Chapter 11: a check that has never failed is not a check. A high-availability design that has never lost a node on purpose, in front of someone, during working hours, is a diagram.</p>
+<h2 id="storage-and-the-backup-nobody-has-restored">Storage, and the backup nobody has restored</h2>
+<p>Virtual machine disks are the platform's real state. In the lab they are files on one disk. In a data centre they need replicated block storage with snapshots — Rook/Ceph is the usual open-source answer for a Kubernetes-native deployment, and an existing enterprise SAN reached through its CSI driver is the usual answer for an organization that already has one. Either satisfies the requirement: a disk can fail without losing the machine that was using it.</p>
+<p>Backup is a separate requirement, and the distinction matters to a board because the two are frequently conflated. Replication protects against a disk dying. It does not protect against a deletion, a bad upgrade, or a corrupted image being faithfully replicated three times. Velero is the common tool for backing up Kubernetes objects and, with the right driver, the volumes behind them.</p>
+<p>The honest framing is the one the platform's own history supplies. Chapter 18 describes deleting both clusters and rebuilding them from the repository in an afternoon. That is a real disaster-recovery rehearsal, and most organizations have never run one. But note what it proved and what it did not: it proved the <em>platform</em> could be rebuilt. No workload data was in it. A restore that returns a running cluster with an empty database has restored nothing a business cares about.</p>
+<p>So the design guidance is a sequence, not a product: choose replicated storage; back up objects and volumes; and then restore from that backup into a different cluster, on a schedule, as a test that is allowed to fail. Until the restore has happened, the backup is a hypothesis.</p>
+<h2 id="networking-that-leaves-the-bridge">Networking that leaves the bridge</h2>
+<p>MetalLB transfers; the way this platform uses it does not. In the lab it runs in layer-2 mode on a Docker bridge with a hardcoded range, and the book's own address table is a discipline invented to stop two clusters advertising the same address (Appendix B). In a data centre the same component runs in BGP mode, peering with the real routers, announcing service addresses into the network the rest of the organization already uses. That is a conversation with the network team, and it is usually the longest lead-time item in the whole build.</p>
+<p>Four more differences, each of which the lab simply does not have:</p>
+<ul>
+<li><strong>Segmentation.</strong> Management traffic, workload traffic, storage replication and out-of-band console access belong on separate VLANs. The lab has one flat network, which is why nothing in this book has ever had to think about it.</li>
+<li><strong>DNS.</strong> The platform resolves nothing externally; the mesh's cross-cluster names work because Istio was told about them. Production clusters need real names in the organization's DNS, with a plan for who creates records and how fast they change.</li>
+<li><strong>Certificates.</strong> The mesh's root of trust was generated locally, and the warm path's certificate authorities are committed to the repository (Chapter 3). In a data centre both belong in the organization's own public-key infrastructure, with a defined lifetime and a rotation procedure that has been performed at least once. Automated issuance — cert-manager is already present on the management cluster — covers the leaf certificates but does not answer the question of who owns the root.</li>
+<li><strong>Firewalling.</strong> Chapter 14 found the agent egress rule allows ports rather than destinations, so anything the agents can address on port 443 is reachable. On one laptop that is a finding. On a network with production systems on it, it is the finding.</li>
+</ul>
+<h2 id="capacity-planning-from-the-one-measurement-that-transfers">Capacity planning, from the one measurement that transfers</h2>
+<p>This is the section where the lab genuinely earns something, because Chapter 19 measured the thing most capacity plans get wrong.</p>
+<p>On the management cluster, 59 running pods had <strong>reserved 22.42 GiB</strong> of memory while the cluster was <strong>using 7.45 GiB</strong> — about a third. The target cluster's control-plane machine had been given 4 cores and 8 GiB, and was using <strong>59 millicores, 1% of its processor allowance</strong>, and 1,114 MiB of memory. Those are measurements, from 17 September 2026, on this platform.</p>
+<p>The transferable lesson is not the numbers; it is which number governs. <strong>Capacity is consumed by what is reserved, not by what is used.</strong> The lab demonstrated the consequence directly: a second target cluster would not fit, because its machines could not reserve the memory, even though two-thirds of the memory already reserved sat idle.</p>
+<p>For a data centre that produces this sizing method:</p>
+<ol>
+<li>Size hosts from the <strong>sum of reservations</strong> of everything you intend to place on them, not from observed utilization.</li>
+<li>Then treat the gap between reservation and use as the thing to manage down, because that gap is the owned-hardware form of the cloud waste in the prologue. Right-sizing requests is the work; it is unglamorous and it is where the margin is.</li>
+<li>Reserve headroom deliberately: enough to lose a failure domain and still place everything that was running on it. That is an availability cost that appears on the capacity plan, and it is routinely forgotten.</li>
+<li>Price warmth explicitly. Chapter 9's standby holds eight cores and 14 GiB idle, permanently, to make a claim take under half a second instead of thirty-four. That may be an excellent trade. It is never a free one, and it belongs on the plan as a line.</li>
+</ol>
+<h2 id="secrets-identity-and-the-two-things-the-lab-has-no-answer-for">Secrets, identity, and the two things the lab has no answer for</h2>
+<p><strong>Secrets.</strong> The platform commits certificate authority private keys and a fixed join token, marked demo-only (Chapter 3), and the agent platform's tokens live in cluster Secrets, which are encoded rather than encrypted. Neither transfers. The two common patterns are SOPS, which encrypts values inside the Git repository so the repository stays the source of truth, and External Secrets, which keeps material in a dedicated store — HashiCorp Vault, or a hardware security module — and syncs references into the cluster. The choice matters less than the property both provide and the platform currently lacks: <em>no plaintext secret in version control, and a rotation procedure that someone has actually run.</em></p>
+<p><strong>Identity.</strong> Chapter 12 records that the model gateway shipped without a lock and Kiali runs with anonymous access; the web console has no login at all. In a data centre, every human-facing surface authenticates against the organization's identity provider through OIDC, and Kubernetes role-based access control is bound to real groups rather than to a shared credential. The agent platform makes this sharper rather than softer: Chapter 15 found that an upgrade silently changed which service account agent runs execute as, and a permission check written against the old identity kept reporting success. Identity is not a one-time configuration. It is something to re-verify after every upgrade, against the identity a running pod actually carries.</p>
+<h2 id="gitops-the-answer-this-book-already-argued-for">GitOps — the answer this book already argued for</h2>
+<p>Chapter 18 is the reason this section exists, and it makes the case better than any vendor's slide.</p>
+<p>When both clusters were deleted and rebuilt, four things turned out to exist nowhere but in the running clusters: the Kind clusters themselves, KubeVirt and CDI, a hand-applied container image patch that no script recorded, and the KubeVirt CPU setting worth eight seconds on every machine start. One of those, the image patch, had been made once, by hand, months earlier, and was recovered only because someone thought to read the old cluster before deleting it. The chapter's conclusion is this book's central claim about sovereignty: <em>everything that lives only in a running cluster is not owned; it is on loan from that cluster's continued existence.</em></p>
+<p>GitOps is the mechanism that makes that conclusion enforceable rather than aspirational. A controller in the cluster — Flux and Argo CD are the two common implementations — continuously reconciles the cluster against a Git repository. The properties that matter here are three:</p>
+<ul>
+<li><strong>Drift becomes visible.</strong> A hand-applied patch shows up as a difference between the cluster and the repository, rather than as institutional memory in one person's head.</li>
+<li><strong>The rebuild is the normal path, not an emergency one.</strong> If the repository is the source of truth, rebuilding from it is what the system does continuously, which is the only version of a disaster-recovery plan that is tested every day.</li>
+<li><strong>Change has a review and an audit trail</strong> — which is also what Constraint 6 of the platform's own agent strategy asks for, and what an agent that proposes changes will eventually need in order to be allowed to make them.</li>
+</ul>
+<p>The design guidance is therefore blunt: <strong>put the four unscripted things in Git first, before adding anything new.</strong> The cluster definitions, the platform components and their versions, the tuning that is currently cluster state, and the base images. Chapter 18 already produced that list at no extra cost, by the expensive method of losing everything on purpose.</p>
+<h2 id="observability-that-remembers">Observability that remembers</h2>
+<p>The lab's observability is real but has no memory. Prometheus holds the mesh's metrics with the sample add-on's retention and no durable storage; Kiali is anonymous; the recorded agent demonstrations are files on a laptop. Chapter 12 found the model traffic — the traffic the board asks about most — carried no model name and no token count, and was displayed nowhere.</p>
+<p>For a data centre, three requirements follow, in this order of usefulness:</p>
+<ol>
+<li><strong>Retention long enough to answer a question about last quarter</strong>, which means durable storage behind the metrics system and a stated retention period, chosen against the audit obligations rather than the disk price.</li>
+<li><strong>Logs and traces with the same lifetime</strong>, so that an incident review can reach the evidence rather than the dashboard's memory of it.</li>
+<li><strong>The AI-specific meter the platform still lacks:</strong> tokens by model, by tenant. Chapter 19 measured energy per token on the GPU and found the electricity is a rounding error, which makes the meter a capacity and chargeback instrument rather than a power one — but it remains the closest thing to an invoice line that local AI has.</li>
+</ol>
+<p>And one rule carried forward unchanged from Part III: a dashboard is not evidence. Every panel a decision rests on should be traceable to a check that can fail, and every such check should have been watched failing at least once.</p>
+<h2 id="running-outside-the-vendors-tested-range-on-purpose">Running outside the vendor's tested range, on purpose</h2>
+<p>Chapter 18 records a deliberate decision to run Istio on a Kubernetes version outside its tested range, written down next to the version number. That decision was correct for a pilot and is a live risk in a data centre, so it needs a policy rather than a habit.</p>
+<p>Design guidance, and this is the part most organizations skip until an incident forces it:</p>
+<ul>
+<li><strong>Decide who carries the risk.</strong> Either an internal team is willing to debug a mesh nobody upstream has tested this combination of, or the organization buys support and then lives inside the supported matrix. Both are defensible. Running unsupported while assuming someone else will help is not.</li>
+<li><strong>Record every exception where the next person will trip over it</strong> — which the platform already does, in the mesh's README, and which is the cheapest control in this chapter.</li>
+<li><strong>Distinguish passing from supported.</strong> The platform's own 22 of 22 checks passed on an unsupported combination. That proves the assertions held, not that the combination is tested. Chapter 18 says so explicitly, and the distinction is exactly what an auditor will ask about.</li>
+<li><strong>Budget for the upgrade treadmill.</strong> A supported posture means tracking upstream release cadences and their support windows, and that is a standing cost in people, not a project.</li>
+</ul>
+<h2 id="transfers-and-does-not">Transfers, and does not</h2>
+<p>The two-column slide Anita put on the wall, filled in from the book's own chapters.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Transfers as-is</th>
+<th>Does not transfer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The declarative model: a cluster is a written declaration, applied (Chapters 4, 5; Appendix G.1)</td>
+<td>Single control planes and a single failure domain — everything in this book runs one of each</td>
+</tr>
+<tr>
+<td>Build and teardown speed: 33.7 s and 18.9 s, which are properties of the software, not the hardware (Chapter 7)</td>
+<td>The storage under it: local files, never replicated, never restored from</td>
+</tr>
+<tr>
+<td>Cluster API and KubeVirt as the factory, including VMs as first-class objects (Chapter 4)</td>
+<td>A flat Docker bridge with a hardcoded address range (Appendix B)</td>
+</tr>
+<tr>
+<td>The service mesh's model: one label for cross-cluster failover, identity-based authorization with no sidecars (Chapter 11)</td>
+<td>MetalLB in layer-2 mode; production wants BGP peering with real routers</td>
+</tr>
+<tr>
+<td>Golden images and air-gapped boot — nothing fetched from the internet at start-up (Chapter 6)</td>
+<td>Fixed certificate authorities and a join token committed to the repository (Chapter 3)</td>
+</tr>
+<tr>
+<td>The warm-standby pattern, and its explicit price in idle capacity (Chapter 9)</td>
+<td>One standby, one resident model — a depth of one is a lab constraint, not a design</td>
+</tr>
+<tr>
+<td>Agents as Kubernetes objects, with policy, identity and tools declared (Chapters 13, 14)</td>
+<td>Unauthenticated consoles, an unlocked model gateway, anonymous Kiali (Chapter 12)</td>
+</tr>
+<tr>
+<td>Local models on owned hardware, and the measured energy per token (Chapters 3, 19)</td>
+<td>One consumer GPU holding one model at a time (Chapter 9)</td>
+</tr>
+<tr>
+<td>The capacity lesson: reservations govern, and the reservation-to-use gap is the margin (Chapter 19)</td>
+<td>The absolute figures — 22.42 GiB reserved, 7.45 GiB used — which are one host's numbers, not a sizing model</td>
+</tr>
+<tr>
+<td><strong>The discipline</strong>: measure by name, assert on values, keep the before picture, record the dead ends (Chapters 7, 10, 11, 15, 18)</td>
+<td>The assumption that anything here has been operated — no on-call, no SLA, no users, no auditor</td>
+</tr>
+</tbody>
+</table></div>
+<p>Read the right-hand column as a work plan and it is long but ordinary: well-understood components, wired in by people who have done it before. Read the left-hand column as what a year of a single engineer and an AI assistant produced, and the interesting claim of this book survives the move to a data centre — not <em>we built a cloud on a laptop</em>, but <em>we found out what is true, cheaply, before spending the money.</em></p>
+<p>That is the last thing that transfers, and the only one that cannot be bought.</p>
+<hr class="scene-break" />
+<p class="dateline dateline-fiction">Meridian · the same afternoon</p>
+<p>The CFO had been writing while Vikram talked, and what he read back was a question rather than a note.</p>
+<p>"If we approve the right-hand column, how long before someone shows me a screen that says everything is fine?"</p>
+<p>"About a week," Anita said.</p>
+<p>"And how long before I should believe it?"</p>
+<p>She thought about the year: a worker marked <code>Ready</code> that could not run anything; a failover check that printed success during a total outage; a map labelled <em>live</em> drawing fourteen things that did not exist; a permission check that passed while the thing it checked had quietly moved.</p>
+<p>"When someone has broken it in front of you," she said, "and the screen went red."</p>
+<div class="endmatter"><h2 id="the-ledger">The ledger</h2>
+<ul>
+<li><strong>Measured, and carried into this chapter:</strong> build 33.7 s and teardown 18.9 s (Chapter 7); a warm claim in 467 ms (Chapter 9); 22.42 GiB reserved against 7.45 GiB used, and a control-plane machine using 1% of its processor allowance (Chapter 19); energy per generated token on the GPU (Chapter 19).</li>
+<li><strong>Designed, not built:</strong> every requirement in this chapter — high availability, replicated storage, tested restores, BGP and segmentation, external DNS and PKI, secrets management, OIDC identity, GitOps reconciliation, observability retention, and a support policy. <strong>None of it exists on the platform.</strong></li>
+<li><strong>Already known to be missing, from the book's own findings:</strong> replicated storage, any restore test, real authentication on the consoles, destination-scoped egress, secrets outside version control, and four pieces of platform state that live only in a running cluster (Chapters 3, 12, 14, 18).</li>
+<li><strong>The cheapest item on the list:</strong> writing the exception down next to the version number. The platform already does it.</li>
+<li><strong>Not claimed:</strong> that any of this was tested, costed, or scheduled. This chapter is a list of requirements, and a list is not a plan.</li>
+</ul>
+<h2 id="ask-your-team">Ask your team</h2>
+<ol>
+<li><strong>Which parts of our platform exist only in a running system — and what would we have to reverse-engineer if we lost it tonight?</strong> Chapter 18 produced that list by accident; produce yours on purpose.</li>
+<li><strong>When did we last restore from a backup into a different cluster, and who watched it?</strong> A backup that has never been restored is a hypothesis with a budget line.</li>
+<li><strong>Where are we running outside a vendor's tested range, who decided it, and who carries the risk if it breaks at three in the morning?</strong></li>
+</ol>
+<h2 id="open-the-repo">Open the repo</h2>
+<p>There is nothing in the repository that implements this chapter, which is the point. What the repository does hold is the evidence behind each requirement:</p>
+<ul>
+<li><code>03-target-cluster/target-cluster-warm.yaml</code> — <code>replicas: 1</code> on the <code>KThreesControlPlane</code>, and the fixed certificate authorities it depends on (quoted in Appendix G.1).</li>
+<li><code>03-target-cluster/warm-ca/</code> and <code>scripts/gen-warm-ca.sh</code> — the committed demonstration keys, and the script that regenerates them.</li>
+<li><code>06-sympozium/agent-egress-ollama.yaml</code> — the port-only egress rule (quoted in Appendix G.5).</li>
+<li><code>01-metallb/metallb-config.yaml</code> — layer-2 mode and the hardcoded address range.</li>
+<li><code>CLAUDE.md</code>, the 2026-09-16 entries — the four things that existed only in a running cluster.</li>
+<li><strong>Without the repo:</strong> Appendix G quotes the manifests above; Appendix B holds the address plan; Appendix C.3 catalogues the statuses that were wrong in both directions.</li>
+</ul>
+</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
+<p><em>For the author — remove before publication.</em></p>
+<ul>
+<li><strong>This chapter contains no new measurements, by design.</strong> Every figure in it is carried from Chapter 7, 9 or 19 and attributed there. If a reviewer finds an unattributed number in this chapter, it is a defect — the chapter's whole claim to belong in this book is that it does not pretend.</li>
+<li><strong>Product names are categories, not recommendations.</strong> Rook/Ceph, Velero, SOPS, External Secrets, Vault, Flux, Argo CD, cert-manager. None was evaluated, benchmarked, or run against this platform. Consider adding one sentence to that effect in the chapter body if a reviewer reads the current framing as endorsement — the "design guidance" label at the top is doing a lot of work.</li>
+<li><strong>Unverified technical assertions to check before publication:</strong> that <code>KThreesControlPlane</code> accepts <code>replicas: 3</code> and behaves as described (the platform has only ever run <code>replicas: 1</code>); that MetalLB's BGP mode is a configuration change rather than a redeployment; and that Velero's volume backup works with the CSI driver a reader would actually use under KubeVirt. All three are stated as well-known practice and none was tested here.</li>
+<li><strong>The HA claim about quorum</strong> is generic etcd/Raft practice. k3s with an embedded datastore behaves differently from k3s with SQLite, and this platform's warm path deliberately forces SQLite (Appendix G.1's header comment). A three-replica k3s control plane is therefore a <em>different</em> configuration from the one this book measured, not a scaled-up one. Worth a sentence in the body if a technical reviewer agrees.</li>
+<li><strong>Chapter numbering.</strong> This chapter was inserted as 17; the upgrade chapter moved to 18 and the TCO chapter to 19. Cross-references throughout the book were shifted accordingly on 18 September. Re-grep before print.</li>
+<li><strong>Overlap to watch.</strong> The capacity section and Chapter 19's worksheet cover adjacent ground. If Chapter 19 gains real cost figures, trim this chapter's capacity section to the sizing <em>method</em> and let 19 own the money.</li>
+<li><strong>The Meridian scenes are fiction.</strong> No Meridian figure is quantified here either; the CFO's questions are the chapter's argument in dialogue form.</li>
+<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
+</ul></aside>
+</article>

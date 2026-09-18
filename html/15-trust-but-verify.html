@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -413,7 +437,7 @@ This is the list of nodes in the target cluster.
 <hr class="scene-break" />
 <p class="dateline dateline-record">Build log · 16 September 2026</p>
 <h2 id="two-answers-one-of-them-invented">Two answers, one of them invented</h2>
-<p>Both answers were collected on the same day, during the platform rebuild described in Chapter 17, while checking that every agent could still reach what it was meant to reach. The prompt was identical — <em>"Use your kubectl tool: kubectl get nodes -o name. Report exactly what it printed."</em> — sent to two agents with two different jobs.</p>
+<p>Both answers were collected on the same day, during the platform rebuild described in Chapter 18, while checking that every agent could still reach what it was meant to reach. The prompt was identical — <em>"Use your kubectl tool: kubectl get nodes -o name. Report exactly what it printed."</em> — sent to two agents with two different jobs.</p>
 <p>The first came from <code>cluster2-agent</code>, which operates the management cluster. It was correct: that cluster has exactly one node, <code>cluster2-control-plane</code>.</p>
 <p>The second came from <code>target-cluster-agent</code>, whose tools reach inside the k3s cluster that runs as virtual machines. That cluster had two nodes, and their real names were <code>target-cluster-cp-9x5sr</code> and <code>target-cluster-workers-x79t2-tlzn9</code>. The agent got the count right and every name wrong. Its answer also described a process — <em>"After retrying, I was able to run…"</em> — for which there is no evidence at all.</p>
 <p>The first thing checked was not the model. It was the path the model's tool would have used. This agent reaches the target cluster through credentials stored as a Kubernetes Secret, and those credentials go stale whenever the target cluster is rebuilt. The repository already warns about exactly this, because when it happens the tool's TLS handshake fails <em>silently</em> and the model is left to fill the gap. So the certificate authority recorded in the Secret was compared with the one in the live kubeconfig. They matched. Then a throwaway pod, with no model anywhere near it, mounted the same Secret and ran the same command:</p>

@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -380,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 4,700 words · about 20 minutes to read</dd>
+      <dd>About 4,700 words · about 21 minutes to read</dd>
     </dl>
   </header>
 
@@ -683,7 +707,7 @@ pod  -&gt; CP VM pod IP:6443   =  timeout
 </tr>
 </tbody>
 </table></div>
-<p>There is one catch, and it belongs in the ledger. This setting lives in the running cluster's KubeVirt configuration, not in a manifest in Git. Rebuild the management cluster and it is gone. The fix was wrapped in a script, <code>scripts/configure-kubevirt-perf.sh</code>, and wired into the management cluster's setup so that a rebuild would reapply it. A week later, after a rebuild from nothing, it was found missing anyway and had to be applied by hand. That story is Chapter 17.</p>
+<p>There is one catch, and it belongs in the ledger. This setting lives in the running cluster's KubeVirt configuration, not in a manifest in Git. Rebuild the management cluster and it is gone. The fix was wrapped in a script, <code>scripts/configure-kubevirt-perf.sh</code>, and wired into the management cluster's setup so that a rebuild would reapply it. A week later, after a rebuild from nothing, it was found missing anyway and had to be applied by hand. That story is Chapter 18.</p>
 <h2 id="where-it-landed">Where it landed</h2>
 <pre><code>baseline                 50.0 s   (52.7 / 50.0 / 46.6, spread 6.1 s)
 + advertise-address      42.7 s   (42.7 / 42.8 / 41.2, spread 1.6 s)
@@ -719,6 +743,7 @@ pod  -&gt; CP VM pod IP:6443   =  timeout
 <p>"June is written down, with its numbers. Nobody here pays for it twice."</p>
 <p>She opened the board summary on her laptop, found the line that said <em>&lt; 40 s</em>, and deleted it. Then she typed the replacement herself: <em>34.5 s median, three runs, spread 0.5 s — measured 9 September.</em></p>
 <p>"Put a date on every number," she said. "A number without a date and a spread is a slogan."</p>
+<figure class="figure"><img alt="Dot plot of three runs at each of three stages; the median bar falls and the spread line shortens." src="../figures/fig-08-1-median-and-spread.svg" /><figcaption>Figure 8.1 — Two one-line changes: the median falls from 50.0 s to 34.5 s, and the spread from 6.1 s to 0.5 s.</figcaption></figure>
 <div class="endmatter"><h2 id="the-ledger">The ledger</h2>
 <ul>
 <li><strong>Spent:</strong> two golden-image experiments, each a full bake cycle to disprove; one instrumentation script; two further hypotheses — gating the worker, rerouting the pod network — that did not survive measurement.</li>
@@ -742,6 +767,7 @@ pod  -&gt; CP VM pod IP:6443   =  timeout
 <li><code>03-target-cluster/target-cluster-warm.yaml</code> — the <code>advertise-address</code> line in the control plane's <code>preK3sCommands</code>.</li>
 <li><code>make kubevirt-perf</code> — applies the CPU ceiling; the header of <code>scripts/configure-kubevirt-perf.sh</code> explains it.</li>
 <li><code>git show c7ad792</code> — the commit that landed both fixes, with the measurements in its message.</li>
+<li><strong>Without the repo:</strong> Appendix G.2 quotes the <code>advertise-address</code> line with its measurement comment; G.3 quotes the <code>supportContainerResources</code> patch.</li>
 </ul>
 </div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
 <p><em>For the author — remove before publication.</em></p>

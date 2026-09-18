@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -401,7 +425,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>On 28 February 2026 the repository gained two scripts that changed that: <code>bake-golden-image.sh</code> and <code>build-containerdisk.sh</code>, committed together as <em>"optimized images for cdi and container images."</em> The README states the result in one line — cluster spin-up <em>"from ~10 minutes to ~2 minutes"</em> — and the same pair of numbers appears in the developer guide and the strategy document. The user guide is more cautious: <em>"~2-5 minutes (with golden image) or ~10 minutes (without)."</em></p>
 <p>Those figures deserve the same honesty as the rest of Part II. They are stated in four documents, and no run log or script output in the repository records the measurements behind them. They date from before the platform had an instrument (Chapter 7 tells that story). What is not in doubt is the direction, and the reason: the slowest thing a new machine can do is download its own software.</p>
 <h2 id="baking">Baking</h2>
-<p>Baking a golden image is a four-step job run by <code>bake-common.sh</code>, and on 16 September it was run from scratch during the rebuild in Chapter 17.</p>
+<p>Baking a golden image is a four-step job run by <code>bake-common.sh</code>, and on 16 September it was run from scratch during the rebuild in Chapter 18.</p>
 <ol>
 <li><strong>Clone the base image.</strong> A stock Ubuntu Noble cloud image, already imported into the cluster as a DataVolume by the Containerized Data Importer, is cloned into a new volume. On 16 September: about 50 seconds.</li>
 <li><strong>Boot a bake VM</strong> from the clone, with a cloud-init script that does the real work.</li>
@@ -431,7 +455,7 @@ ADD --chown=107:107 disk.qcow2 /disk/disk.qcow2
 cluster2-control-plane   172.18.0.3
 registry                 172.18.0.4
 </code></pre>
-<p>Every image reference on the platform points at the control-plane node of <code>cluster1</code> — a Kubernetes node that runs no registry. Before the rebuild in Chapter 17, the repository's notes recorded <code>.2</code> as <code>cluster2</code>'s node instead, and in June as <code>cluster1</code>'s. The address in the image names has moved from one neighbor to another and back. In every record the repository keeps, it has never been the registry's own.</p>
+<p>Every image reference on the platform points at the control-plane node of <code>cluster1</code> — a Kubernetes node that runs no registry. Before the rebuild in Chapter 18, the repository's notes recorded <code>.2</code> as <code>cluster2</code>'s node instead, and in June as <code>cluster1</code>'s. The address in the image names has moved from one neighbor to another and back. In every record the repository keeps, it has never been the registry's own.</p>
 <p>Images still pull, because the container runtime on each <code>cluster2</code> node is given a small translation file:</p>
 <pre><code>[host.&quot;http://172.18.0.4:5000&quot;]
   capabilities = [&quot;pull&quot;, &quot;resolve&quot;, &quot;push&quot;]
@@ -440,7 +464,7 @@ registry                 172.18.0.4
 <p>containerd reads it and quietly sends every request for <code>172.18.0.2:5000</code> to <code>172.18.0.4:5000</code> instead. Nothing else knows about the file. Asked directly from the same node on 17 September, a plain HTTP request to the alias failed to connect at all; the same request to the registry's real address returned <code>200</code>.</p>
 <p>That arrangement fails in two ways, and both have happened.</p>
 <p><strong>The registry's address drifts.</strong> When containers reconnect to the network, the registry can come back at a different address. The translation file still points at the old one, and new VMs sit in <code>ImagePullBackOff</code>, failing to reach <code>172.18.0.2:5000</code>.</p>
-<p><strong>The file disappears.</strong> It lives inside the node's container, so recreating a node — as Chapter 17 did to both clusters — deletes it.</p>
+<p><strong>The file disappears.</strong> It lives inside the node's container, so recreating a node — as Chapter 18 did to both clusters — deletes it.</p>
 <p>The repair is <code>scripts/fix-registry-hosts.sh</code>, added in June. It looks up the registry's current address and rewrites the translation file on every <code>cluster2</code> node. The Makefile runs it before the deploy and pre-pull targets. The UI's own deploy path does not.</p>
 <p>The alias claimed one more casualty. The UI has a Registry tab that lists images, and it dialed the alias the way any program would — over plain HTTP, without containerd's translation. It reported <code>failed to connect to registry</code> and showed the registry as disconnected, both from the host and from inside the cluster. The fix split one setting into two: <code>REGISTRY_URL</code>, a real address to dial, and <code>REGISTRY_ALIAS</code>, the name to <em>display</em> — because, in the handler's words, the alias <em>"is what image references use."</em></p>
 <p>The platform works. But hundreds of references name a machine that is not the registry, and every consumer that needs to reach it must be told, separately and locally, where the registry really is.</p>
@@ -449,7 +473,7 @@ registry                 172.18.0.4
 <p><code>:warm</code> was built on 16 September, the day of the upgrade. <code>:preinit</code> was built on 18 April. <code>:latest</code> was built on <strong>3 March</strong>. After the rebuild, only <code>:warm</code> had been pulled onto the new <code>cluster2</code> node.</p>
 <p>Everything inside an image was decided on the day it was baked, and every cluster built from it inherits those decisions:</p>
 <ul>
-<li><strong>A Kubernetes version.</strong> Chapter 17 had to rebake <code>:warm</code> because every tag still carried k3s v1.31, and the variable the bake script documented for choosing the version turned out never to have controlled anything.</li>
+<li><strong>A Kubernetes version.</strong> Chapter 18 had to rebake <code>:warm</code> because every tag still carried k3s v1.31, and the variable the bake script documented for choosing the version turned out never to have controlled anything.</li>
 <li><strong>A ghost.</strong> The warm image's Node object for its own bake VM (Chapter 7).</li>
 <li><strong>Fixed certificates and a join token</strong>, baked into the warm image on purpose, safe only while one cluster runs at a time.</li>
 <li><strong>An Ubuntu base</strong> as it stood on the day it was imported.</li>

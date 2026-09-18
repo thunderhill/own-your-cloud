@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -502,7 +526,7 @@ if [[ -n &quot;$b&quot; ]]; then okc=$((okc+1)); else failc=$((failc+1)); fi
 <p><strong>Failover works — even with the waypoint in the path.</strong> The namespace was left enrolled in the waypoint, exactly as the acts leave it, with no opt-out label. cluster1's copies of echo were scaled to zero. All 30 of the next calls returned <code>200</code>, and every one was answered by a pod in cluster2. The first call after the last local pod disappeared was already one of them. The waypoint's endpoint list explains why. In August it held only local pod addresses. Now it also holds cluster2's east-west gateway:</p>
 <pre><code>envoy://inner_connect_originate/172.18.255.221:15008   HEALTHY   inbound-vip|80|http|echo.demo-apps.svc.cluster.local
 </code></pre>
-<p>The problem recorded that August evening no longer reproduces. The opt-out the console applies is now unnecessary, though harmless. What changed is not established. The Istio upgrade of Chapter 17 is the obvious candidate.</p>
+<p>The problem recorded that August evening no longer reproduces. The opt-out the console applies is now unnecessary, though harmless. What changed is not established. The Istio upgrade of Chapter 18 is the obvious candidate.</p>
 <p><strong>The other August gotcha still reproduces.</strong> Act 2 also leaves a route that splits in-mesh traffic between the <code>echo-v1</code> and <code>echo-v2</code> Services — and those Services are not global. With that route re-applied and cluster1's copies scaled to zero, 20 of 20 calls returned <code>503</code>. After the route was deleted, the second call returned <code>200</code>, 0.15 seconds later, and the next 20 all did. A route that points at local-only services overrides global routing. Act 3 deletes the route for exactly this reason.</p>
 <p><strong>Healthy traffic does not prefer home.</strong> The Service's manifest says <em>"Local endpoints are preferred; remote ones are used when no healthy local endpoint exists."</em> After its baseline calls, the act prints <em>"traffic served (locality-aware routing prefers in-cluster endpoints)"</em> — without comparing any numbers. Measured with everything healthy, 60 calls split exactly <strong>30 to cluster1 and 30 to cluster2</strong>. The act's own local-or-remote classifier recognises only one of cluster2's three pod names. That day every remote call happened to land on a different one, so the act would have counted all of them as local.</p>
 <p>On one laptop, the price of that split is a fraction of a millisecond: 2.67 ms mean for calls served locally, 2.96 ms for calls served across. Between two real sites, it is a network hop for half of every service's traffic, on a day when nothing is wrong. That is a latency and data-transfer bill, set by a default nobody chose.</p>
@@ -520,13 +544,14 @@ if [[ -n &quot;$b&quot; ]]; then okc=$((okc+1)); else failc=$((failc+1)); fi
 <p>"And when nothing is broken?"</p>
 <p>"Half our traffic crosses to the other site anyway. Nobody set that. It's the default."</p>
 <p>"That one isn't an engineering question," Anita said. "That's a bill." She took a pen to the list from the week before and added a line at the bottom. "New rule. No check goes on a dashboard of mine until someone has watched it fail on purpose. And the traffic split comes to me with a cost attached, and we choose it."</p>
+<figure class="figure"><img alt="Two terminal panels, working failover and total outage, printing the identical success line." src="../figures/fig-11-3-two-identical-screens.svg" /><figcaption>Figure 11.3 — One check, two opposite realities, the same output.</figcaption></figure>
 <div class="endmatter"><h2 id="the-ledger">The ledger</h2>
 <ul>
 <li><strong>Built (21 August 2026):</strong> a Gateway API front door with a team ownership split; request-level authorization on cryptographic identity, with no proxy in any application pod; one mesh across two clusters under a single local root certificate; a cross-cluster service declared with one label.</li>
 <li><strong>Re-verified (17 September; Istio 1.31.0, Kubernetes 1.37):</strong> verification script 22 passed, 0 failed. Rogue route refused. Identity rules 200 / 403 / 403 / 200. Caller identity delivered to the application.</li>
 <li><strong>Measured by HTTP status:</strong> cluster1 scaled to zero → 30 of 30 <code>200</code>, all from cluster2. Both clusters at zero → 20 of 20 <code>503</code>, which Act 3's counter reports as <code>success=20 failed=0</code>.</li>
 <li><strong>Found:</strong> the ListenerSet beat refused for a missing <code>ReferenceGrant</code>, and never asserted; healthy traffic split 30/30 across clusters, despite the manifest's comment; a local/remote classifier that sees one of three remote pods; a verification section that checks configuration, not behaviour; one August gotcha that no longer reproduces, and one that still does.</li>
-<li><strong>Corrected elsewhere:</strong> Chapter 17 had cited <code>success=20 failed=0</code> as proof of failover. It now cites the status-code measurement.</li>
+<li><strong>Corrected elsewhere:</strong> Chapter 18 had cited <code>success=20 failed=0</code> as proof of failover. It now cites the status-code measurement.</li>
 <li><strong>Cleaned up:</strong> every replica count, label and route changed for measurement was put back, and checked.</li>
 </ul>
 <h2 id="ask-your-team">Ask your team</h2>
@@ -545,6 +570,7 @@ if [[ -n &quot;$b&quot; ]]; then okc=$((okc+1)); else failc=$((failc+1)); fi
 <li><code>ui/backend/handlers/istio_actions.go</code> — <code>HandleIstioFailover</code>: the counter that checks for <code>200</code>, with convergence measured.</li>
 <li><code>07-istio-advanced/verify.sh</code>, section 5 — what the Act 3 checks do and do not assert.</li>
 <li><code>istioctl proxy-config endpoints deploy/waypoint.demo-apps --context kind-cluster1 | grep echo</code> — whether the waypoint can see the other cluster.</li>
+<li><strong>Without the repo:</strong> Appendix G.4 quotes both counters side by side — the act's non-empty-body check, and the console's status-code check.</li>
 </ul>
 </div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
 <p><em>For the author — remove before publication.</em></p>
@@ -555,9 +581,9 @@ if [[ -n &quot;$b&quot; ]]; then okc=$((okc+1)); else failc=$((failc+1)); fi
 <li><strong>The even split.</strong> 60 of 60 calls were <code>200</code>; per pod: three cluster1 pods at 10 each, and all 30 remote calls on one cluster2 pod (<code>x8dph</code>). Hypotheses, not verified: the east-west endpoint is weighted by the remote pod count (3 + 3), and one pooled tunnel connection pins remote calls to one pod. Whether <code>spec.trafficDistribution: PreferClose</code> changes the split was not tested.</li>
 <li><strong>Latency numbers</strong> are curl <code>time_total</code> inside the client pod, on one laptop: local means little about a real WAN.</li>
 <li><strong>Not re-run on 17 September:</strong> the identity-swap revocation beat, request mirroring, the 301 redirect, and XFCC after a waypoint restart (the header was present, but the restart itself wasn't repeated).</li>
-<li><strong>Canary figures differ across runs:</strong> 89/11 (August, 100 requests), 93/7 (16 September, from Chapter 17), 8% (17 September, 60 requests). All are within the act's accepted band.</li>
+<li><strong>Canary figures differ across runs:</strong> 89/11 (August, 100 requests), 93/7 (16 September, from Chapter 18), 8% (17 September, 60 requests). All are within the act's accepted band.</li>
 <li><strong>ListenerSet.</strong> Whether it ever worked in August is unknown; the August commit does not list it among verified results. There is no <code>ReferenceGrant</code> anywhere in the repository.</li>
-<li><strong>Unsupported combination.</strong> Istio 1.31 on Kubernetes 1.37 is outside Istio's tested range (Chapter 17).</li>
+<li><strong>Unsupported combination.</strong> Istio 1.31 on Kubernetes 1.37 is outside Istio's tested range (Chapter 18).</li>
 <li><strong>Repo fixes not made:</strong> count status codes in <code>run.sh</code>; assert (or remove) the locality claim; add a <code>ReferenceGrant</code> or drop the ListenerSet beat; update README gotcha 2 and the console's handler comment for 1.31; add a behavioural failover check to <code>verify.sh</code>.</li>
 <li><strong>Figures.</strong> 11.1: the Chapter 10 plumbing next to the one label. 11.2: the two refusal status lines. 11.3: the two identical <code>success=20 failed=0</code> screens — failover and total outage. 11.4: the 60-call distribution.</li>
 <li><strong>The Meridian scenes are fiction.</strong> The outage test and its output are real.</li>

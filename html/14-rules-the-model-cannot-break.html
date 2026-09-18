@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -588,11 +612,12 @@ get secrets -n sympozium-system        yes
 <li><code>kubectl auth can-i --list -n sympozium-system --as=system:serviceaccount:sympozium-system:sympozium-run-&lt;run-name&gt;</code> — what a real agent run can actually do.</li>
 <li><code>06-sympozium/mesh-sre-agent.yaml</code> — RULE 1, and the header explaining why the metrics path is closed.</li>
 <li><code>ui/backend/handlers/ai.go</code> — <code>allowedActions</code>.</li>
+<li><strong>Without the repo:</strong> Appendix G.5 quotes <code>agent-egress-ollama.yaml</code> whole — the port-only rules are visible in it.</li>
 </ul>
 </div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
 <p><em>For the author — remove before publication.</em></p>
 <ul>
-<li><strong>Fix before publishing, not just before print.</strong> This chapter describes, at design level, a path from an agent run to a target-cluster administrator credential. It is the author's own demo platform, but either fix it first and describe the fix, or confirm you are comfortable publishing it as open.</li>
+<li><strong>Tracked, not fixed.</strong> This chapter describes, at design level, a path from an agent run to a target-cluster administrator credential. Rather than fixing the live platform as part of writing this book, it is tracked as <code>TODO.md</code> §3 ("agent runs can write in their namespace and read every secret in it") in the <code>sovereign_cloud</code> repository. The chapter describes the hole as open; it is not confirmed fixed as of this draft.</li>
 <li><strong>Probe method.</strong> Two <code>curlimages/curl</code> pods in <code>sympozium-system</code>, one labeled <code>sympozium.ai/role=agent,app.kubernetes.io/part-of=sympozium</code> and one unlabeled; <code>curl</code> with a 5-second connect timeout; "no connection" is curl status <code>000</code>. Both pods were deleted. The labels were checked against the pod of lab 04's real run the same morning. Kind 0.33.0, <code>kindnetd</code> image <code>v20260820</code>.</li>
 <li><strong>Lab 04's README is wrong about the network plugin</strong>, at least today. Update it. Note that <code>06-sympozium/host-ollama-service.yaml</code> already says policy enforcement is what made the shim necessary.</li>
 <li><strong>Re-verified on 17 September:</strong> the admission refusal (dry run); <code>fetch_url</code> used despite the deny (one tool call, 3.8 s of model time, 6,956 input and 121 output tokens — July's run used 4,010 and 95); webhook failure policies (<code>vagentpod</code> and <code>vskillpack</code> fail closed; the repository's own skills webhook fails open). <strong>Not re-verified:</strong> the RULE 1 refusal measurements, which date from August on <code>qwen2.5:7b</code>.</li>

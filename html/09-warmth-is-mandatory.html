@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -380,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 2,300 words · about 10 minutes to read</dd>
+      <dd>About 2,800 words · about 12 minutes to read</dd>
     </dl>
   </header>
 
@@ -418,7 +442,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p class="dateline dateline-record">Build log · 17 September 2026</p>
 <p>Checked against the running platform on 17 September, the fastest path in the platform turns out to be the least exercised one.</p>
 <p>The UI backend reports no standby: <code>{"state":"none"}</code>. The pool is opt-in, and the script that starts the UI leaves it off by default. It also lives only as long as that backend process runs, so the command-line deploy path has never benefited from it.</p>
-<p>Its standby manifest still points at the image tagged <code>ubuntu-noble-k3s:latest</code>, and that image was built on <strong>3 March</strong>. It was not rebuilt during the September upgrade in Chapter 17. Turning the pool on today would build its standby from a six-month-old image, under a manifest that now declares a much newer k3s. Nobody has tried it.</p>
+<p>Its standby manifest still points at the image tagged <code>ubuntu-noble-k3s:latest</code>, and that image was built on <strong>3 March</strong>. It was not rebuilt during the September upgrade in Chapter 18. Turning the pool on today would build its standby from a six-month-old image, under a manifest that now declares a much newer k3s. Nobody has tried it.</p>
 <p>Its readiness check counts <em>two Ready nodes</em>, the same pattern that fooled the stopwatch in Chapter 7. A standby built from the warm image would be declared ready while its worker was still booting, because that image carries the ghost node. Whether the March image carries anything similar has not been checked.</p>
 <p>And the 194-millisecond claim has not been measured since June.</p>
 <p>None of this means the design is wrong. It means a warm path is only as good as the last time someone used it. The image aged, the platform moved underneath it, and a number from June stayed on the page.</p>
@@ -472,7 +496,7 @@ td strong { color: var(--accent); font-weight: 600; }
 </tr>
 <tr>
 <td>Warm</td>
-<td>194 ms claim (June; not re-measured)</td>
+<td>467 ms median (18 Sept, 3 runs; was 194 ms in June)</td>
 <td>0.14–0.17 s</td>
 </tr>
 <tr>
@@ -506,11 +530,42 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>"Then it isn't warm. It's a cold path with a design document." She wrote across the bottom of the page. "Rebuild the image. Turn it on. And every week, someone claims it, deletes it, and times the rebuild — naming both nodes."</p>
 <p>"Every week?"</p>
 <p>"Anything we keep warm, we exercise," Anita said. "Otherwise we are paying for idle hardware to hold a promise nobody has checked."</p>
+<h2 id="turned-on-and-timed">Turned on, and timed</h2>
+<p class="dateline dateline-record">Build log · 18 September 2026</p>
+<p>The mandate was carried out the next day, and it found the same ghost that Chapter 7 found in the timing scripts, waiting in the same shape.</p>
+<p><code>targetNodesReady</code>, the function both the on-demand deploy path and the pool controller use to decide "are both nodes up," counted Ready nodes without checking their names. A standby built from the <code>:warm</code> image would have been declared ready on the control plane plus the leftover bake-VM ghost node, before the real worker ever joined — exactly the bug that made Chapter 7's stopwatch stop early, now confirmed live in <code>ui/backend/handlers/pool.go</code>, not just in the standalone scripts. Fixed the same way Chapter 7 recommends: count only nodes named <code>&lt;cluster&gt;-cp-*</code> or <code>&lt;cluster&gt;-workers-*</code>.</p>
+<p>With that fixed, <code>POOL_STANDBY_MANIFEST</code> moved from <code>target-cluster-parallel.yaml</code> (the March image, k3s v1.31.4) to the warm manifest — and the pool's build function gained the one step it was missing to use it safely: seeding the fixed CA and token secrets before applying, the same order the on-demand deploy path already used, so KThrees adopts the baked material instead of falling back to a slower path.</p>
+<p>Then the cycle Anita asked for — claim, delete, rebuild, claim — ran three times, timed from the <code>POST /api/v1/cluster/deploy</code> request to the stream's closing <code>done</code> event:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Run</th>
+<th style="text-align: right;">Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td style="text-align: right;">1.059 s</td>
+</tr>
+<tr>
+<td>2</td>
+<td style="text-align: right;">0.467 s</td>
+</tr>
+<tr>
+<td>3</td>
+<td style="text-align: right;">0.465 s</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Median: 467 milliseconds.</strong> Not 194. The first run is reported rather than discarded — an unexplained outlier, kept on the same principle this book applies to every other number in it. Runs 2 and 3 agree closely, and the time is not free: of the roughly 465 milliseconds, about 265 is <code>clusterctl get kubeconfig</code> alone; relabeling the cluster and syncing the in-cluster kubeconfig Secret split most of the rest.</p>
+<p>Two and a half times the June figure, and still far faster than building from nothing: the claim now beats the 33.7-second cold build by a factor of about 72 — not the factor of two hundred the June number implied, but still the same conclusion Anita drew from the wrong number: handing over something already running beats building it, by nearly two orders of magnitude. The design held. The number on the page had simply gone stale, in exactly the way this chapter's own middle section warned that warmth does.</p>
 <div class="endmatter"><h2 id="the-ledger">The ledger</h2>
 <ul>
 <li><strong>Built (June):</strong> a one-deep cluster standby, claimed in 194–195 ms instead of built from scratch, rebuilt in about 60 seconds in the background.</li>
 <li><strong>Cost of that warmth:</strong> one full cluster idle — eight cores and 14 GiB of memory.</li>
 <li><strong>Today (17 September):</strong> no standby running; the pool is opt-in and off by default; its manifest points at an image built on 3 March; the claim time has not been re-measured since June.</li>
+<li><strong>Fixed and re-measured (18 September):</strong> the pool's node-readiness check now counts by name, not by count (the same ghost-node bug Chapter 7 found, confirmed live in <code>pool.go</code>); its standby manifest switched to the warm image, with CA/token seeding added to the build path. Three claim-delete-rebuild-claim cycles: 1.059 s, 0.467 s, 0.465 s — <strong>median 467 ms</strong>, not 194. Still about 72x faster than a cold build. The pool remains opt-in — this fixes what happens when it's on, not the default.</li>
 <li><strong>Model warmth, measured on the GPU (17 September):</strong> 2.3–2.6 s cold, 0.14–0.17 s warm — against the 28–30 s CPU figure in the rule.</li>
 <li><strong>Found:</strong> the GPU holds one model at a time, and a lab run evicted the model two of the three agents use.</li>
 <li><strong>Held by:</strong> a host setting outside the repository, not the heartbeat the rule names, which stopped after two runs.</li>
@@ -528,11 +583,12 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><code>docs/superpowers/specs/2026-06-26-warm-pool-standby-design.md</code> — the acceptance gate.</li>
 <li><code>06-sympozium/ollama-warm.sh</code> and <code>06-sympozium/schedules/ollama-warm.yaml</code> — the first two ways the model was kept warm.</li>
 <li><code>curl -s localhost:11434/api/ps</code> on the host — which model is warm right now; the <code>load_duration</code> field of any <code>/api/generate</code> response shows whether a request paid for a cold start.</li>
+<li><code>POOL_ENABLED=true POOL_STANDBY_MANIFEST=03-target-cluster/target-cluster-warm.yaml</code> — the corrected pool config (18 September); <code>git log --oneline -- ui/backend/handlers/pool.go run-ui.sh</code> for the fix commits.</li>
 </ul>
 </div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
 <p><em>For the author — remove before publication.</em></p>
 <ul>
-<li><strong>The 194 ms claim is from June</strong> (k3s 1.31, recorded in the warm-pool design notes and the project's memory). It has not been re-measured. Before re-measuring, rebuild the <code>:latest</code> image or point <code>POOL_STANDBY_MANIFEST</code> at the warm manifest — and if you choose the warm manifest, fix the pool's node-count readiness check first (see Chapter 7's ghost node).</li>
+<li><strong>Resolved 18 September — the 194 ms claim has been re-measured.</strong> Was from June (k3s 1.31, recorded in the warm-pool design notes and the project's memory), unmeasured since. Both prerequisite fixes this note asked for were made: <code>POOL_STANDBY_MANIFEST</code> now points at the warm manifest, and the pool's node-count readiness check (<code>targetNodesReady</code> in <code>pool.go</code>) now counts by name. Re-measured median: 467 ms, three runs (1.059 / 0.467 / 0.465 s). See "Turned on, and timed" above.</li>
 <li><strong>Model measurements (17 September):</strong> <code>POST /api/generate</code> with a one-token limit, reading Ollama's own <code>load_duration</code>; RTX 4050 laptop GPU with 6 GB; every loaded model reported 100% on GPU. After measuring, <code>qwen2.5:7b</code> was left as the loaded model, matching the state before the Chapter 16 lab evicted it.</li>
 <li><strong>The 28–30 s figure</strong> is the CPU-era number from the architecture constraint and the repository's Ollama notes. It was not re-measured on CPU.</li>
 <li><strong>Pool status wording.</strong> The backend reported <code>state: none</code>. That status alone does not distinguish "disabled" from "enabled but idle beside an operator-managed cluster"; the chapter relies on the opt-in default in <code>run-ui.sh</code>.</li>

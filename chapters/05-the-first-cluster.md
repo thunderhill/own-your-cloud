@@ -161,6 +161,10 @@ Anita let that sit. "And the demo?"
 
 "Fix it, and run it from the first step every Monday." She stood. "The thing we show people is the thing people believe. It had better still be true."
 
+![Six nested boxes: workstation, container, pod, virtual machine, pod, container.](../figures/fig-05-2-six-layers.svg)
+
+*Figure 5.2 — Six layers: a pod inside a VM inside a pod inside a container.*
+
 ## The ledger
 
 - **Declared:** seven objects in a 258-line manifest, plus four pre-seeded secrets.

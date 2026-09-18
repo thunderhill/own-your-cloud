@@ -26,14 +26,26 @@ body = body.replace("<table>", '<div class="table-wrap"><table>').replace("</tab
 body = body.replace("<hr />", '<hr class="scene-break" />')
 body = body.replace('<pre><code class="language-agent">', '<pre class="agent-reply"><code>')
 
+# Figures: markdown emits <p><img ...></p> followed by <p><em>Figure N — …</em></p>.
+# Pair them into one <figure> with a <figcaption>; an uncaptioned image still gets
+# the wrapper. Paths stay relative (html/ sits one level down, as chapters/ does).
+body = re.sub(
+    r'<p>(<img [^>]*>)</p>\s*<p><em>(Figure [^<]*)</em></p>',
+    r'<figure class="figure">\1<figcaption>\2</figcaption></figure>',
+    body,
+)
+body = re.sub(r'<p>(<img [^>]*>)</p>', r'<figure class="figure">\1</figure>', body)
+
 starts = [body.find(f'<h2 id="{k}">') for k in ("the-ledger", "ask-your-team", "open-the-repo")]
 starts = [x for x in starts if x >= 0]
-j = body.index('<h2 id="draft-notes">')
+j = body.find('<h2 id="draft-notes">')
+if j < 0:
+    j = len(body)
 i = min(starts) if starts else j
 body = (
     body[:i]
     + (('<div class="endmatter">' + body[i:j] + "</div>") if i < j else "")
-    + '<aside class="draft-notes">' + body[j:] + "</aside>"
+    + ('<aside class="draft-notes">' + body[j:] + '</aside>' if j < len(body) else '')
 )
 
 CSS = r"""
@@ -399,6 +411,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .draft-notes { padding: 4px 18px 16px; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
+}
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
 }
 """
 

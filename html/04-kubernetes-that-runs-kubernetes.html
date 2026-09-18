@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -380,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository. <span class="legend-public">Public record</span> and <span class="legend-public">Briefing</span> sections quote named sources — published reports, or the strategy deck behind this book.</dd>
       <dt>Length</dt>
-      <dd>About 2,000 words · about 9 minutes to read</dd>
+      <dd>About 2,600 words · about 11 minutes to read</dd>
     </dl>
   </header>
 
@@ -412,11 +436,24 @@ td strong { color: var(--accent); font-weight: 600; }
 </ul>
 <p>The deck's summary line: <em>"From safe but locked (Tanzu) → powerful but complex (CAPZ) → truly sovereign (KKP)."</em> Past the end of the spectrum, it adds a fourth option — <em>"The Self-Managed Sovereign Platform"</em>: <em>"building your own cloud platform using open standards."</em></p>
 <p>Two cautions before a board uses this slide. First, the labels are the deck's opinions, not measurements; <em>"truly sovereign"</em> in particular depends on who runs the platform, under what licence, and with what support. Second, the four options are not exclusive. The platform in this book is the fourth kind, built from the same open-source Cluster API the middle options use. Meridian's three roads share more pavement than the slide suggests.</p>
+<h2 id="what-the-slide-leaves-off">What the slide leaves off</h2>
+<p><em>Not independently verified · September 2026</em></p>
+<p>A three-marker spectrum is a slide, not a market. A board evaluating this decision will meet several other options, and it is worth naming them so that nobody mistakes the deck's three for the field.</p>
+<p><strong>A caution that applies to this whole section.</strong> What follows is a map, assembled from each project's own public description of itself. <strong>None of it was installed, benchmarked, or otherwise verified for this book.</strong> Only one option here was actually built and measured — the one the rest of the book is about — and a reader should treat every other line as a pointer to evaluate, not a finding. Capabilities change release by release; check current documentation before deciding anything.</p>
+<ul>
+<li><strong>Harvester</strong> is the closest thing to a productized version of what this book builds by hand: an open-source hyperconverged infrastructure product from SUSE that packages KubeVirt with storage and networking, and integrates with Rancher for cluster management. An organization that wants this architecture without assembling it is looking for this category. The trade is the usual one — less to build, less to change.</li>
+<li><strong>OpenStack</strong> is the long-established open-source answer to "run our own infrastructure-as-a-service," predating the Kubernetes era and widely deployed in telecommunications and public-sector estates. It solves a broader problem than this book's platform and is correspondingly larger to operate. Organizations that already run it should be asking how Kubernetes sits <em>on</em> it, not whether to replace it.</li>
+<li><strong>Talos Linux</strong> takes a different cut at the same sovereignty argument: a minimal, immutable, API-managed operating system built only to run Kubernetes, with no shell and no package manager. It addresses the layer this book mostly inherits — the golden image and what is inside it (Chapter 6).</li>
+<li><strong>Distributions</strong> — RKE2, OpenShift, Anthos, EKS Anywhere — are the "supported Kubernetes you run yourself" tier, and they are the most likely real alternative for an enterprise with a support requirement. They differ enormously in licence and price, and two of them are paths back toward the vendor whose bill started this book. That is not an objection; it is the trade being made deliberately, which is the whole subject of Chapter 2.</li>
+<li><strong>OpenTofu and Terraform</strong> are the declarative alternative to Cluster API itself, and the comparison is genuinely interesting for a board. Both describe infrastructure as code. The difference is <em>where the loop lives</em>: Terraform and OpenTofu run a plan when a person or a pipeline runs them, while Cluster API runs a controller inside a cluster that continuously reconciles reality against the declaration. Chapter 17 makes the case for the continuous kind, and Chapter 18 shows what happens without it. Many organizations use both — one to build the foundation, the other to manage what runs on it.</li>
+</ul>
+<p>The book's own choice is not presented as the winner of this list. It is the option that best matched one set of constraints — open source throughout, virtual machines as first-class objects, no dependency on a provider's control plane — and the rest of the book is what happened when someone actually built it.</p>
 <h2 id="why-virtual-machines-still-matter">Why virtual machines still matter</h2>
 <p>For an organization like Meridian, the most important word on the Tanzu marker is <em>estate</em>. Fifteen years of virtualization means thousands of virtual machines running systems that will never be rewritten as containers: vendor appliances, licensed databases, old applications nobody dares to touch.</p>
 <p>A Kubernetes strategy that has nothing to say about virtual machines asks those systems to wait for a future that will not arrive. That is why the platform in this book is built on <strong>KubeVirt</strong>, an open-source project that runs virtual machines <em>as Kubernetes objects</em>. A virtual machine sits beside containers, is declared in the same kind of file, and is scheduled, networked and monitored by the same system.</p>
 <p>The platform then does something a little dizzying with that. The workload clusters it manufactures are Kubernetes clusters <strong>whose machines are themselves virtual machines</strong>, run by KubeVirt on the management cluster. Kubernetes manages virtual machines, which run Kubernetes.</p>
 <p>One honest limit belongs here, before Part II begins. The repository contains no tooling for <em>moving</em> existing VMware virtual machines — none of the usual import or conversion tools appears anywhere in it. This book shows the destination, and measures it. The migration of an existing estate is a separate project, and this book does not pretend to have done it.</p>
+<p>That tooling does exist, and a board should know the names even though this book cannot report on them. <strong>Forklift</strong> is the open-source migration project for bringing virtual machines from VMware and other sources into a KubeVirt environment; <strong>virt-v2v</strong> is the older, lower-level converter that turns a virtual machine's disk into a form a different hypervisor can boot. Neither was run here, so this book has nothing to say about how well they work on a real estate, how long a migration takes, or what fraction of machines need hand-holding — and those three questions, not the destination architecture, are what determine whether a migration is affordable. Treat the names as the start of an evaluation. An organization serious about this decision should migrate a representative sample early, because the answer will shape the business case far more than the thirty-four seconds in Chapter 7.</p>
 <h2 id="the-factory-running">The factory, running</h2>
 <p class="dateline dateline-record">Build log · 17 September 2026</p>
 <p>This is the factory as it stood on the day this chapter was checked.</p>
@@ -501,7 +538,7 @@ ControlPlaneComponentsHealthy=False  Following machines are reporting control pl
 <li><code>kubectl --context kind-cluster2 get clusters.cluster.x-k8s.io target-cluster -o wide</code> — the gauge.</li>
 <li><code>02-capi-init/init-management-cluster.sh</code> — how the factory itself is set up.</li>
 <li><code>README.md</code> — the architecture diagram, and how far it has drifted.</li>
-<li><code>~/marketing/Reclaiming Margins with Sovereign Cloud.pptx</code>, slides 14–16; <code>~/marketing/capi.mp4</code> (8 min 56 s), the factory demonstrated end to end.</li>
+<li>The strategy deck, slides 14–16; the recorded factory demonstration (8 min 56 s), end to end.</li>
 </ul>
 </div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
 <p><em>For the author — remove before publication.</em></p>
@@ -510,6 +547,8 @@ ControlPlaneComponentsHealthy=False  Following machines are reporting control pl
 <li><strong><code>Available=False</code></strong> was read at about 09:00 on 17 September, about 143 minutes after the cluster was built. The target cluster served Chapter 10's measurement at 08:10; Chapter 11's measurements ran on cluster1 and cluster2, not on the target cluster. The cause is not investigated. The KThreesControlPlane also showed <code>Ready=False</code>, <code>ControlPlaneComponentsHealthy=False</code>, and <code>initialized=true</code>. It is plausibly a health check that expects separate control-plane component pods, which k3s does not run. Check the cluster-api-k3s issue tracker before implying a cause.</li>
 <li><strong>"No VMware migration tooling"</strong> was checked by searching the repository (excluding <code>book/</code> and <code>.worktrees/</code>) for vsphere, forklift, virt-v2v, vmdk and ovf. The only match was an unrelated substring in <code>scripts/render-demo-video.sh</code>.</li>
 <li><strong>Product descriptions</strong> (Tanzu, CAPZ, KKP) are quoted from the deck, not independently verified. KKP is a Kubermatic product. Keep the chapter from endorsing or disparaging any vendor beyond the deck's quoted labels.</li>
+<li><strong>The alternatives scan ("What the slide leaves off") is entirely unverified,</strong> and says so in the body. Harvester, OpenStack, Talos, RKE2, OpenShift, Anthos, EKS Anywhere, OpenTofu/Terraform, Forklift and virt-v2v are described from each project's public self-description, from general knowledge, as of September 2026. Nothing was installed or tested. Before publication: re-check each description against current documentation, confirm Harvester's current vendor relationship (SUSE) and that it still ships KubeVirt, and confirm Forklift's current name and scope. If any description cannot be confirmed, cut the line rather than soften it.</li>
+<li><strong>Deliberately not ranked.</strong> The section names no winner and gives no comparison table, because a table implies criteria that were never applied. If a reviewer asks for one, the honest version would require actually running them.</li>
 <li><strong>The README diagram</strong> shows <code>mc-demo</code>, the <code>sample</code> namespace, VM addresses 10.244.0.60/.61 and the <code>.216</code> proxy. Redraw it for the book's figure 4.1 rather than reproducing it.</li>
 <li><strong>Figures.</strong> 4.1: management cluster → declaration → workload cluster on VMs. 4.2: the deck's spectrum, relabelled neutrally. 4.3: the two gauges side by side — <code>Available=False</code> here and <code>Ready</code> in Chapter 5.</li>
 <li><strong>The Meridian board scene is fiction.</strong> It sets up Chapter 5's "demo that won the pilot its funding in February".</li>

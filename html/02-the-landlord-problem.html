@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -380,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository. <span class="legend-public">Public record</span> and <span class="legend-public">Briefing</span> sections quote named sources — published reports, or the strategy deck behind this book.</dd>
       <dt>Length</dt>
-      <dd>About 1,900 words · about 8 minutes to read</dd>
+      <dd>About 2,000 words · about 8 minutes to read</dd>
     </dl>
   </header>
 
@@ -406,7 +430,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>Analogies persuade by what they leave out, and this one leaves out the boiler.</p>
 <p>A tenant who wakes to a broken boiler calls the landlord. An owner fixes it. Owning the brain of your cluster means owning its mistakes too, and this book records plenty of them:</p>
 <ul>
-<li>In September 2026, Kubernetes and everything around it were upgraded on the platform this book describes. It took a week of rebuilding. The rebuild turned up a dead container image that never started, behind a setup script that reported success anyway, a version setting that had never controlled what it claimed to, and a mesh release running outside its tested range. That is Chapter 17.</li>
+<li>In September 2026, Kubernetes and everything around it were upgraded on the platform this book describes. It took a week of rebuilding. The rebuild turned up a dead container image that never started, behind a setup script that reported success anyway, a version setting that had never controlled what it claimed to, and a mesh release running outside its tested range. That is Chapter 18.</li>
 <li>For months, the dashboard reported a worker machine as <code>Ready</code> while a single configuration line prevented it from running any workload at all. That is Chapter 5.</li>
 <li>A software component pinned to a <em>moving</em> version tag quietly updated itself one day and then crashed about every thirty seconds, with no log output, for thousands of restarts before anyone diagnosed it. That is recorded in the repository's own list of pitfalls.</li>
 </ul>
@@ -435,7 +459,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>The deck is honest about what ownership demands, and this chapter should be too. Its own list of <em>"Infrastructure Requirements"</em> for a self-managed platform is: hardware; data-centre facilities; a platform engineering team of <em>"Kubernetes experts, DevOps, SRE specialists"</em>; automation and tooling; and operational processes for incidents, changes and security. It estimates <em>"12–18 months to full production readiness"</em> and <em>"$2–5M for mid-size enterprise deployment"</em> — again without a source.</p>
 <p>This book adds three items from experience:</p>
 <ul>
-<li><strong>Upgrades are yours.</strong> On a managed service, a Kubernetes upgrade is a button and a maintenance window. Here it was a week (Chapter 17).</li>
+<li><strong>Upgrades are yours.</strong> On a managed service, a Kubernetes upgrade is a button and a maintenance window. Here it was a week (Chapter 18).</li>
 <li><strong>Measurement is yours.</strong> Nobody tells an owner how long things take, or whether a dashboard is telling the truth. Chapters 5, 7 and 11 are about building that for yourself.</li>
 <li><strong>Pinning is yours.</strong> An owner who does not fix software versions in place has quietly handed the landlord's role to whoever publishes the latest release.</li>
 </ul>
@@ -468,7 +492,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><code>03-target-cluster/target-cluster-warm.yaml</code> — the control-plane setting, in the manifest (<code>advertise-address</code>).</li>
 <li><code>scripts/configure-kubevirt-perf.sh</code> — the virtualization-layer setting (<code>supportContainerResources</code>).</li>
 <li><code>CLAUDE.md</code>, "Common Pitfalls" — the owner's side of the ledger, including the upgrade record and the moving-tag crash.</li>
-<li><code>~/marketing/Reclaiming Margins with Sovereign Cloud.pptx</code>, slides 5, 8, 9 and 16.</li>
+<li>The strategy deck, slides 5, 8, 9 and 16. (Not a repository file; see Appendix H — Sources.)</li>
 </ul>
 </div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
 <p><em>For the author — remove before publication.</em></p>

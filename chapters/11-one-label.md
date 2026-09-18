@@ -202,6 +202,10 @@ Anita looked for a long time. "So the check I asked to see go red can't."
 
 "That one isn't an engineering question," Anita said. "That's a bill." She took a pen to the list from the week before and added a line at the bottom. "New rule. No check goes on a dashboard of mine until someone has watched it fail on purpose. And the traffic split comes to me with a cost attached, and we choose it."
 
+![Two terminal panels, working failover and total outage, printing the identical success line.](../figures/fig-11-3-two-identical-screens.svg)
+
+*Figure 11.3 — One check, two opposite realities, the same output.*
+
 ## The ledger
 
 - **Built (21 August 2026):** a Gateway API front door with a team ownership split; request-level authorization on cryptographic identity, with no proxy in any application pod; one mesh across two clusters under a single local root certificate; a cross-cluster service declared with one label.

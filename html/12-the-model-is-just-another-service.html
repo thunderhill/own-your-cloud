@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -490,7 +514,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>Three facts about that stage belong in front of a board:</p>
 <ul>
 <li><strong>The map is open to anyone.</strong> Kiali at <code>172.18.255.204</code> reported its authentication strategy as <code>anonymous</code>. Anyone who can reach the address can browse every namespace, workload and identity in the mesh, and a map of your systems is itself sensitive. This is the default in Istio's sample installation, which is what the act uses.</li>
-<li><strong>The history is temporary.</strong> Prometheus is set to keep fifteen days of data, on storage that disappears whenever its pod restarts. On 17 September its history began on 16 September at 07:29 UTC, the moment of Chapter 17's rebuild.</li>
+<li><strong>The history is temporary.</strong> Prometheus is set to keep fifteen days of data, on storage that disappears whenever its pod restarts. On 17 September its history began on 16 September at 07:29 UTC, the moment of Chapter 18's rebuild.</li>
 <li><strong>The stage is downloaded, not owned.</strong> The act fetches both installations at install time from Istio's public GitHub branch for the release, not from a pinned, local copy. The mesh's root certificate was created so the demo <em>"works air-gapped"</em>. Its observability does not.</li>
 </ul>
 <h2 id="the-screen-that-says-live">The screen that says live</h2>
@@ -520,6 +544,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>She was quiet for a moment. "The design is right," she said at last. "A model <em>is</em> just another service. So it gets the same three things every service gets from us: an identity, a lock, and a meter. The meter counts tokens by model, because that's the bill. The agents go through the gateway, or we stop calling it the AI control point. And nothing goes on a board screen unless every box on it traces back to a lookup that could have come back empty."</p>
 <p>"And tomorrow?"</p>
 <p>"Tomorrow I tell them the truth," Anita said. "We have built the control point. Our AI doesn't use it yet. I'd rather present a gap we've measured than a screen we haven't."</p>
+<figure class="figure"><img alt="Topology panel badged LIVE: seven solid nodes and fourteen dashed ones, with two causes annotated." src="../figures/fig-12-2-phantom-topology.svg" /><figcaption>Figure 12.2 — A view labelled "live", drawing fourteen things that do not exist.</figcaption></figure>
 <div class="endmatter"><h2 id="the-ledger">The ledger</h2>
 <ul>
 <li><strong>Built (21 August 2026):</strong> an AI gateway on cluster1 in front of the host GPU's models; a load-aware second tier designed and documented, with its limitation stated; Kiali and Prometheus; a visual mode rebuilt around live data.</li>

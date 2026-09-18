@@ -172,6 +172,10 @@ She was quiet for a moment. "The design is right," she said at last. "A model *i
 
 "Tomorrow I tell them the truth," Anita said. "We have built the control point. Our AI doesn't use it yet. I'd rather present a gap we've measured than a screen we haven't."
 
+![Topology panel badged LIVE: seven solid nodes and fourteen dashed ones, with two causes annotated.](../figures/fig-12-2-phantom-topology.svg)
+
+*Figure 12.2 — A view labelled "live", drawing fourteen things that do not exist.*
+
 ## The ledger
 
 - **Built (21 August 2026):** an AI gateway on cluster1 in front of the host GPU's models; a load-aware second tier designed and documented, with its limitation stated; Kiali and Prometheus; a visual mode rebuilt around live data.

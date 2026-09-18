@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -510,7 +534,7 @@ failoverActive := (!httpbinAlive &amp;&amp; ok(probes[1])) || (!nginxAlive &amp;
 </tr>
 </tbody>
 </table></div>
-<p>A single label on a Service replaces the address book, the fixed address and the hand-written proxy. Chapter 11 tells that story, including the day a waypoint silently broke it. (The "after" column has since moved to Istio 1.31; Chapter 17.)</p>
+<p>A single label on a Service replaces the address book, the fixed address and the hand-written proxy. Chapter 11 tells that story, including the day a waypoint silently broke it. (The "after" column has since moved to Istio 1.31; Chapter 18.)</p>
 <p>It would have been easy to delete <code>05-istio/</code> that same day. Instead the README records that it <em>"is left untouched. It stays as the 'before' picture."</em> A company keeps last year's accounts for the same reason: an improvement you cannot compare against is only a claim.</p>
 <p>There is one honest limit, and the README states it too. Act 3 connects <strong>cluster1 and cluster2</strong> — not the target cluster. The target cluster is <em>"k3s nested in KubeVirt VMs (pod IPs unreachable from cluster1 without a NodePort proxy) and the warm pool destroys and rebuilds it, which would break mesh membership each time."</em> On 17 September the target cluster had no service mesh at all: four namespaces, none of them Istio's. The virtual-machine clusters are the product this book is about. The only cross-cluster path they have ever had is the one in this chapter.</p>
 <hr class="scene-break" />
@@ -541,7 +565,7 @@ failoverActive := (!httpbinAlive &amp;&amp; ok(probes[1])) || (!nginxAlive &amp;
 <h2 id="open-the-repo">Open the repo</h2>
 <ul>
 <li><code>05-istio/cross-cluster-demo.sh</code> — the eight steps. Step 5 (the ServiceEntries) begins at line 460; Step 6's call by address is at line 537.</li>
-<li><code>05-istio/cross-cluster-mindmap.html</code> — the chapter figure; identical to the copy in the marketing folder.</li>
+<li><code>05-istio/cross-cluster-mindmap.html</code> — the chapter figure. A byte-identical copy sits in the author's briefing material (Appendix H), so correcting one leaves the other wrong.</li>
 <li><code>git show 44aa28a -- 03-target-cluster/target-cluster.yaml</code> — <code>masquerade</code> becomes <code>bridge</code> in the same commit as the diagram.</li>
 <li><code>ui/backend/handlers/cross_cluster.go</code> (line 151) — the failover rule; <code>ui/frontend/src/components/visual/CrossClusterDemo.tsx</code> — the badge.</li>
 <li><code>ui/frontend/src/pages/VisualDashboard.tsx</code> — the retirement note for the six panels.</li>

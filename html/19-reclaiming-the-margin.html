@@ -366,13 +366,37 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
   <header class="masthead">
     <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part V — The Dividend</span><span class="sep">/</span><span>Draft 1</span></p>
-    <p class="ch-number" aria-hidden="true">18</p>
-    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 18: </span>Reclaiming the Margin</h1>
+    <p class="ch-number" aria-hidden="true">19</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 19: </span>Reclaiming the Margin</h1>
     <blockquote class="epigraph"><p><em>The question is no longer whether you can afford to become your own cloud provider, but whether you can afford not to.</em></p>
 <p>— <em>Reclaiming Margins with Sovereign Cloud</em>, strategic briefing, February 2026</p>
 </blockquote>
@@ -513,7 +537,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>On owned hardware, capacity is set by what is <strong>reserved</strong>, not what is used. On this host, a second target cluster would not fit — its machines could not reserve the memory — even though two-thirds of the memory already reserved sat idle. That is the deck's <em>"overprovisioning"</em>, on hardware you own. It is the owner's margin to reclaim or waste, and right-sizing reservations is where it lives.</p>
 <p><strong>The energy cost of AI.</strong> The model most of the platform's agents use, <code>qwen2.5:7b</code>, was measured on the laptop's GPU. With the model loaded and idle, the GPU drew <strong>6.4 W</strong>. While generating text it drew <strong>38–42 W</strong>, at <strong>34–37 tokens per second</strong>. That comes to <strong>1.19 joules per generated token — 0.33 kWh per million tokens</strong>, for the GPU alone.</p>
 <p>Multiply that by any electricity price between 10 and 50 cents a kilowatt-hour, and the power for a million generated tokens costs roughly <strong>3 to 17 cents</strong>. The lesson is not that local AI is nearly free. It is that for local AI, the electricity is a rounding error. The cost is the hardware — which, on this GPU, holds one model at a time (Chapter 9) — and the people who run and check it.</p>
-<p><strong>The people.</strong> The repository behind this book holds 81 commits, from 11 February to 9 September 2026, from <strong>a single committer</strong>. <strong>63 of those 81 commits</strong> carry an AI coding assistant as co-author. The platform's operating notes run to 612 lines, including 23 entries in a list of pitfalls — most of them a failure that looked like success.</p>
+<p><strong>The people.</strong> The repository behind this book holds 81 commits, from 11 February to 9 September 2026, from <strong>a single committer, Mahipal</strong>. <strong>63 of those 81 commits</strong> carry an AI coding assistant as co-author. The platform's operating notes run to 612 lines, including 23 entries in a list of pitfalls — most of them a failure that looked like success.</p>
 <p>Read that carefully, because it is the easiest number in this book to misuse. It describes a lab: no on-call rota, no service-level agreement, no production users, no auditors. It says nothing about the cost of <em>operating</em> a sovereign platform at Meridian's scale. What it does suggest is narrower, and still worth a line in the model: in 2026, the effort to <em>build</em> such a platform is not the effort a 2021 estimate would assume. And the cost that never appears on a TCO slide is the one those 23 pitfalls describe: the continuous work of knowing what is true.</p>
 <p>One more fact belongs on the worksheet. The platform's cost-analysis agent — the persona written in April to find idle virtual machines and propose stopping them — cannot currently be installed; it was written for a resource type the agent platform no longer ships (Chapter 16). The tool meant to measure the owner's waste is itself waiting to be fixed.</p>
 <h2 id="the-worksheet">The worksheet</h2>
@@ -568,13 +592,13 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>People</td>
 <td>The supplier's staff</td>
 <td>Platform team, on-call, training</td>
-<td>A lab: one committer, 63 of 81 commits AI-co-authored</td>
+<td>A lab: one committer (Mahipal), 63 of 81 commits AI-co-authored</td>
 </tr>
 <tr>
 <td>Upgrades</td>
 <td>A button and a maintenance window</td>
 <td>Yours</td>
-<td>A week, for one major upgrade (Chapter 17)</td>
+<td>A week, for one major upgrade (Chapter 18)</td>
 </tr>
 <tr>
 <td>Knowing what's true</td>
@@ -636,7 +660,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>Depreciation (public record):</strong> Microsoft (FY2022) and Alphabet (2023) moved servers from four- to six-year lives; Amazon moved part of its fleet from six to five years from January 2025, citing AI.</li>
 <li><strong>Owned waste (build log, 17 September 2026):</strong> 22.42 GiB reserved against 7.45 GiB used on the management cluster; a control-plane VM using 1% of its CPU and 14% of its memory.</li>
 <li><strong>AI energy (build log):</strong> <code>qwen2.5:7b</code> on an RTX 4050 laptop GPU at 6.4 W idle and 38–42 W generating; 34–37 tokens/s; 1.19 J per token; 0.33 kWh per million generated tokens, GPU only.</li>
-<li><strong>Effort (build log):</strong> 81 commits from one committer over seven months, 63 of them co-authored with an AI coding assistant — a lab, not an operation.</li>
+<li><strong>Effort (build log):</strong> 81 commits from one committer, Mahipal, over seven months, 63 of them co-authored with an AI coding assistant — a lab, not an operation.</li>
 <li><strong>Not claimed:</strong> any saving for Meridian.</li>
 </ul>
 <h2 id="ask-your-team">Ask your team</h2>
@@ -653,7 +677,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><code>nvidia-smi --query-gpu=power.draw --format=csv -lms 200</code>, alongside <code>ollama</code>'s <code>eval_count</code> and <code>eval_duration</code> — energy per token.</li>
 <li><code>git log --format='%B' | grep -c 'Co-Authored-By'</code> and <code>git shortlog -sn</code> — how the platform was built.</li>
 <li><code>06-sympozium/cost-analyzer.yaml</code> — the FinOps agent, and why it does not install (Chapter 16).</li>
-<li><code>~/marketing/Reclaiming Margins with Sovereign Cloud.pptx</code>, slides 16, 18 and 19; <code>~/marketing/SovereignCloud_Flyer_v2.pdf</code>.</li>
+<li>The strategy deck, slides 16, 18 and 19; the unbranded sovereign-cloud flyer, version 2. (Neither is a repository file; see Appendix H — Sources.)</li>
 </ul>
 </div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
 <p><em>For the author — remove before publication.</em></p>
@@ -669,7 +693,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li>GPU-board power only: not CPU, memory, the rest of the laptop, or cooling. The laptop was on AC power.</li>
 <li>Chapter 15's "11.0 tokens per second" is a different metric: whole agent runs, including prompt processing and tool calls.</li>
 <li>The 3–17 cents range is illustrative arithmetic at 10–50 cents per kWh, not a measured price.</li>
-<li><strong>The effort figures</strong> are <code>git rev-list --count HEAD</code> (81), <code>git shortlog -sne</code> (1 author) and a count of commit messages containing "Co-Authored-By: Claude" (63). The last commit is 9 September. 28 working-tree changes (including this book and the September upgrade) were uncommitted at the time of writing. The author should decide whether to name the committer, and how to describe the AI assistance.</li>
+<li><strong>The effort figures</strong> are <code>git rev-list --count HEAD</code> (81), <code>git shortlog -sne</code> (1 author) and a count of commit messages containing "Co-Authored-By: Claude" (63). The last commit is 9 September. 28 working-tree changes (including this book and the September upgrade) were uncommitted at the time of writing. <strong>Decided:</strong> the committer is named (Mahipal) in the text above; how much further to describe the AI assistance is still open.</li>
 <li><strong>The Meridian scenes are fiction.</strong> The board-pack sentence sets up the epilogue, where savings are still "not yet measured".</li>
 <li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
 </ul></aside>

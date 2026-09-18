@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -408,7 +432,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>The platform runs on a single workstation, and it is built from three Kubernetes clusters.</p>
 <p><code>cluster1</code> and <code>cluster2</code> are Kind clusters: Kubernetes whose "nodes" are Docker containers. <code>cluster1</code> hosts the service-mesh demonstrations in Part III. <code>cluster2</code> is the <strong>management cluster</strong> — the factory. It runs Cluster API, which manages clusters as Kubernetes objects; KubeVirt, which runs virtual machines as Kubernetes workloads; CDI, which imports disk images; MetalLB, which hands out load-balancer addresses; and the agent platform from Part IV.</p>
 <p>The third cluster, <code>target-cluster</code>, is the product. It is a k3s cluster whose control plane and worker are virtual machines running <em>inside</em> <code>cluster2</code>.</p>
-<p>The repository builds the factory in numbered stages — <code>00-prereqs</code> installs the <code>clusterctl</code> tool, <code>01-metallb</code> the load balancer, <code>02-capi-init</code> the Cluster API providers, <code>03-target-cluster</code> the target cluster, <code>04-verify</code> a health check — with <code>make all</code> running the first four. As Chapter 17 found, the stages assume a few things already exist: the Kind clusters themselves, KubeVirt, and CDI are installed by hand.</p>
+<p>The repository builds the factory in numbered stages — <code>00-prereqs</code> installs the <code>clusterctl</code> tool, <code>01-metallb</code> the load balancer, <code>02-capi-init</code> the Cluster API providers, <code>03-target-cluster</code> the target cluster, <code>04-verify</code> a health check — with <code>make all</code> running the first four. As Chapter 18 found, the stages assume a few things already exist: the Kind clusters themselves, KubeVirt, and CDI are installed by hand.</p>
 <h2 id="one-apply">One apply</h2>
 <p>The default target cluster is one file: <code>03-target-cluster/target-cluster-warm.yaml</code>, 258 lines declaring seven objects.</p>
 <div class="table-wrap"><table>
@@ -457,7 +481,7 @@ td strong { color: var(--accent); font-weight: 600; }
                    └─ VirtualMachineInstance/target-cluster-cp-s9j8h
                         └─ Pod/virt-launcher-target-cluster-cp-s9j8h-…
 </code></pre>
-<p>One link is missing. The VirtualMachine has no owner reference back to the <code>KubevirtMachine</code> that created it; the provider manages it without one. So deleting a cluster is not a single cascade that Kubernetes performs on its own. It is a sequence of controllers noticing, finalizing, and deleting, one object at a time — which is part of why, in Chapter 17, tearing a cluster down took nearly nineteen seconds.</p>
+<p>One link is missing. The VirtualMachine has no owner reference back to the <code>KubevirtMachine</code> that created it; the provider manages it without one. So deleting a cluster is not a single cascade that Kubernetes performs on its own. It is a sequence of controllers noticing, finalizing, and deleting, one object at a time — which is part of why, in Chapter 18, tearing a cluster down took nearly nineteen seconds.</p>
 <h2 id="six-layers-deep">Six layers deep</h2>
 <p>The chain above describes ownership. The picture below describes where the software actually runs, and it is the thing to hold in mind for the rest of Part II:</p>
 <ol>
@@ -504,6 +528,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>"So we have been timing, to a tenth of a second, the arrival of a machine that isn't allowed to do anything." She was quiet for a moment. "Change one word on the dashboard. Stop saying <em>Ready</em>. Say <em>working</em>, and don't show it until something we gave that node has actually run on it."</p>
 <p>"And the demo?"</p>
 <p>"Fix it, and run it from the first step every Monday." She stood. "The thing we show people is the thing people believe. It had better still be true."</p>
+<figure class="figure"><img alt="Six nested boxes: workstation, container, pod, virtual machine, pod, container." src="../figures/fig-05-2-six-layers.svg" /><figcaption>Figure 5.2 — Six layers: a pod inside a VM inside a pod inside a container.</figcaption></figure>
 <div class="endmatter"><h2 id="the-ledger">The ledger</h2>
 <ul>
 <li><strong>Declared:</strong> seven objects in a 258-line manifest, plus four pre-seeded secrets.</li>
@@ -526,12 +551,13 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><code>03-target-cluster/target-cluster-warm.yaml</code> — the seven objects, and the worker's <code>kubelet-arg</code> in its bootstrap Secret.</li>
 <li>On the management cluster: <code>kubectl get cluster,kthreescontrolplane,machinedeployment,machine,kubevirtmachine,vm,vmi</code>.</li>
 <li>On the target cluster: <code>kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name} {.spec.taints}{"\n"}{end}'</code>.</li>
+<li><strong>Without the repo:</strong> Appendix G.1 quotes the manifest's seven objects, including the worker bootstrap Secret and its <code>kubelet-arg</code>.</li>
 </ul>
 </div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
 <p><em>For the author — remove before publication.</em></p>
 <ul>
 <li><strong>The worker taint is the most important finding in this chapter,</strong> and it reaches beyond it. Verified on the cluster running on 17 September only. The setting is in the static worker bootstrap Secret of <code>03-target-cluster/target-cluster-warm.yaml</code> (and in its template); the control plane sets <code>disableCloudController: true</code>. The fix is untested. Also check <code>target-cluster-parallel.yaml</code> and the legacy sequential manifest, whose worker bootstrap is generated by the k3s provider rather than written by hand.</li>
-<li><strong>Consequences for other chapters.</strong> Chapters 7, 8, 9, and 17 measure the time until both nodes report <code>Ready</code>. Those measurements stand as measurements of <code>Ready</code>, but "both nodes" does not mean "both usable." Add a sentence to Chapter 7 (and to the time-to-ready definition in the brief) once the fix is tested.</li>
+<li><strong>Consequences for other chapters.</strong> Chapters 7, 8, 9, and 18 measure the time until both nodes report <code>Ready</code>. Those measurements stand as measurements of <code>Ready</code>, but "both nodes" does not mean "both usable." Add a sentence to Chapter 7 (and to the time-to-ready definition in the brief) once the fix is tested.</li>
 <li><strong><code>demo.sh</code></strong> fails at the registry check because it dials the alias over plain HTTP; use the registry's real address (as <code>ui/backend/handlers/registry.go</code> does) and refresh its narration — VM sizes, the <code>:latest</code> image, containerDisks.</li>
 <li><strong><code>show-cluster.sh</code></strong> narrates <em>"curl ${SVC_IP}"</em> but runs <code>wget http://localhost</code> inside a pod; its DataVolume section is obsolete; it trusts any kubeconfig already in <code>/tmp</code>.</li>
 <li><strong>Identity across rebuilds.</strong> The <code>/tmp</code> kubeconfig (written 16 September) and the current one share a CA fingerprint; the warm image's fixed identity is demo-only by design. Worth one line in Chapter 14's scorecard.</li>

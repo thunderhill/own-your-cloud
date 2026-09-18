@@ -331,6 +331,10 @@ She opened the board summary on her laptop, found the line that said *< 40 s*, a
 
 "Put a date on every number," she said. "A number without a date and a spread is a slogan."
 
+![Dot plot of three runs at each of three stages; the median bar falls and the spread line shortens.](../figures/fig-08-1-median-and-spread.svg)
+
+*Figure 8.1 — Two one-line changes: the median falls from 50.0 s to 34.5 s, and the spread from 6.1 s to 0.5 s.*
+
 ## The ledger
 
 - **Spent:** two golden-image experiments, each a full bake cycle to disprove; one instrumentation script; two further hypotheses — gating the worker, rerouting the pod network — that did not survive measurement.

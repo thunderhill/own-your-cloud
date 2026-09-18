@@ -366,13 +366,37 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
   <header class="masthead">
     <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part V — The Dividend</span><span class="sep">/</span><span>Draft 1</span></p>
-    <p class="ch-number" aria-hidden="true">17</p>
-    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 17: </span>The Day We Upgraded Everything</h1>
+    <p class="ch-number" aria-hidden="true">18</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 18: </span>The Day We Upgraded Everything</h1>
     <blockquote class="epigraph"><p><em>Do not assume <code>latest</code> is safe just because a past jump was.</em></p>
 <p>— <code>CLAUDE.md</code>, the repository's operating notes</p>
 </blockquote>
@@ -560,14 +584,16 @@ Programmed=False (ListenersNotValid)
 <li><code>07-istio-advanced/README.md</code> — the note recording the unsupported combination; <code>make istio-adv-verify</code> reruns the 22 checks.</li>
 <li><code>./scripts/phase-timings.sh --runs 3</code> — the bring-up measurement protocol.</li>
 <li><code>scripts/import-base-images.sh</code> — the script the rebuild could not find.</li>
+<li><strong>Without the repo:</strong> Appendix G.7 quotes both <code>K3S_VERSION</code> assignments and the quoted heredoc between them; G.8 quotes the dead-image patch.</li>
 </ul>
 </div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
 <p><em>For the author — remove before publication.</em></p>
 <ul>
-<li><strong>Nothing from 16 September is committed yet.</strong> Every repository change this chapter describes — and several that Chapters 8 and 15 point to, including <code>06-sympozium/demo-mesh-sre.sh</code>, <code>06-sympozium/agent-istio-rbac.yaml</code>, and <code>docs/demo/</code> — is still uncommitted or untracked. Commit before print, or every "Open the repo" block that depends on them fails.</li>
-<li><strong><code>CLAUDE.md</code> has two errors from this rebuild.</strong> Its upgrade entry says <code>scripts/configure-kubevirt-perf.sh</code> "can silently no-op if it races KubeVirt's operator"; the evidence says the setup script was killed by a 590-second time limit during its readiness waits. It also says the base image is "NOT created by any script in this repo"; <code>scripts/import-base-images.sh</code> creates it.</li>
-<li><strong>Table of contents corrected.</strong> Its Chapter 17 entry listed the base image among the things nobody had scripted. Fixed.</li>
-<li><strong>Minimal image missing.</strong> <code>ubuntu-minimal-noble-dv</code> was not re-imported on the rebuilt <code>cluster2</code>, so <code>make bake-image-minimal-preinit</code> has no source image. Running <code>scripts/import-base-images.sh</code> fixes it.</li>
+<li><strong>Resolved 18 September — the specific files are committed.</strong> <code>06-sympozium/demo-mesh-sre.sh</code>, <code>06-sympozium/agent-istio-rbac.yaml</code>, and <code>docs/demo/mesh-sre-agent-demo.mp4</code> all landed in commit <code>84669ad</code> ("feat(sympozium): add mesh-sre-agent for Istio ambient mesh health", 2026-09-17), which is pushed to <code>origin</code>.</li>
+<li><strong>A bigger version of the same problem remains: the branch isn't merged to <code>main</code>.</strong> All of this — the mesh-sre-agent work, the Kubernetes 1.37/Istio 1.31/Sympozium 0.10.75 upgrade this chapter describes, and in fact most of Parts II–V's technical material — lives on <code>upgrade/k8s-1.37-istio-1.31-sympozium-0.10.75</code>, 40 commits ahead of <code>main</code> with none of <code>main</code>'s own commits missing from it. <code>main</code> has 161 tracked files against this branch's 312. A reader who clones <code>main</code> following any "Open the repo" pointer into <code>06-sympozium/</code>, <code>07-istio-advanced/</code>, or most of the upgrade-era scripts will not find them. Decide before print: merge the branch (open a PR), or have "Open the repo" name the branch explicitly.</li>
+<li><strong><code>CLAUDE.md</code> had two errors from this rebuild; both corrected 18 September.</strong> Its upgrade entry said <code>scripts/configure-kubevirt-perf.sh</code> "can silently no-op if it races KubeVirt's operator" — corrected to the evidence: the setup script was killed by a 590-second time limit during its readiness waits. It also said the base image is "NOT created by any script in this repo" — corrected: <code>scripts/import-base-images.sh</code> creates it, but isn't wired into the Makefile/README setup path.</li>
+<li><strong>Table of contents corrected.</strong> Its Chapter 18 entry listed the base image among the things nobody had scripted. Fixed.</li>
+<li><strong>Minimal image still missing, not yet fixed.</strong> <code>ubuntu-minimal-noble-dv</code> was not re-imported on the rebuilt <code>cluster2</code> (confirmed still absent 18 September — <code>kubectl -n default get dv</code> on cluster2 lists only <code>ubuntu-noble-dv</code>), so <code>make bake-image-minimal-preinit</code> has no source image. <code>scripts/import-base-images.sh</code> fixes it; running it is a live-cluster change, deliberately not done as part of this documentation pass.</li>
 <li><strong>ListenerSet.</strong> Resolve before print: send a request to port 8443 with the <code>tenant-a.demo.istio.local</code> hostname, and either report a real regression or explain the status/Service mismatch. Act 1 also prints the gateway's own listeners under the caption "attached ListenerSets", which overstates what it shows.</li>
 <li><strong>Digest pinning.</strong> The Kind 0.33.0 release notes say node images must be referenced by <code>@sha256</code> digest to guarantee an image built for that release. The rebuild used the plain tag.</li>
 <li><strong>Unmeasured.</strong> The rebuild's total wall-clock time was not recorded, so the Meridian close says "one afternoon" rather than a number. The teardown timing came from a one-off command, not a script.</li>

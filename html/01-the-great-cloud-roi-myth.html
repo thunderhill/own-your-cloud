@@ -366,6 +366,30 @@ td strong { color: var(--accent); font-weight: 600; }
   .meta { grid-template-columns: 1fr; gap: 2px; }
   .meta dd + dt { margin-top: 8px; }
 }
+
+.figure {
+  margin: 34px 0;
+  padding: 0;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.figure figcaption {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+@media (max-width: 700px) {
+  .figure { margin: 24px 0; }
+}
 </style>
 
 <article class="chapter">
@@ -380,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository. <span class="legend-public">Public record</span> and <span class="legend-public">Briefing</span> sections quote named sources — published reports, or the strategy deck behind this book.</dd>
       <dt>Length</dt>
-      <dd>About 1,800 words · about 8 minutes to read</dd>
+      <dd>About 1,900 words · about 8 minutes to read</dd>
     </dl>
   </header>
 
@@ -418,12 +442,12 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>That growth figure carries the chapter's most practical distinction. A bill can rise because prices rise, or because consumption rises. They call for opposite responses. Rising prices are a supplier problem, answered by negotiation or by leaving. Rising consumption is a management problem, and changing suppliers doesn't fix it. The Success Tax is real only for the share of growth that cost more than the business value it bought.</p>
 <h2 id="waste-doesnt-care-who-owns-the-hardware">Waste doesn't care who owns the hardware</h2>
 <p>The published waste figure from the prologue — 29% of cloud spend, by respondents' own estimate — is often used as an argument for leaving. It is really an argument for managing.</p>
-<p>Owned hardware can be wasted too. Chapter 9 of this book measured a <em>warm standby</em>: a spare cluster kept running so that a user could claim one in a fifth of a second instead of waiting for one to be built. It is a good design. It also holds eight processor cores and 14 GiB of memory idle, around the clock, waiting. On the platform this book describes, that standby is switched off by default, for exactly that reason.</p>
+<p>Owned hardware can be wasted too. Chapter 9 of this book measured a <em>warm standby</em>: a spare cluster kept running so that a user could claim one in under half a second instead of waiting for one to be built. It is a good design. It also holds eight processor cores and 14 GiB of memory idle, around the clock, waiting. On the platform this book describes, that standby is switched off by default, for exactly that reason.</p>
 <p>Idle capacity costs money wherever it runs. The difference is who sends the bill, and whether anyone reads it.</p>
 <h2 id="the-promise-that-is-worth-testing">The promise that is worth testing</h2>
 <p class="dateline dateline-record">Build log · June–September 2026</p>
 <p>If owning is going to compete with renting, it has to match the cloud's signature promise: capacity in seconds, not months. That is testable, and the rest of this book tests it.</p>
-<p>On the platform in this book, a complete Kubernetes cluster — a control plane and a worker, each running as its own virtual machine — is built from a written declaration to both machines ready in a median of <strong>33.7 seconds</strong>, measured on 17 September 2026 (Chapter 7). Tearing one down takes <strong>18.9 seconds</strong>. Claiming a pre-built standby took <strong>194 milliseconds</strong> when it was measured in June (Chapter 9).</p>
+<p>On the platform in this book, a complete Kubernetes cluster — a control plane and a worker, each running as its own virtual machine — is built from a written declaration to both machines ready in a median of <strong>33.7 seconds</strong>, measured on 17 September 2026 (Chapter 7). Tearing one down takes <strong>18.9 seconds</strong>. Claiming a pre-built standby took <strong>467 milliseconds</strong>, median of three runs measured 18 September 2026 — about 72 times faster than the cold build (Chapter 9).</p>
 <p>Speed, it turns out, is not something only a landlord can offer. But the same chapters also show what it cost to get there. The first measured build took 50 seconds. Four attempts to make it faster failed. The two changes that worked took months of instrumentation to find (Chapter 8). And the dashboard reported the worker as ready for months while it was unable to run anything (Chapter 5).</p>
 <p>That is the honest shape of the ROI question. Owning can match renting on speed. What it costs in people and attention is the part the rest of this book counts.</p>
 <hr class="scene-break" />
@@ -453,7 +477,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><code>docs/sub-60s-cluster-strategy.md</code> — how cluster build time was measured and brought down, including the dead ends.</li>
 <li><code>scripts/phase-timings.sh</code> (<code>make phase-timings</code>) — the per-phase measurement behind the 33.7-second figure.</li>
 <li><code>docs/warm-pool-strategy.md</code> and <code>ui/backend/handlers/pool.go</code> — the standby, and what it costs to keep warm.</li>
-<li><code>~/marketing/Reclaiming Margins with Sovereign Cloud.pptx</code>, slides 3–9 — the strategy deck's first two chapters.</li>
+<li>The strategy deck, slides 3–9 — its first two chapters. (Not a repository file; see Appendix H — Sources.)</li>
 </ul>
 </div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
 <p><em>For the author — remove before publication.</em></p>
@@ -463,7 +487,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>Counter-arguments exist.</strong> The a16z paper drew public rebuttals (for example a VentureBeat opinion piece). The chapter's caveats cover the substance; decide whether to name one.</li>
 <li><strong>Deck figures not repeated as fact.</strong> From slides 4 and 7: $3.86 ROI per $1, 94% of companies using cloud, 67% delaying deployments, 46% revenue loss, 30% fines. None has a source.</li>
 <li><strong>"The price of an hour of computing didn't go up much"</strong> is Anita's claim, in fiction. It was not verified, and it should stay in the character's voice unless it is sourced.</li>
-<li><strong>The standby's cost</strong> (8 cores, 14 GiB) and the 194 ms claim are from Chapter 9. The claim was measured in June and has not been re-measured.</li>
+<li><strong>The standby's cost</strong> (8 cores, 14 GiB) is from Chapter 9. <strong>Resolved 18 September</strong> — the claim time was re-measured (was 194 ms in June, unmeasured since; now 467 ms median, three runs); this chapter's figure is updated.</li>
 <li><strong>The Meridian scenes are fiction.</strong> No Meridian figure is quantified.</li>
 <li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
 </ul></aside>
