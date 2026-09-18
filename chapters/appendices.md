@@ -4,7 +4,7 @@
 >
 > — `07-istio-advanced/verify.sh`
 
-Seven appendices, for readers who want to check the book rather than take its word. Each was checked against the repository and the running platform on 17 September 2026 (Appendix G, on 18 September). Where the repository's own documentation disagrees with what was running, both are shown.
+Eight appendices, for readers who want to check the book rather than take its word. Each was checked against the repository and the running platform on 17 September 2026 (Appendix G, on 18 September). Where the repository's own documentation disagrees with what was running, both are shown.
 
 - **A. The repo, stage by stage** — what each directory does, and the `make` targets that matter.
 - **B. Addresses that must not move** — the network address plan, as reserved and as found.
@@ -13,6 +13,7 @@ Seven appendices, for readers who want to check the book rather than take its wo
 - **E. The ten labs** — the agent-platform labs, with their original honesty markers and what this book re-checked.
 - **F. A glossary for the boardroom** — one plain-English sentence per term.
 - **G. Key files, quoted** — the load-bearing code and manifests, verbatim, for readers without the companion repository.
+- **H. Sources** — what the book draws on, and which of it a reader can check.
 
 ## Appendix A — The repo, stage by stage
 
@@ -30,7 +31,7 @@ Installs MetalLB, which gives Services on the laptop's Docker network real IP ad
 
 ### 02-capi-init
 
-`init-management-cluster.sh` turns `cluster2` into a cluster factory. It installs Cluster API v1.14.2, the KubeVirt infrastructure provider (CAPK) v0.11.2, and the k3s bootstrap and control-plane providers v0.3.0. It then replaces a dead proxy image those providers ship (Chapter 17), and runs `scripts/configure-kubevirt-perf.sh`, which applies the CPU setting that cut eight seconds from every VM start (Chapter 8). That auto-run can silently do nothing if KubeVirt is still initializing, so check afterwards that the setting landed. *Targets:* `make capi-init`, `make kubevirt-perf`.
+`init-management-cluster.sh` turns `cluster2` into a cluster factory. It installs Cluster API v1.14.2, the KubeVirt infrastructure provider (CAPK) v0.11.2, and the k3s bootstrap and control-plane providers v0.3.0. It then replaces a dead proxy image those providers ship (Chapter 17), and runs `scripts/configure-kubevirt-perf.sh`, which applies the CPU setting that cut eight seconds from every VM start (Chapter 8). That auto-run can silently do nothing — not, as first diagnosed, because it races KubeVirt's start-up, but because the script's own readiness waits can outlast whatever time limit its caller imposes, and it is killed before reaching that last step (Chapter 17). Check afterwards that the setting landed. *Targets:* `make capi-init`, `make kubevirt-perf`.
 
 ### 03-target-cluster
 
@@ -770,6 +771,35 @@ done
 ```
 
 The `|| true` that the comment mentions is the pattern Appendix C.2 catalogues: a wait that fails, a fallback that swallows the failure, and a script that reports success.
+
+## Appendix H — Sources
+
+The book draws on three kinds of source, and they are not equally checkable. This appendix says which is which.
+
+### H.1 The companion repository
+
+The **Build log** sections come from the platform repository, `sovereign_cloud`. It is the only source a reader can run. Every build-log claim names the file or command behind it in that chapter's **Open the repo** block, and the load-bearing files are quoted in Appendix G.
+
+One caveat, recorded in Chapter 17's draft notes: most of the material this book cites lives on the working branch `upgrade/k8s-1.37-istio-1.31-sympozium-0.10.75`, not on `main`. A reader who clones the default branch will not find much of it.
+
+### H.2 Briefing material (not public, not in the repository)
+
+Four items are the author's own briefing material. They are described here rather than linked, because no path or URL would resolve for a reader. Where the book quotes them, it quotes them verbatim and says so.
+
+| Referred to in the book as | What it is |
+|---|---|
+| **The strategy deck** | *Reclaiming Margins with Sovereign Cloud*, a strategic briefing deck dated February 2026, in five chapters. Parts I and V adapt its argument; Chapter 18 takes its TCO slide apart. None of its figures carries a source, and the book says so each time it quotes one. |
+| **The sovereign-cloud flyer** | A one-page campaign flyer, version 2, unbranded — six promises and a *"Save $Millions — Creating a Cloud Owning Culture"* band. The epilogue reads it claim by claim. A separate version of the same flyer carries a real company's branding; the book does not quote that one, and does not name the company. |
+| **The recorded factory demonstration** | A screen recording, 8 minutes 56 seconds, of the cluster-provisioning path in Chapters 4 and 5. Used only as a source of stills. |
+| **The recorded agent demonstration** | A screen recording, 2 minutes 50 seconds, of the agent console in Chapter 13. Used only as a source of stills. |
+
+The cross-cluster mind map in Chapter 10 was previously cited from this material as well. It is in the repository, at `05-istio/cross-cluster-mindmap.html`, and the book now cites it there. The briefing copy is byte-identical, which is exactly Chapter 10's point: a diagram duplicated into two places goes stale in both.
+
+### H.3 The public record
+
+**Public record** sections cite published, checkable sources: the Andreessen Horowitz cloud-cost paper (2021), Dropbox's 2018 IPO filing, 37signals' published cloud-exit accounts, Gartner's public-cloud spending forecast, Flexera's annual cloud reports, the EU Data Act, the AT&T/Broadcom litigation coverage, Grand View Research's sovereign-cloud market sizing, and the hyperscalers' own server-depreciation disclosures. Each is named where it is used, with its date.
+
+Their verification status is recorded per chapter in the draft notes, and several are still marked *confirm against the primary source before publication* — a search summary or a news report is not the filing it describes.
 
 ## Draft notes
 

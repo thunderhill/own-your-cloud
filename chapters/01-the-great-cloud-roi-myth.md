@@ -72,7 +72,7 @@ That growth figure carries the chapter's most practical distinction. A bill can 
 
 The published waste figure from the prologue — 29% of cloud spend, by respondents' own estimate — is often used as an argument for leaving. It is really an argument for managing.
 
-Owned hardware can be wasted too. Chapter 9 of this book measured a *warm standby*: a spare cluster kept running so that a user could claim one in a fifth of a second instead of waiting for one to be built. It is a good design. It also holds eight processor cores and 14 GiB of memory idle, around the clock, waiting. On the platform this book describes, that standby is switched off by default, for exactly that reason.
+Owned hardware can be wasted too. Chapter 9 of this book measured a *warm standby*: a spare cluster kept running so that a user could claim one in under half a second instead of waiting for one to be built. It is a good design. It also holds eight processor cores and 14 GiB of memory idle, around the clock, waiting. On the platform this book describes, that standby is switched off by default, for exactly that reason.
 
 Idle capacity costs money wherever it runs. The difference is who sends the bill, and whether anyone reads it.
 
@@ -123,7 +123,7 @@ The CFO ran his finger down the first column. "Most of it is steady."
 - `docs/sub-60s-cluster-strategy.md` — how cluster build time was measured and brought down, including the dead ends.
 - `scripts/phase-timings.sh` (`make phase-timings`) — the per-phase measurement behind the 33.7-second figure.
 - `docs/warm-pool-strategy.md` and `ui/backend/handlers/pool.go` — the standby, and what it costs to keep warm.
-- `~/marketing/Reclaiming Margins with Sovereign Cloud.pptx`, slides 3–9 — the strategy deck's first two chapters.
+- The strategy deck, slides 3–9 — its first two chapters. (Not a repository file; see Appendix H — Sources.)
 
 ## Draft notes
 

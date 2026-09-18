@@ -127,7 +127,7 @@ Anita read the fourth column first. Most of it was blank.
 - `03-target-cluster/target-cluster-warm.yaml` — the control-plane setting, in the manifest (`advertise-address`).
 - `scripts/configure-kubevirt-perf.sh` — the virtualization-layer setting (`supportContainerResources`).
 - `CLAUDE.md`, "Common Pitfalls" — the owner's side of the ledger, including the upgrade record and the moving-tag crash.
-- `~/marketing/Reclaiming Margins with Sovereign Cloud.pptx`, slides 5, 8, 9 and 16.
+- The strategy deck, slides 5, 8, 9 and 16. (Not a repository file; see Appendix H — Sources.)
 
 ## Draft notes
 

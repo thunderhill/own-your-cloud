@@ -217,7 +217,7 @@ He read it back. "It's a very boring sentence."
 - `nvidia-smi --query-gpu=power.draw --format=csv -lms 200`, alongside `ollama`'s `eval_count` and `eval_duration` — energy per token.
 - `git log --format='%B' | grep -c 'Co-Authored-By'` and `git shortlog -sn` — how the platform was built.
 - `06-sympozium/cost-analyzer.yaml` — the FinOps agent, and why it does not install (Chapter 16).
-- `~/marketing/Reclaiming Margins with Sovereign Cloud.pptx`, slides 16, 18 and 19; `~/marketing/SovereignCloud_Flyer_v2.pdf`.
+- The strategy deck, slides 16, 18 and 19; the unbranded sovereign-cloud flyer, version 2. (Neither is a repository file; see Appendix H — Sources.)
 
 ## Draft notes
 

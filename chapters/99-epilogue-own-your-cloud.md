@@ -96,7 +96,7 @@ Anita turned the page back round, and put her finger on the line in the corner t
 
 *For the author — remove before publication.*
 
-- **Flyer text** is from `~/marketing/SovereignCloud_Flyer_v2.pdf` (the unbranded flyer; the "Save $Millions" and "Creating a Cloud Owning Culture" band appears only in v2). The six pillar lines are quoted verbatim from its extracted text. Do not quote the separately branded flyer.
+- **Flyer text** is from the sovereign-cloud flyer, version 2, unbranded (Appendix H; the "Save $Millions" and "Creating a Cloud Owning Culture" band appears only in v2). The six pillar lines are quoted verbatim from its extracted text. Do not quote the separately branded flyer.
 - **Every measured claim in the scene** traces to a drafted chapter:
   - 33.7 s / 18.9 s — Chapter 7.
   - Standby claim "under half a second" — 467 ms median, three runs, 18 September, Chapter 9 (was 194 ms in June, resolved 18 September).

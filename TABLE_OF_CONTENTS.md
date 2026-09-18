@@ -27,7 +27,7 @@ Two readers, one story:
 
 Meridian's CTO reads the monthly bill for its slope, not its total. The briefing deck's waste figures — 35% over-provisioned, 28% idle, 18% orphaned, a 40% markup — meet the published one (29%, self-estimated), and the book explains how it keeps score. The prologue ends on the question the book answers: what would it take to **own** this instead of rent it?
 
-> Source: `~/marketing/Reclaiming Margins with Sovereign Cloud.pptx`, ch. 1–2.
+> Source: the strategy deck *Reclaiming Margins with Sovereign Cloud* (February 2026), ch. 1–2. See Appendix H.
 
 ---
 
@@ -48,7 +48,7 @@ Data residency and the buyers who actually ask for it — *"enterprise Europe / 
 
 **4. Kubernetes That Runs Kubernetes**
 Cluster API explained for a board: a management cluster that manufactures workload clusters. The managed-Kubernetes spectrum (Tanzu vs. CAPZ vs. Kubermatic). Why an organization with a VMware estate should care that **VMs are first-class citizens** here (KubeVirt). The bridge from money to machinery.
-> Source: deck ch. 4, slides 14–16; `README.md` architecture diagram; `~/marketing/capi.mp4` for figures.
+> Source: deck ch. 4, slides 14–16; `README.md` architecture diagram; the recorded factory demonstration for figures.
 
 ---
 
@@ -82,7 +82,7 @@ The warm pool: a standby cluster **claimed in 467 ms** (18 September; was 194 ms
 
 **10. Hardcoded IPs and Other Confessions**
 The "before" picture: cross-cluster discovery hand-plumbed with a `ServiceEntry`, a hardcoded MetalLB IP, and a NodePort proxy. It worked. It was also a lie waiting to be found out. The eight-step demo from the cross-cluster mind map is the chapter's spine; the mind map is its figure.
-> Source: `05-istio/cross-cluster-demo.sh`, `~/marketing/cross-cluster-mindmap.html`.
+> Source: `05-istio/cross-cluster-demo.sh`, `05-istio/cross-cluster-mindmap.html`.
 
 **11. One Label**
 Acts 1–3. The Gateway API ownership split: a `rogue-tenant` route the API server *accepts* and the Gateway *refuses* — and a second refusal nobody checked, of the demo's own tenant. Waypoints enforcing L7 authorization on SPIFFE identity with no sidecar in any pod. Multicluster failover where `istio.io/global: "true"` replaces everything in chapter 10: measured by status code, it works — but the act's own tally prints *"success=20 failed=0"* with both clusters down, and healthy traffic splits half-and-half across sites.
@@ -124,7 +124,7 @@ Kubernetes 1.35 → 1.37, Istio 1.30 → 1.31, k3s 1.31 → 1.37; both clusters 
 
 **18. Reclaiming the Margin**
 The briefing deck's $12.5M → $8.2M five-year TCO, taken apart line by line: savings that add up exactly with no line for what owning costs, 70% of it in lines no invoice records, and a 5–7 year payback that fits only at the expensive end. Then what the platform measured — reservations against use, 0.33 kWh per million generated tokens, the effort in the repo — a TCO worksheet, the seven-step Sovereign Cloud Journey, a **"Cloud Owning Culture"**, and what to ask your vendors, including the one you become.
-> Source: deck ch. 5, slide 19; `~/marketing/SovereignCloud_Flyer_v2.pdf`.
+> Source: deck ch. 5, slide 19; the unbranded sovereign-cloud flyer, v2 (Appendix H).
 
 ## Epilogue — Own Your Cloud
 Meridian's CTO, twelve months later. Short. It ends on the flyer's line.
@@ -140,6 +140,7 @@ Meridian's CTO, twelve months later. Short. It ends on the flyer's line.
 - **E. The ten labs** — quick reference, with the ✅ / ⚠️ honesty markers preserved.
 - **F. A glossary for the boardroom** — CAPI, KubeVirt, ambient mesh, waypoint, SPIFFE, agentic control plane, sovereign cloud — one plain-English sentence each.
 - **G. Key files, quoted** — the load-bearing manifests and code, verbatim with their repo paths, so the book can be checked without the companion repository: the warm manifest's seven objects, the two one-line speed fixes, the two ways to count a failover, the egress allowlist, an agent as an object, the `K3S_VERSION` that controlled nothing, and the dead-image patch.
+- **H. Sources** — the companion repository; the author's briefing material, described rather than linked because no path would resolve for a reader; and the public record, with each citation's verification status.
 
 ---
 
@@ -153,8 +154,8 @@ Meridian's CTO, twelve months later. Short. It ends on the flyer's line.
 
 **Figures to source:**
 - Deck slides 14–16 → ch. 4.
-- `~/marketing/cross-cluster-mindmap.html` (render to SVG) → ch. 10.
-- `~/marketing/capi.mp4` (8m56s), `~/marketing/ai.mp4` (2m50s) → stills for ch. 5 and ch. 13.
+- `05-istio/cross-cluster-mindmap.html` (render to SVG) → ch. 10.
+- The recorded factory demonstration (8m56s) and agent demonstration (2m50s) → stills for ch. 5 and ch. 13 (Appendix H).
 - `docs/demo/mesh-sre-agent-demo.mp4` → frames for ch. 15.
 - `phase-timings.sh` tables → charts for ch. 7–8 and Appendix D.
 - `README.md` ASCII architecture → redraw once, reuse across Parts.

@@ -215,7 +215,7 @@ She didn't cross anything out. "Here is what we do. The before picture stays. It
 ## Open the repo
 
 - `05-istio/cross-cluster-demo.sh` — the eight steps. Step 5 (the ServiceEntries) begins at line 460; Step 6's call by address is at line 537.
-- `05-istio/cross-cluster-mindmap.html` — the chapter figure; identical to the copy in the marketing folder.
+- `05-istio/cross-cluster-mindmap.html` — the chapter figure. A byte-identical copy sits in the author's briefing material (Appendix H), so correcting one leaves the other wrong.
 - `git show 44aa28a -- 03-target-cluster/target-cluster.yaml` — `masquerade` becomes `bridge` in the same commit as the diagram.
 - `ui/backend/handlers/cross_cluster.go` (line 151) — the failover rule; `ui/frontend/src/components/visual/CrossClusterDemo.tsx` — the badge.
 - `ui/frontend/src/pages/VisualDashboard.tsx` — the retirement note for the six panels.

@@ -145,7 +145,7 @@ Vikram read it over her shoulder. "*Measured* is doing a lot of work in that sen
 - `kubectl --context kind-cluster2 get clusters.cluster.x-k8s.io target-cluster -o wide` — the gauge.
 - `02-capi-init/init-management-cluster.sh` — how the factory itself is set up.
 - `README.md` — the architecture diagram, and how far it has drifted.
-- `~/marketing/Reclaiming Margins with Sovereign Cloud.pptx`, slides 14–16; `~/marketing/capi.mp4` (8 min 56 s), the factory demonstrated end to end.
+- The strategy deck, slides 14–16; the recorded factory demonstration (8 min 56 s), end to end.
 
 ## Draft notes
 
