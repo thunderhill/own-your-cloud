@@ -263,7 +263,7 @@ The limit is the part that removed the eight seconds, and a limit is a ceiling, 
 | Runs | 42.7 / 42.8 / 41.2 | 34.5 / 34.2 / 34.7 |
 | Run-to-run spread | 1.6 s | **0.5 s** |
 
-There is one catch, and it belongs in the ledger. This setting lives in the running cluster's KubeVirt configuration, not in a manifest in Git. Rebuild the management cluster and it is gone. The fix was wrapped in a script, `scripts/configure-kubevirt-perf.sh`, and wired into the management cluster's setup so that a rebuild would reapply it. A week later, after a rebuild from nothing, it was found missing anyway and had to be applied by hand. That story is Chapter 17.
+There is one catch, and it belongs in the ledger. This setting lives in the running cluster's KubeVirt configuration, not in a manifest in Git. Rebuild the management cluster and it is gone. The fix was wrapped in a script, `scripts/configure-kubevirt-perf.sh`, and wired into the management cluster's setup so that a rebuild would reapply it. A week later, after a rebuild from nothing, it was found missing anyway and had to be applied by hand. That story is Chapter 18.
 
 ## Where it landed
 

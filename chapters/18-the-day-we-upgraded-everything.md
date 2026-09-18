@@ -1,4 +1,4 @@
-# Chapter 17 — The Day We Upgraded Everything
+# Chapter 18 — The Day We Upgraded Everything
 
 > *Do not assume `latest` is safe just because a past jump was.*
 >
@@ -261,7 +261,7 @@ Anita read it and went back to one line. "One afternoon. Because we'd never done
 - **Resolved 18 September — the specific files are committed.** `06-sympozium/demo-mesh-sre.sh`, `06-sympozium/agent-istio-rbac.yaml`, and `docs/demo/mesh-sre-agent-demo.mp4` all landed in commit `84669ad` ("feat(sympozium): add mesh-sre-agent for Istio ambient mesh health", 2026-09-17), which is pushed to `origin`.
 - **A bigger version of the same problem remains: the branch isn't merged to `main`.** All of this — the mesh-sre-agent work, the Kubernetes 1.37/Istio 1.31/Sympozium 0.10.75 upgrade this chapter describes, and in fact most of Parts II–V's technical material — lives on `upgrade/k8s-1.37-istio-1.31-sympozium-0.10.75`, 40 commits ahead of `main` with none of `main`'s own commits missing from it. `main` has 161 tracked files against this branch's 312. A reader who clones `main` following any "Open the repo" pointer into `06-sympozium/`, `07-istio-advanced/`, or most of the upgrade-era scripts will not find them. Decide before print: merge the branch (open a PR), or have "Open the repo" name the branch explicitly.
 - **`CLAUDE.md` had two errors from this rebuild; both corrected 18 September.** Its upgrade entry said `scripts/configure-kubevirt-perf.sh` "can silently no-op if it races KubeVirt's operator" — corrected to the evidence: the setup script was killed by a 590-second time limit during its readiness waits. It also said the base image is "NOT created by any script in this repo" — corrected: `scripts/import-base-images.sh` creates it, but isn't wired into the Makefile/README setup path.
-- **Table of contents corrected.** Its Chapter 17 entry listed the base image among the things nobody had scripted. Fixed.
+- **Table of contents corrected.** Its Chapter 18 entry listed the base image among the things nobody had scripted. Fixed.
 - **Minimal image still missing, not yet fixed.** `ubuntu-minimal-noble-dv` was not re-imported on the rebuilt `cluster2` (confirmed still absent 18 September — `kubectl -n default get dv` on cluster2 lists only `ubuntu-noble-dv`), so `make bake-image-minimal-preinit` has no source image. `scripts/import-base-images.sh` fixes it; running it is a live-cluster change, deliberately not done as part of this documentation pass.
 - **ListenerSet.** Resolve before print: send a request to port 8443 with the `tenant-a.demo.istio.local` hostname, and either report a real regression or explain the status/Service mismatch. Act 1 also prints the gateway's own listeners under the caption "attached ListenerSets", which overstates what it shows.
 - **Digest pinning.** The Kind 0.33.0 release notes say node images must be referenced by `@sha256` digest to guarantee an image built for that release. The rebuild used the plain tag.

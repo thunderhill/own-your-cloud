@@ -207,7 +207,7 @@ Return to Anita's three questions, because the architecture answers each of them
 
 That is what *first-class object* buys: the agent inherits the governance machinery the organization already runs, instead of arriving with its own.
 
-It does not buy immortality, and this is where the build log has to be exact. The strategy document's sixth constraint says the trail is append-only: *"No design may erase, short-circuit, or replace that trail."* Nothing enforces that. The labs delete their runs when they clean up. The repository's own repair script for serving agents works by deleting their runs so the controller will recreate them. And on 16 September, when both host clusters were deleted and rebuilt for the upgrade in Chapter 17, every run record that existed that morning — fifty-three of them, the oldest nearly four weeks old — was deleted with the cluster that held it.
+It does not buy immortality, and this is where the build log has to be exact. The strategy document's sixth constraint says the trail is append-only: *"No design may erase, short-circuit, or replace that trail."* Nothing enforces that. The labs delete their runs when they clean up. The repository's own repair script for serving agents works by deleting their runs so the controller will recreate them. And on 16 September, when both host clusters were deleted and rebuilt for the upgrade in Chapter 18, every run record that existed that morning — fifty-three of them, the oldest nearly four weeks old — was deleted with the cluster that held it.
 
 An object is auditable for exactly as long as it exists. The same constraint already names the answer — durable storage off the cluster that *"mirrors `AgentRun`s, it does not replace them"* — and it has not been built.
 

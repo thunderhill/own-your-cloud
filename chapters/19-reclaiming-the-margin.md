@@ -1,4 +1,4 @@
-# Chapter 18 — Reclaiming the Margin
+# Chapter 19 — Reclaiming the Margin
 
 > *The question is no longer whether you can afford to become your own cloud provider, but whether you can afford not to.*
 >
@@ -127,7 +127,7 @@ Put the slide's shape and the platform's measurements together, and the chapter'
 | Power and facilities | Inside the rent | Power, cooling, space | 0.33 kWh per million generated tokens, GPU only |
 | AI inference | Per token, hosted | Hardware sized for the models | 34–37 tokens/s; one model at a time on a 6 GB GPU |
 | People | The supplier's staff | Platform team, on-call, training | A lab: one committer (Mahipal), 63 of 81 commits AI-co-authored |
-| Upgrades | A button and a maintenance window | Yours | A week, for one major upgrade (Chapter 17) |
+| Upgrades | A button and a maintenance window | Yours | A week, for one major upgrade (Chapter 18) |
 | Knowing what's true | The supplier's status page | Your own checks | Gauges found wrong in Chapters 4, 5, 11 and 12 |
 
 ## The journey

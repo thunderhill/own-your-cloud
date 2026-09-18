@@ -35,10 +35,11 @@ Every chapter closes with **The ledger** (what was built, measured or found), **
 | 14 | Rules the Model Cannot Break | IV — The Brain |
 | 15 | Trust, but Verify | IV — The Brain |
 | 16 | The Fleet | IV — The Brain |
-| 17 | The Day We Upgraded Everything | V — The Dividend |
-| 18 | Reclaiming the Margin | V — The Dividend |
+| 17 | From the Lab to the Data Centre | V — The Dividend |
+| 18 | The Day We Upgraded Everything | V — The Dividend |
+| 19 | Reclaiming the Margin | V — The Dividend |
 | Epilogue | Own Your Cloud | |
-| Appendices | The Owner's Reference (A–F) | |
+| Appendices | The Owner's Reference (A–H) | |
 
 About 52,000 words of narrative, plus about 4,500 words of appendices.
 

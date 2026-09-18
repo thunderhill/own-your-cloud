@@ -112,7 +112,7 @@ What the team did with that table is the next chapter. This chapter has one more
 
 ## The stopwatch that stopped early
 
-After the platform upgrade in Chapter 17, the same instrument reported a cluster build of **23.9 seconds** — 23.9, 24.1, and 23.7 across three runs, a spread of only 0.4 seconds. Ten seconds faster than before the upgrade, and steadier. The number went into the platform's operating notes, into two chapters of this book, and into an answer about how the platform got under forty seconds.
+After the platform upgrade in Chapter 18, the same instrument reported a cluster build of **23.9 seconds** — 23.9, 24.1, and 23.7 across three runs, a spread of only 0.4 seconds. Ten seconds faster than before the upgrade, and steadier. The number went into the platform's operating notes, into two chapters of this book, and into an answer about how the platform got under forty seconds.
 
 It was wrong, and the instrument's own output said so to anyone who looked closely.
 
@@ -214,7 +214,7 @@ Anita looked at the display for a moment. "When a number improves and nobody can
 
 *For the author — remove before publication.*
 
-- **This discovery corrected earlier drafts in this pass.** Chapter 8's postscript and Chapter 17's measurement section, ledger, and Meridian memo previously reported 23.9 s as a both-nodes time; the table of contents did too. All now carry the corrected 33.7 s. The 23.9 s figure in `CLAUDE.md`, added earlier at the author's request, is corrected as well.
+- **This discovery corrected earlier drafts in this pass.** Chapter 8's postscript and Chapter 18's measurement section, ledger, and Meridian memo previously reported 23.9 s as a both-nodes time; the table of contents did too. All now carry the corrected 33.7 s. The 23.9 s figure in `CLAUDE.md`, added earlier at the author's request, is corrected as well.
 - **The scripts are not fixed yet.** Both `scripts/phase-timings.sh` and `scripts/time-to-ready.sh` wait for "two nodes Ready" by count. Fix by naming the nodes (or excluding `ubuntu-bake-vm-warm`), by failing loudly when a node's timestamp is missing instead of treating it as zero, and by giving the worker's install path a "started" marker the instrument can find. Alternatively, remove the ghost from the image at bake time.
 - **Measurement method for the corrected numbers:** from just before `kubectl apply`, poll the target cluster's nodes every 0.5 s by name (`-cp-`, `-workers-`), then read each node's `Ready` `lastTransitionTime` from the API (1-second granularity). The table uses the API transition times; the polled observations agree within about a second (control plane 25.1 / 25.2 / 25.6 s, worker 31.0 / 36.3 / 34.5 s). Host load was 1.2–2.3. The measuring script lives outside the repository; consider adding it.
 - **Cannot be re-checked:** the 9 September runs (artifacts not kept) and June's 48.520 s from `time-to-ready.sh`, which may have included the ghost. The ghost cleanup dates from 23 June.

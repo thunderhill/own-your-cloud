@@ -53,7 +53,7 @@ She looked at the page again, the way she had looked at the stopwatch printout a
 
 ## Two answers, one of them invented
 
-Both answers were collected on the same day, during the platform rebuild described in Chapter 17, while checking that every agent could still reach what it was meant to reach. The prompt was identical — *"Use your kubectl tool: kubectl get nodes -o name. Report exactly what it printed."* — sent to two agents with two different jobs.
+Both answers were collected on the same day, during the platform rebuild described in Chapter 18, while checking that every agent could still reach what it was meant to reach. The prompt was identical — *"Use your kubectl tool: kubectl get nodes -o name. Report exactly what it printed."* — sent to two agents with two different jobs.
 
 The first came from `cluster2-agent`, which operates the management cluster. It was correct: that cluster has exactly one node, `cluster2-control-plane`.
 
