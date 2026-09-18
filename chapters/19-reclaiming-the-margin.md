@@ -130,6 +130,68 @@ Put the slide's shape and the platform's measurements together, and the chapter'
 | Upgrades | A button and a maintenance window | Yours | A week, for one major upgrade (Chapter 18) |
 | Knowing what's true | The supplier's status page | Your own checks | Gauges found wrong in Chapters 4, 5, 11 and 12 |
 
+## One workload, metered both ways
+
+*Build log · 18 September 2026*
+
+A worksheet with no amounts in it is still a slide. So the test this chapter proposes — meter one workload both ways, in parallel — was run at the only scale available: one workload, on the laptop.
+
+**The workload.** An `nginx` deployment on the target cluster, served continuously and probed every twenty seconds for ten minutes. It answered **30 of 30 probes with `200`**. It is a small, steady, unglamorous workload, which is exactly the kind the a16z paper says is cheapest to own.
+
+**What it consumed, measured.** The platform as a whole ran at a **median 0.549 of the host's 24 threads — 2.29% of its processor — and 8.71 GiB of 29.96 GiB**. The target cluster's control-plane node used 67 millicores and 1,142 MiB.
+
+But use is not what capacity costs, and this is where the lab produced its sharpest number. The two virtual machines **reserve 14,920 MiB — 48.6% of the host's memory** — while reserving only 400 millicores each, 3.3% of its processor. The `cores: 4` in each machine's declaration is a guest topology setting, not a claim on the host's CPU at all. Memory is the binding constraint, and one cluster of this shape holds down **roughly half the machine**, whatever it is doing.
+
+**What could not be measured, and therefore is not claimed.** Whole-host power. The CPU energy counter at `/sys/class/powercap/intel-rapl:0/energy_uj` is present but not readable without root on this kernel, and the battery reads zero on AC. So host power below is an assumption with a range, not a measurement. The GPU was measured — a steady 5.22 W — and is idle: this workload never touches it.
+
+**The rented side**, priced from published list prices, accessed 18 September 2026, with no committed-use discount:
+
+| Item | Price |
+|---|---|
+| DigitalOcean CPU-Optimized Droplet, 4 vCPU / 8 GB × 2 | $0.125 / hour each |
+| DigitalOcean Kubernetes standard control plane | free |
+| *(alternative)* high-availability control plane | $40 / month ≈ $0.055 / hour |
+| *(for comparison)* Amazon EKS control plane, standard support | $0.10 / cluster-hour |
+
+**Rented: $0.250 per workload-hour** for the same two-machine shape with a free control plane — $0.305 with a highly available one. A managed control plane is not always free, which is what the EKS line is doing there.
+
+**The owned side** needs four inputs. One is measured, three are assumptions, and the assumptions are stated so a reader can substitute their own:
+
+| Input | Value | Measured? |
+|---|---|---|
+| Share of the host this workload holds | 48.6% | **measured** (memory reservation) |
+| Host capital cost | $1,500–$3,000 | assumption |
+| Amortization | 4 years — the conservative end of the public record above | assumption |
+| Host power under this load | 25–65 W, at $0.10–$0.50/kWh | assumption; RAPL unreadable |
+
+That gives hardware at **$0.021–$0.042** per workload-hour and power at **$0.001–$0.016** — call it **$0.02–$0.06 per workload-hour** for the metal.
+
+Against $0.250 rented, that looks like a rout: four to eleven times cheaper. It is also wrong, because it leaves out the only line that actually decided this.
+
+### The line that decides it
+
+The repository carries commits on **18 distinct days** between 11 February and 18 September 2026. That is a measured lower bound on the human effort — real work happens on days without commits, and a commit day is not a full day — but it is the only effort figure this book has that is not a guess.
+
+Put that on the same worksheet. At an assumed $400–$1,200 per engineer-day, spread over four years:
+
+| Steady workloads sharing the build effort | Build effort, per workload-hour | Total owned, per workload-hour | Against $0.250 rented |
+|---|---|---|---|
+| 1 | $0.21–$0.62 | **$0.23–$0.68** | loses, or breaks even at best |
+| 2 | $0.10–$0.31 | **$0.12–$0.37** | roughly a wash |
+| 3 | $0.07–$0.21 | **$0.09–$0.27** | wins, except at the pessimistic end |
+| 5 | $0.04–$0.12 | **$0.06–$0.18** | wins |
+| 10 | $0.02–$0.06 | **$0.04–$0.12** | wins comfortably |
+
+**The crossover is at roughly two to three steady workloads.** Below it, the build effort swamps everything and the cloud is cheaper. Above it, the hardware arithmetic starts to look like the a16z paper's "one-third to one-half," and keeps improving.
+
+That is the first line in this book that is true about money, and it is worth being precise about how small it is. It is one workload, on one laptop, for ten minutes, against one provider's list price, with three of its four cost inputs assumed rather than measured. It does not capture high availability, replicated storage, backup, support contracts, on-call, an SLA, facilities, networking hardware, or any of the right-hand column of Chapter 17 — every one of which the rented price *includes* and the owned price does not.
+
+So the honest statement of the result is narrow, and it is still the most useful sentence the platform has produced about cost:
+
+> **On steady workloads, owning beats renting on the metal by roughly an order of magnitude — and the build effort is so much larger than the metal that it, not the hardware, decides whether owning pays. At this lab's effort level, the answer turns positive somewhere around the second or third workload.**
+
+Which is the same conclusion the deck reached, by a different route, and with one difference that matters: the deck put 70% of its saving in lines no invoice records. This puts the deciding line — people — in the open, where a CFO can argue with it.
+
 ## The journey
 
 *Briefing · February 2026*
@@ -200,8 +262,9 @@ He read it back. "It's a very boring sentence."
 - **Depreciation (public record):** Microsoft (FY2022) and Alphabet (2023) moved servers from four- to six-year lives; Amazon moved part of its fleet from six to five years from January 2025, citing AI.
 - **Owned waste (build log, 17 September 2026):** 22.42 GiB reserved against 7.45 GiB used on the management cluster; a control-plane VM using 1% of its CPU and 14% of its memory.
 - **AI energy (build log):** `qwen2.5:7b` on an RTX 4050 laptop GPU at 6.4 W idle and 38–42 W generating; 34–37 tokens/s; 1.19 J per token; 0.33 kWh per million generated tokens, GPU only.
-- **Effort (build log):** 81 commits from one committer, Mahipal, over seven months, 63 of them co-authored with an AI coding assistant — a lab, not an operation.
-- **Not claimed:** any saving for Meridian.
+- **Effort (build log, 18 September 2026):** 88 commits from one committer, Mahipal, over seven months, 70 of them co-authored with an AI coding assistant, on 18 distinct days — a lab, not an operation. (The figure moved while this book was being written, because writing it added commits.)
+- **Metered, one workload both ways (build log, 18 September 2026):** an nginx deployment on the target cluster, 30 of 30 probes `200` over ten minutes. It holds **48.6% of the host's memory by reservation** while using 2.29% of its processor. Rented equivalent, at published list prices: **$0.250 per workload-hour**. Owned metal, on stated assumptions: **$0.02–$0.06**. Owned including the build effort: **$0.23–$0.68 at one workload**, falling below the rented price at **roughly two to three steady workloads**.
+- **Not claimed:** any saving for Meridian; any figure for high availability, backup, support, on-call or an SLA, none of which the owned side includes and all of which the rented price does.
 
 ## Ask your team
 
@@ -215,7 +278,8 @@ He read it back. "It's a very boring sentence."
 - `docker stats --no-stream` — what the clusters actually use.
 - `kubectl --kubeconfig target-cluster-kubeconfig top nodes` — what a target-cluster machine uses of what it was given.
 - `nvidia-smi --query-gpu=power.draw --format=csv -lms 200`, alongside `ollama`'s `eval_count` and `eval_duration` — energy per token.
-- `git log --format='%B' | grep -c 'Co-Authored-By'` and `git shortlog -sn` — how the platform was built.
+- `git log --format='%B' | grep -c 'Co-Authored-By'`, `git shortlog -sn`, and `git log --format=%ad --date=short | sort -u | wc -l` — how the platform was built, and on how many distinct days.
+- `measurements/ch19-parallel-metering-20260918.tsv` and `measurements/ch19-meter.sh` — the metering run's raw samples and the script that produced them; `measurements/README.md` holds the full assumptions table and the dated price sources.
 - `06-sympozium/cost-analyzer.yaml` — the FinOps agent, and why it does not install (Chapter 16).
 - The strategy deck, slides 16, 18 and 19; the unbranded sovereign-cloud flyer, version 2. (Neither is a repository file; see Appendix H — Sources.)
 
@@ -223,7 +287,10 @@ He read it back. "It's a very boring sentence."
 
 *For the author — remove before publication.*
 
-- **This chapter has no Meridian figures.** The author was asked for real cost inputs; none were available, so the chapter uses the deck's model, clearly labelled, and proposes the parallel-metering test instead. If real figures become available, the worksheet table is where they go.
+- **This chapter still has no *Meridian* figures,** and should not acquire any. What it now has is a lab-scale metering result of its own ("One workload, metered both ways", 18 September). If real Meridian figures become available, the worksheet table is where they go — the metered section stays as the method.
+- **The metering experiment's honesty boundary.** One workload, one laptop, ten minutes, one provider's list price. Three of the four owned-side inputs are assumptions (host cost, amortization, host power) and are labelled as such in the body and tabulated in `measurements/README.md`. Only the 48.6% host share and the 18 commit-days are measured. **Host power could not be measured at all** — `/sys/class/powercap/intel-rapl:0/energy_uj` is root-only on this kernel and the battery reads zero on AC — so no wattage for the host is asserted anywhere.
+- **Rented-side prices** are DigitalOcean list prices accessed 18 September 2026, with no committed-use discount, plus the EKS control-plane fee for contrast. **AWS EC2 instance prices are deliberately absent:** the on-demand tables are script-rendered and could not be read, so no EC2 figure is quoted. Before publication, re-check every price and re-date it; cloud list prices move.
+- **The crossover claim (two to three workloads) is arithmetic, not an experiment.** A second workload was never actually placed on this host — and by the memory reservation it measures, roughly two of these clusters is all the host would hold. Chapter 19's own earlier finding ("a second target cluster would not fit") and this crossover are in tension at exactly the interesting point; say so rather than resolving it by assertion.
 - **Deck arithmetic** was computed in a scratch script: 4.3/12.5 = 34.4%; (1.8+1.2)/4.3 = 69.8%; the investment and payback scenarios are as tabled. The deck does not say whether $8.2M includes the initial investment. The chapter tests both readings rather than choosing one.
 - **Depreciation sources** are secondary (search results summarizing filings): Microsoft Q4 FY2022; Alphabet January 2023; Amazon's 7 February 2025 disclosure, effective 1 January 2025, quoting "increased pace of technology development, particularly in the area of artificial intelligence and machine learning." Cite the 10-K/10-Q text directly before publication, and confirm the "billions" wording (the coverage cites about $3.7B for Microsoft's FY2023).
 - **Reservation figures.** Memory requests were summed over Running/Pending pods from `kubectl get pods -A -o json`. That gives 22.42 GiB; `describe node` reported 24,192,159,232 bytes (≈22.5 GiB). "Used" is `docker stats` for the `cluster2-control-plane` container (7.453 GiB), a single sample. CPU use is the same sample (41.46% of one core). The target VM figures are `kubectl top nodes` inside the target cluster; the worker reported `<unknown>`, consistent with Chapter 5's tainted worker.
@@ -234,6 +301,6 @@ He read it back. "It's a very boring sentence."
   - GPU-board power only: not CPU, memory, the rest of the laptop, or cooling. The laptop was on AC power.
   - Chapter 15's "11.0 tokens per second" is a different metric: whole agent runs, including prompt processing and tool calls.
   - The 3–17 cents range is illustrative arithmetic at 10–50 cents per kWh, not a measured price.
-- **The effort figures** are `git rev-list --count HEAD` (81), `git shortlog -sne` (1 author) and a count of commit messages containing "Co-Authored-By: Claude" (63). The last commit is 9 September. 28 working-tree changes (including this book and the September upgrade) were uncommitted at the time of writing. **Decided:** the committer is named (Mahipal) in the text above; how much further to describe the AI assistance is still open.
+- **The effort figures** are `git rev-list --count HEAD` (88 as of 18 September; 81 on 9 September), `git shortlog -sne` (1 author), a count of commit messages containing "Co-Authored-By: Claude" (70; 63 on 9 September), and distinct commit days (18). The count moved because writing this book added commits to the platform repository — worth one line in the body if a reviewer finds the change confusing rather than charming. 28 working-tree changes (including this book and the September upgrade) were uncommitted at the time of writing. **Decided:** the committer is named (Mahipal) in the text above; how much further to describe the AI assistance is still open.
 - **The Meridian scenes are fiction.** The board-pack sentence sets up the epilogue, where savings are still "not yet measured".
 - **Character names.** Anita Rao and Vikram Iyer remain placeholders.

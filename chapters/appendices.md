@@ -292,7 +292,7 @@ Guest console timestamps count seconds since boot, not time of day. The script a
 
 ### D.4 Measuring bring-up by name
 
-The repository's two timing scripts still wait for a node *count*. Until they are fixed, the 33.7-second figure was measured this way, three times:
+The repository's two original timing scripts, `time-to-ready.sh` and `phase-timings.sh`, still wait for a node *count*, which a ghost node can satisfy before the worker joins. The procedure below is now committed as **`scripts/time-to-ready-by-name.sh`** (`make time-to-ready-by-name`), which waits by name, ignores and *names* any node matching neither pattern, and fails loudly on a missing timestamp rather than reporting it as zero. The 33.7-second figure was measured this way, three times:
 
 1. Delete the cluster, and wait until no virtual machine or VM instance named `target-cluster` remains.
 2. Seed the fixed certificate and token secrets (`scripts/seed-cluster-secrets.sh`).
@@ -301,6 +301,18 @@ The repository's two timing scripts still wait for a node *count*. Until they ar
 5. Record, separately, the first moment a node whose name contains `-cp-` is `Ready`, and the first moment a node whose name contains `-workers-` is `Ready`.
 6. Cross-check both against each node's `Ready` `lastTransitionTime` from the API.
 7. Afterwards, refresh the agents' copy of the target credentials (`06-sympozium/refresh-target-kubeconfig.sh`).
+
+Run it directly:
+
+```
+make time-to-ready-by-name RUNS=3
+```
+
+### D.5 The parallel-metering run
+
+Chapter 19's cost comparison was measured on 18 September 2026 with `measurements/ch19-meter.sh`: an `nginx` deployment on the target cluster, sampled every 20 seconds for ten minutes, recording the host container's CPU and memory, the GPU's power draw, the target control plane's CPU and memory, and one HTTP probe of the workload per sample. All 30 samples returned `200`.
+
+The raw samples are kept at `measurements/ch19-parallel-metering-20260918.tsv`, and `measurements/README.md` holds the full assumptions table and the dated price sources. Two things could not be measured on this host and are therefore assumptions, not figures: whole-host power (`/sys/class/powercap/intel-rapl:0/energy_uj` is root-only on this kernel, and the battery reads zero on AC) and the hardware's purchase price.
 
 ## Appendix E — The ten labs
 

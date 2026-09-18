@@ -42,9 +42,15 @@ Then she came to the band at the bottom, and stopped.
 
 *Save $Millions.*
 
-Nobody had measured that. The platform could build a cluster from a written order with both machines ready in a median of 33.7 seconds, and tear it down in 18.9. It could keep a spare cluster warm and hand it over in under half a second. Those were measurements. The savings were a projection from a deck that gave no sources, and from other companies' accounts. Meridian's own number would come from Meridian's own invoice, workload by workload. It did not exist yet.
+Nobody had measured that — not here. The platform could build a cluster from a written order with both machines ready in a median of 33.7 seconds, and tear it down in 18.9. It could keep a spare cluster warm and hand it over in under half a second. Those were measurements.
 
-She drew a box around *Save $Millions* and wrote inside it: *not yet measured.*
+And in September the pilot had finally metered one workload both ways: a single web service, running steadily, priced against a public list price for the same two machines. Owning the metal came out roughly an order of magnitude cheaper per hour. Then the engineering time went on the same sheet, and the picture turned over: at one workload, owning lost. The line crossed somewhere around the second or third steady workload, and after that it ran away.
+
+Anita had read that result twice, and what she took from it was not the ratio. It was which line decided. The hardware was a rounding error next to the people, and the people were the line the consultant's slide had left out.
+
+One workload, on one laptop, against one price list, with three of its four inputs assumed. It was the smallest true thing in the folder, and it was the first line about money that was hers rather than someone else's.
+
+She drew a box around *Save $Millions* and wrote inside it: *one workload says yes, past the third. Ours, on our invoice: not yet measured.*
 
 * * *
 
@@ -84,7 +90,7 @@ Anita turned the page back round, and put her finger on the line in the corner t
 - **The fabric:** failover between two clusters measured by status code, 30 calls out of 30, with one label replacing hand-written cross-cluster plumbing (Chapters 10 and 11).
 - **The brain:** AI agents on models hosted in the building; a planted fault triaged correctly in 3 runs out of 3; a smaller model that invented output when its tool failed quietly (Chapters 13–16).
 - **The gauges:** a worker reported `Ready` that could not run work; a cluster reported unavailable while it served workloads; a map labelled `live` drawing fourteen things that did not exist; a failover check that printed success during a total outage (Chapters 4, 5, 11 and 12).
-- **The money:** not yet measured against Meridian's own invoice. Part V is where that happens.
+- **The money:** one workload metered both ways on the lab platform (Chapter 19) — rented $0.250 per workload-hour at list price, owned metal $0.02–$0.06, and owning only paying for its own build effort at roughly the second or third steady workload. Against **Meridian's** own invoice: still not measured. That is the difference the chapter is careful about.
 
 ## Ask your team
 
@@ -111,7 +117,7 @@ Anita turned the page back round, and put her finger on the line in the corner t
   - Moving-tag crash — Chapter 2.
   - Committed demo keys — Chapter 3.
 - **"A single rack in the basement"** is Meridian fiction. The real platform in the build logs runs on one laptop, and the prologue says so. Keep the two distinct.
-- **Chapter 19 is not yet drafted.** The epilogue promises only that Part V is "where that happens". Revisit once Chapter 19 exists, especially the savings line.
+- **Chapter 19 now exists and carries a metered result** (18 September), so the savings line has been rewritten: the scene reports the lab's one-workload comparison and keeps "not yet measured" for *Meridian's* own invoice, which is the distinction the whole epilogue turns on. Re-read the scene against Chapter 19 before print — if that section's figures move, this scene moves with them.
 - **"Anybody can buy servers… It's most of what the rent pays for"** is an opinion in Anita's voice. Keep it as dialogue, not narration.
 - **The Meridian scene is fiction.**
 - **Character names.** Anita Rao and Vikram Iyer remain placeholders.
