@@ -568,21 +568,5 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><code>ui/backend/handlers/istio.go</code> — <code>HandleIstioAIGateway</code> and <code>HandleIstioObservability</code>, the panels that do read live state.</li>
 <li><code>curl -s localhost:8080/api/v1/mesh/topology</code> with the console backend running — the graph, node by node.</li>
 <li>Prometheus query <code>agentgateway_requests_total</code> — the metric that counts model traffic, and the labels it lacks.</li>
-</ul>
-</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
-<p><em>For the author — remove before publication.</em></p>
-<ul>
-<li><strong>Measurements (17 September).</strong> Scratchpad <code>ch12-ai-path.sh</code> / <code>.log</code>, plus ad hoc read-only queries. No Kubernetes objects were created or changed. The only state change was Act 4's own completion swapping the GPU model; a trap reloaded <code>qwen2.5:7b</code>, and <code>/api/ps</code> confirmed it afterwards.</li>
-<li><strong>Latency.</strong> Host-side curl: direct is <code>localhost:11434</code>; the gateway path goes through the MetalLB address and the Kind node. Seven interleaved pairs after a warm-up, <code>max_tokens</code> 5, temperature 0. The difference is noise; do not say the gateway is faster.</li>
-<li><strong>Request counts.</strong> <code>agentgateway_requests_total</code> showed POST 12 / GET 28 when queried. That does not exactly match the requests this session sent (scrape timing, the console backend's own GETs). Cite the metric's labels, not its values.</li>
-<li><strong>Host exposure.</strong> <code>*:11434</code> is the bind address. Reachability from another machine on the LAN was not tested and depends on the host firewall.</li>
-<li><strong>Tier 2 validity</strong> was checked against the CRD schemas in the downloaded v1.0.1 <code>manifests.yaml</code>, not by applying to a cluster (the CRDs are not installed).</li>
-<li><strong>Routing agents through the gateway</strong> would also need their egress widened: per Chapter 14's reading of <code>agent-egress-ollama.yaml</code>, the agents may use ports 443, 6443 and 11434, and the gateway listens on 80. Not tested.</li>
-<li><strong>Stale agent briefings.</strong> <code>cluster2-agent</code>'s system prompt describes cluster1 as running <code>httpbin/sleep</code>; <code>mesh-sre-agent</code>'s says Istio 1.30. Both are pre-September facts.</li>
-<li><strong>Kiali anonymous</strong> is the sample add-on's default; Istio labels those add-ons as not intended for production. Say so if a reader might think it was a deliberate choice.</li>
-<li><strong>Topology</strong> is judged by the API response, not a screenshot of the rendered graph. The frontend may add decoration; the node list and statuses are what the backend sent.</li>
-<li><strong>Figures.</strong> 12.1: two model paths — agents → cluster2 shim → host (used), and the AI gateway on cluster1 (unused). 12.2: the topology view with the 14 non-existent nodes annotated. 12.3: Kiali's empty <code>ai-gateway</code> graph beside <code>demo-apps</code>.</li>
-<li><strong>The Meridian scenes are fiction.</strong> Every figure quoted in them was measured.</li>
-<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
-</ul></aside>
+</ul></div>
 </article>

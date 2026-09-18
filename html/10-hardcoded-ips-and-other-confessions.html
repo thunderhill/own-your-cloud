@@ -571,20 +571,5 @@ failoverActive := (!httpbinAlive &amp;&amp; ok(probes[1])) || (!nginxAlive &amp;
 <li><code>ui/frontend/src/pages/VisualDashboard.tsx</code> — the retirement note for the six panels.</li>
 <li><code>07-istio-advanced/README.md</code> — the before/after table, and the Act 3 note on why the target cluster is left out.</li>
 <li><code>kubectl --context kind-cluster1 logs -n istio-system -l app=ztunnel | grep "connection complete"</code> — check any connection for <code>src.identity</code> and <code>dst.identity</code>.</li>
-</ul>
-</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
-<p><em>For the author — remove before publication.</em></p>
-<ul>
-<li><strong>The 17 September re-plumb.</strong> Target cluster: namespace <code>ch10-before</code>, <code>nginx:alpine</code> (already present in the image, so no pull), NodePort 30080. cluster2: <code>default/target-cluster-nginx</code> Service (<code>.216</code>) plus hand-written Endpoints, using the script's own selection loop and YAML. cluster1: namespace <code>ch10-before</code>, labelled ambient (redirection confirmed <code>enabled</code>), with a curl pod and the ServiceEntry applied verbatim. Everything was deleted afterwards and verified gone; <code>.216</code> was released. Script and log: scratchpad <code>ch10-before-path.sh</code> / <code>.log</code>.</li>
-<li><strong>This was not a faithful re-run of the March demo.</strong> The target cluster had no Istio: <code>install-istio-ambient.sh</code> pins 1.28, which is outside its tested range on Kubernetes 1.37, and it was not run. cluster1 runs Istio 1.31 from <code>07-istio-advanced</code>, not whatever was installed by hand in March. The <code>mc-demo</code> httpbin/sleep were not recreated. The reverse direction was tested against <code>.201</code>, the Act 1 gateway (HTTP 404, so reachable), because <code>.200</code> is not allocated today.</li>
-<li><strong>Name resolution after the ServiceEntry</strong> was measured on Istio 1.31 ambient. Do not claim it would have worked on the March install without checking.</li>
-<li><strong>The DestinationRule claim was not tested live.</strong> It rests on the 07 README's verdict and ambient's documented L4/L7 split. A test that would settle it: make nginx return 5xx responses and see whether its endpoint gets ejected.</li>
-<li><strong>The first request from the host failed</strong> (<code>000</code>, after 3.1 s), sent within a second of MetalLB assigning <code>.216</code>. The next four succeeded in 0.6–1.0 ms. Not investigated; most likely the L2 announcement had not yet reached the host. The pod-side measurements started about 8 s later, and every one succeeded.</li>
-<li><strong>A suspicion that did not hold.</strong> The demo reads <code>/tmp/target-cluster-kubeconfig</code>, which was a day old. It still authenticated, because the warm image's CAs are fixed. It is not a confession, and not in the chapter. It does mean CLAUDE.md's <em>"The target CA changes on every redeploy"</em> is outdated for the warm path.</li>
-<li><strong>CLAUDE.md wording.</strong> It says cluster1's httpbin/sleep are <em>"not recreated by any script"</em>. In fact <code>cross-cluster-demo.sh</code> does create them; what no script did before <code>07-istio-advanced</code> was install Istio on cluster1.</li>
-<li><strong>The March commit carries an AI coding assistant as co-author</strong> (commit trailer). Decide whether to say so in the text. It sharpens Part IV's "trust, but verify" theme, but the chapter stands without it.</li>
-<li><strong>The Meridian briefing scene is fiction.</strong> The badge logic it depicts is real and unchanged.</li>
-<li><strong>Figures.</strong> 10.1: the mind map as drawn, with the masquerade concept annotated. 10.2: the path as measured (bridge binding, no NAT hop). 10.3: the two ztunnel log lines side by side, identity fields highlighted.</li>
-<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
-</ul></aside>
+</ul></div>
 </article>

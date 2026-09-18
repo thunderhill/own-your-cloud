@@ -584,17 +584,5 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><code>06-sympozium/ollama-warm.sh</code> and <code>06-sympozium/schedules/ollama-warm.yaml</code> — the first two ways the model was kept warm.</li>
 <li><code>curl -s localhost:11434/api/ps</code> on the host — which model is warm right now; the <code>load_duration</code> field of any <code>/api/generate</code> response shows whether a request paid for a cold start.</li>
 <li><code>POOL_ENABLED=true POOL_STANDBY_MANIFEST=03-target-cluster/target-cluster-warm.yaml</code> — the corrected pool config (18 September); <code>git log --oneline -- ui/backend/handlers/pool.go run-ui.sh</code> for the fix commits.</li>
-</ul>
-</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
-<p><em>For the author — remove before publication.</em></p>
-<ul>
-<li><strong>Resolved 18 September — the 194 ms claim has been re-measured.</strong> Was from June (k3s 1.31, recorded in the warm-pool design notes and the project's memory), unmeasured since. Both prerequisite fixes this note asked for were made: <code>POOL_STANDBY_MANIFEST</code> now points at the warm manifest, and the pool's node-count readiness check (<code>targetNodesReady</code> in <code>pool.go</code>) now counts by name. Re-measured median: 467 ms, three runs (1.059 / 0.467 / 0.465 s). See "Turned on, and timed" above.</li>
-<li><strong>Model measurements (17 September):</strong> <code>POST /api/generate</code> with a one-token limit, reading Ollama's own <code>load_duration</code>; RTX 4050 laptop GPU with 6 GB; every loaded model reported 100% on GPU. After measuring, <code>qwen2.5:7b</code> was left as the loaded model, matching the state before the Chapter 16 lab evicted it.</li>
-<li><strong>The 28–30 s figure</strong> is the CPU-era number from the architecture constraint and the repository's Ollama notes. It was not re-measured on CPU.</li>
-<li><strong>Pool status wording.</strong> The backend reported <code>state: none</code>. That status alone does not distinguish "disabled" from "enabled but idle beside an operator-managed cluster"; the chapter relies on the opt-in default in <code>run-ui.sh</code>.</li>
-<li><strong>Superseded estimates.</strong> <code>docs/warm-pool-strategy.md</code> uses the coarse 17/17/18-second phase split that Chapter 7 corrected. Its "~50 s" cold build is the June figure; today's is 33.7 s.</li>
-<li><strong>The Meridian demo scene is fiction,</strong> but it mirrors a real, recorded symptom: agents' first requests timing out on a cold model.</li>
-<li><strong>Figures.</strong> 9.1: the standby lifecycle. 9.2: the two-inventories table as a diagram — shelves one item deep.</li>
-<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
-</ul></aside>
+</ul></div>
 </article>

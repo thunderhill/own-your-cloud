@@ -97,27 +97,3 @@ Anita turned the page back round, and put her finger on the line in the corner t
 1. **Which of the claims we make about our own platform have we measured — and which are we still printing?**
 2. **When did each of our important checks last fail, on purpose, in front of someone?**
 3. **If we owned it all tomorrow, who would know what is true about it — and how would they show us?**
-
-## Draft notes
-
-*For the author — remove before publication.*
-
-- **Flyer text** is from the sovereign-cloud flyer, version 2, unbranded (Appendix H; the "Save $Millions" and "Creating a Cloud Owning Culture" band appears only in v2). The six pillar lines are quoted verbatim from its extracted text. Do not quote the separately branded flyer.
-- **Every measured claim in the scene** traces to a drafted chapter:
-  - 33.7 s / 18.9 s — Chapter 7.
-  - Standby claim "under half a second" — 467 ms median, three runs, 18 September, Chapter 9 (was 194 ms in June, resolved 18 September).
-  - Worker `Ready` that couldn't work — Chapter 5.
-  - Before picture kept and labelled — Chapter 10.
-  - Failover 30/30, and the check that couldn't fail — Chapter 11.
-  - Map with 14 of 21 non-existent nodes; gateway without a lock; model traffic without model or token labels — Chapter 12.
-  - Agents may triage, not act — Chapter 15.
-  - 3-of-3 triage and llama3.2 confabulation — Chapter 15.
-  - `Available=False` — Chapter 4.
-  - Week-long upgrade — Chapter 18.
-  - Moving-tag crash — Chapter 2.
-  - Committed demo keys — Chapter 3.
-- **"A single rack in the basement"** is Meridian fiction. The real platform in the build logs runs on one laptop, and the prologue says so. Keep the two distinct.
-- **Chapter 19 now exists and carries a metered result** (18 September), so the savings line has been rewritten: the scene reports the lab's one-workload comparison and keeps "not yet measured" for *Meridian's* own invoice, which is the distinction the whole epilogue turns on. Re-read the scene against Chapter 19 before print — if that section's figures move, this scene moves with them.
-- **"Anybody can buy servers… It's most of what the rent pays for"** is an opinion in Anita's voice. Keep it as dialogue, not narration.
-- **The Meridian scene is fiction.**
-- **Character names.** Anita Rao and Vikram Iyer remain placeholders.

@@ -827,24 +827,3 @@ Their verification status, as re-checked on **18 September 2026**:
 | GDPR, Schrems II, CLOUD Act, India DPDP Act | **Not verified** — stated from general knowledge. Have counsel review (Chapter 3) |
 
 A search summary or a news report is not the filing it describes, and every row above marked *not verified* is a row where the book is currently trusting one.
-
-## Draft notes
-
-*For the author — remove before publication.*
-
-- **Checked live on 17 September:**
-  - MetalLB pools and allocated LoadBalancer addresses on both clusters.
-  - The `kubeui` namespace (absent).
-  - Makefile target count (65) and the `make help` output.
-  - Controller image versions.
-  - The labs index text.
-  - "Files naming it" counts, from `grep -rl` over `*.sh *.yaml *.go *.ts *.tsx *.env Makefile`, excluding `book/`, `.worktrees/` and `node_modules`.
-- **Node addresses** (`.2`/`.3`/`.4`) are from `docker network inspect kind` on 17 September. `CLAUDE.md` still records `.2` as `cluster2-control-plane`.
-- **The by-name procedure** (D.4) is from a measurement script kept outside the repository during the writing of this book. Consider committing it as `scripts/time-to-ready-by-name.sh`, or fixing the two repository scripts, so Appendix D can point at the repo.
-- **The spread of 4.7 s** after the upgrade is computed from the three recorded runs (30.4 / 35.1 / 33.7). No chapter states it; consider adding it to Chapter 7's ledger.
-- **Catalog rows marked "Not fixed"** reflect the state on 17 September; revisit before publication. Rows sourced only from `CLAUDE.md` (C.1, C.8, C.9, most of C.10) were not re-reproduced for this appendix.
-- **MetalLB annotations.** Both spellings "worked on 17 September": `metallb.io/…` via the live Act 1/3/4 gateways, `metallb.universe.tf/…` via Chapter 10's re-plumb. Check whether the older spelling is deprecated in the installed MetalLB version.
-- **Glossary** definitions are deliberately non-technical. Have an engineer check that each is still true enough, and a non-engineer check that each is understandable.
-- **Appendix G is the priority subset, not a complete audit.** The nine load-bearing excerpts are quoted (read 18 September from branch `upgrade/k8s-1.37-istio-1.31-sympozium-0.10.75`). Every other file named in an "Open the repo" block is still a bare pointer. Before publication, walk each remaining block and decide, reference by reference, whether the argument depends on the file's contents — if it does, quote it here; if it does not, leave the pointer.
-- **SSH key elided** in G.1. The committed manifest carries a real public key; the book prints `[public key elided]`. Anyone diffing the book against the repository will see the difference — say so here rather than let it look like a transcription error.
-- **G.6 quotes a stale briefing on purpose.** `cluster2-agent`'s `systemPrompt` still describes cluster1 as running `httpbin/sleep`, which the September rebuild ended. If that prompt is fixed in the repository before publication, re-quote it and rewrite the paragraph beneath, which depends on the staleness.

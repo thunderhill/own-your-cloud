@@ -768,20 +768,5 @@ pod  -&gt; CP VM pod IP:6443   =  timeout
 <li><code>make kubevirt-perf</code> — applies the CPU ceiling; the header of <code>scripts/configure-kubevirt-perf.sh</code> explains it.</li>
 <li><code>git show c7ad792</code> — the commit that landed both fixes, with the measurements in its message.</li>
 <li><strong>Without the repo:</strong> Appendix G.2 quotes the <code>advertise-address</code> line with its measurement comment; G.3 quotes the <code>supportContainerResources</code> patch.</li>
-</ul>
-</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
-<p><em>For the author — remove before publication.</em></p>
-<ul>
-<li><strong>Character names.</strong> Anita Rao (CTO) and Vikram Iyer (platform lead) are placeholders. Settle them in the Prologue and carry them through.</li>
-<li><strong>Figure 8.1.</strong> Per-run dots for the three stages (52.7 / 50.0 / 46.6 → 42.7 / 42.8 / 41.2 → 34.5 / 34.2 / 34.7), so the median falling and the spread collapsing read as one picture.</li>
-<li><strong>Figure 8.2.</strong> Reachability sketch: node → control-plane VM pod IP (<code>200</code>, 0.3 ms); worker VM → control-plane VM pod IP (timeout); worker VM → VIP <code>172.18.255.215</code> (reachable).</li>
-<li><strong>Source conflict — resolve before print.</strong> In <code>docs/sub-60s-cluster-strategy.md</code>, "What is actually left" strikes the 10 s kubelet gap as fixed, then lists "~10s silent gap inside kubelet startup on the worker" as still open. Worker join after API ready fell to 5.1 s after the fix, which suggests the second entry is stale. This draft omits it.</li>
-<li><strong>Source conflict.</strong> <code>:preinit</code> at ~136 s is "not worse than legacy" in the strategy doc and "slower than legacy" in the brief. The draft says "back inside the 90-to-150-second band," which is true under both readings.</li>
-<li><strong>Source conflict.</strong> <code>CLAUDE.md</code> gives the parallel-boot build as "~61s"; the brief's measured table gives 46.6 / 49.7 / 50.0. The draft uses the brief (it says its table wins).</li>
-<li><strong>Section numbers.</strong> The strategy doc has two sections numbered 6, so the draft cites section titles. Renumber the doc if you want to cite by number.</li>
-<li><strong>The agent.</strong> The September investigation was run by an AI coding agent working from the brief (commit <code>c7ad792</code> is agent co-authored). This draft says so once; decide whether to foreground it here or save it for Part IV.</li>
-<li><strong>Postscript corrected 17 September.</strong> The earlier draft reported 23.9 s as a both-nodes time; it was the control plane only (see Chapter 7). The corrected both-nodes median is 33.7 s. The 9 September runs cannot be re-checked — their raw files were not kept — though their tables report a worker-join phase, so the worker was captured.</li>
-<li><strong>Trim the phase table.</strong> Chapter 7 now introduces the 9 September budget; replace this chapter's copy with a back-reference.</li>
-<li><strong>Optional.</strong> CxO readers will compare against managed-Kubernetes cluster-creation times. If you add that comparison, source it; the draft deliberately quotes no external number.</li>
-</ul></aside>
+</ul></div>
 </article>

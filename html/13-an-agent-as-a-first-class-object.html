@@ -594,18 +594,5 @@ var allowedActions = map[string]bool{
 <li><code>ui/backend/handlers/ai.go</code> (the chat proxy and its action allowlist) and <code>ui/backend/handlers/dashboard_proxy.go</code> (the embedded console).</li>
 <li><code>06-sympozium/labs/README.md</code> — "the one correction that matters most."</li>
 <li><strong>Without the repo:</strong> Appendix G.6 quotes the <code>cluster2-agent</code> Agent object whole, briefing included.</li>
-</ul>
-</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
-<p><em>For the author — remove before publication.</em></p>
-<ul>
-<li><strong>Re-verified on 17 September</strong> (Sympozium 0.10.75, Kubernetes 1.37): the three required <code>AgentRun</code> fields (server dry run, nothing created); lab 02's run and every figure in its table; the models endpoint. <strong>Not re-verified:</strong> lab 01's streaming behavior and the count-to-five file-writing anecdote, which date from 0.10.38.</li>
-<li><strong>The strategy document is stale in three places this chapter quotes around.</strong> Its object table lists <code>SympoziumInstance</code> as the persona; Constraint 1 names llama3.2 at <code>172.18.0.1</code>, while the agents run <code>qwen2.5:7b</code> through the in-cluster <code>host-ollama</code> Service; Constraints 4 and 7 bind policy through <code>SympoziumInstance.spec.policyRef</code>, which must live on the <code>Agent</code>. Update it, or quote it explicitly as a historical document.</li>
-<li><strong>Dates.</strong> The kagent-to-Sympozium timeline comes from commit history: kagent in February, Sympozium personas in April, the chat proxy's switch landing in a late-June checkpoint commit, and the embedded console in August. The exact switch date is not recorded.</li>
-<li><strong>Fifty-three records.</strong> Counted from the run list captured on the morning of 16 September, before the rebuild; the oldest was 26 days old.</li>
-<li><strong>Known defects named in the chapter:</strong> <code>HandleListAgents</code> in <code>ui/backend/handlers/ai.go</code> still queries <code>sympoziuminstances</code>; the console proxy on port 8081 is unauthenticated; the skills webhook is still deployed although it has done nothing since 0.10.47.</li>
-<li><strong>Chapter 15 overlap.</strong> This chapter now owns the sidecar explanation; trim the opening of Chapter 15's "Where the truth goes missing" to a back-reference.</li>
-<li><strong>Meridian's vendor</strong> is deliberately generic. Keep it from resembling any real product.</li>
-<li><strong>Figures.</strong> 13.1: the object map — <code>Agent</code> → <code>AgentRun</code> → pod (<code>agent</code>, <code>ipc-bridge</code>, skill sidecar) → per-run identity and permissions → model endpoint. 13.2: the three UI modes as windows onto one set of objects.</li>
-<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
-</ul></aside>
+</ul></div>
 </article>

@@ -613,18 +613,5 @@ get secrets -n sympozium-system        yes
 <li><code>06-sympozium/mesh-sre-agent.yaml</code> — RULE 1, and the header explaining why the metrics path is closed.</li>
 <li><code>ui/backend/handlers/ai.go</code> — <code>allowedActions</code>.</li>
 <li><strong>Without the repo:</strong> Appendix G.5 quotes <code>agent-egress-ollama.yaml</code> whole — the port-only rules are visible in it.</li>
-</ul>
-</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
-<p><em>For the author — remove before publication.</em></p>
-<ul>
-<li><strong>Tracked, not fixed.</strong> This chapter describes, at design level, a path from an agent run to a target-cluster administrator credential. Rather than fixing the live platform as part of writing this book, it is tracked as <code>TODO.md</code> §3 ("agent runs can write in their namespace and read every secret in it") in the <code>sovereign_cloud</code> repository. The chapter describes the hole as open; it is not confirmed fixed as of this draft.</li>
-<li><strong>Probe method.</strong> Two <code>curlimages/curl</code> pods in <code>sympozium-system</code>, one labeled <code>sympozium.ai/role=agent,app.kubernetes.io/part-of=sympozium</code> and one unlabeled; <code>curl</code> with a 5-second connect timeout; "no connection" is curl status <code>000</code>. Both pods were deleted. The labels were checked against the pod of lab 04's real run the same morning. Kind 0.33.0, <code>kindnetd</code> image <code>v20260820</code>.</li>
-<li><strong>Lab 04's README is wrong about the network plugin</strong>, at least today. Update it. Note that <code>06-sympozium/host-ollama-service.yaml</code> already says policy enforcement is what made the shim necessary.</li>
-<li><strong>Re-verified on 17 September:</strong> the admission refusal (dry run); <code>fetch_url</code> used despite the deny (one tool call, 3.8 s of model time, 6,956 input and 121 output tokens — July's run used 4,010 and 95); webhook failure policies (<code>vagentpod</code> and <code>vskillpack</code> fail closed; the repository's own skills webhook fails open). <strong>Not re-verified:</strong> the RULE 1 refusal measurements, which date from August on <code>qwen2.5:7b</code>.</li>
-<li><strong>The strategy document is stale in several places this chapter grades:</strong> Constraint 1 names llama3.2 at <code>172.18.0.1</code>; Constraint 3's pool is now <code>.211–.225</code>; Constraints 4 and 7 bind policy through <code>SympoziumInstance.spec.policyRef</code>; Constraint 8 calls the policy <code>sympozium-sandbox-restricted</code>, while the repository's policy is named <code>sandbox-restricted</code> (the generated network policy carries the longer name).</li>
-<li><strong>Warm-up schedule.</strong> The cause of it stopping is not established. The pre-rebuild record also shows far fewer runs than a four-minute schedule implies (18 over about 26 days). The heartbeat's own comment says it keeps llama3.2 warm, but it runs against <code>cluster2-agent</code>, whose model is <code>qwen2.5:7b</code>.</li>
-<li><strong>Verdict counts.</strong> The Meridian close says one held, four partly, three not — matching the scorecard, with rule 2 counted as held.</li>
-<li><strong>Figures.</strong> 14.1: the seven-layer ladder, with each of the eight rules placed where it actually lives. 14.2: the probe results as a two-column reachability diagram.</li>
-<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
-</ul></aside>
+</ul></div>
 </article>

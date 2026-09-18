@@ -82,15 +82,3 @@ Three rules hold for every quoted block. It is verbatim, never paraphrased — i
 An engineer who wants to run any of it will need the repository. A reader who only wants to know whether the book is telling the truth should not have to.
 
 It starts where Anita did: with an invoice, and a question written above the total.
-
-## Draft notes
-
-*For the author — remove before publication.*
-
-- **The deck's four numbers** are on slide 9 of the strategy deck (February 2026; Appendix H). Neither the slide text nor the notes carry a source. If a source exists, add it and soften the paragraph; if not, keep the check as written.
-- **Flexera figures.** The 2026 press release (18 March 2026) gives 29% waste, "the first time in five years" it rose, and 85% naming cost management a top challenge, from 750+ respondents: https://www.flexera.com/about-us/press-center/flexera-finds-cloud-value-is-rising-while-ai-waste-grows. The 2025 figures (27%, 84%) are from https://www.flexera.com/about-us/press-center/new-flexera-report-finds-84-percent-of-organizations-struggle-to-manage-cloud-spend. The 2025 release called cost management the top challenge for "the third year in a row". The 2026 release says only that it "remains a top challenge", so the chapter says that.
-- **Meridian's financials are deliberately unquantified.** Every earlier chapter promises that figures in Meridian scenes were measured, and nothing here was. Keep the invoice qualitative, or clearly mark any invented figure.
-- **Timeline.** The prologue is September 2025, so the epilogue ("twelve months later") lands in September 2026, the book's present. This is consistent with Chapter 5 (pilot funded in February 2026) and the repository's first commit (11 February 2026).
-- **Hardware** was read on 17 September (`lscpu`, `free -g`, `nvidia-smi`); it matches Chapter 16.
-- **Flyers.** One of the three flyers in the author's briefing material carries a real company's branding. The book quotes only the unbranded one, and Appendix H describes it without naming the folder it came from.
-- **Character names.** Anita Rao and Vikram Iyer remain placeholders.

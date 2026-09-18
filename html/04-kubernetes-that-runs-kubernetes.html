@@ -539,19 +539,5 @@ ControlPlaneComponentsHealthy=False  Following machines are reporting control pl
 <li><code>02-capi-init/init-management-cluster.sh</code> — how the factory itself is set up.</li>
 <li><code>README.md</code> — the architecture diagram, and how far it has drifted.</li>
 <li>The strategy deck, slides 14–16; the recorded factory demonstration (8 min 56 s), end to end.</li>
-</ul>
-</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
-<p><em>For the author — remove before publication.</em></p>
-<ul>
-<li><strong>Versions and objects</strong> were read live on 17 September from cluster2's controller images, the KubeVirt/CDI status, and <code>kubectl get</code> on the Cluster API resources.</li>
-<li><strong><code>Available=False</code></strong> was read at about 09:00 on 17 September, about 143 minutes after the cluster was built. The target cluster served Chapter 10's measurement at 08:10; Chapter 11's measurements ran on cluster1 and cluster2, not on the target cluster. The cause is not investigated. The KThreesControlPlane also showed <code>Ready=False</code>, <code>ControlPlaneComponentsHealthy=False</code>, and <code>initialized=true</code>. It is plausibly a health check that expects separate control-plane component pods, which k3s does not run. Check the cluster-api-k3s issue tracker before implying a cause.</li>
-<li><strong>"No VMware migration tooling"</strong> was checked by searching the repository (excluding <code>book/</code> and <code>.worktrees/</code>) for vsphere, forklift, virt-v2v, vmdk and ovf. The only match was an unrelated substring in <code>scripts/render-demo-video.sh</code>.</li>
-<li><strong>Product descriptions</strong> (Tanzu, CAPZ, KKP) are quoted from the deck, not independently verified. KKP is a Kubermatic product. Keep the chapter from endorsing or disparaging any vendor beyond the deck's quoted labels.</li>
-<li><strong>The alternatives scan ("What the slide leaves off") is entirely unverified,</strong> and says so in the body. Harvester, OpenStack, Talos, RKE2, OpenShift, Anthos, EKS Anywhere, OpenTofu/Terraform, Forklift and virt-v2v are described from each project's public self-description, from general knowledge, as of September 2026. Nothing was installed or tested. Before publication: re-check each description against current documentation, confirm Harvester's current vendor relationship (SUSE) and that it still ships KubeVirt, and confirm Forklift's current name and scope. If any description cannot be confirmed, cut the line rather than soften it.</li>
-<li><strong>Deliberately not ranked.</strong> The section names no winner and gives no comparison table, because a table implies criteria that were never applied. If a reviewer asks for one, the honest version would require actually running them.</li>
-<li><strong>The README diagram</strong> shows <code>mc-demo</code>, the <code>sample</code> namespace, VM addresses 10.244.0.60/.61 and the <code>.216</code> proxy. Redraw it for the book's figure 4.1 rather than reproducing it.</li>
-<li><strong>Figures.</strong> 4.1: management cluster → declaration → workload cluster on VMs. 4.2: the deck's spectrum, relabelled neutrally. 4.3: the two gauges side by side — <code>Available=False</code> here and <code>Ready</code> in Chapter 5.</li>
-<li><strong>The Meridian board scene is fiction.</strong> It sets up Chapter 5's "demo that won the pilot its funding in February".</li>
-<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
-</ul></aside>
+</ul></div>
 </article>

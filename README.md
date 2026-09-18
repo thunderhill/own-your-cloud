@@ -4,7 +4,7 @@
 
 A book for two readers: the executive who signs the cloud bill, and the engineer who would build the alternative. It follows a composite enterprise, **Meridian**, from a cloud invoice to a working sovereign platform — and checks every claim along the way against a real one.
 
-**Status: first complete draft, September 2026.** Every chapter ends with a *Draft notes* section for the author (sources to confirm, open questions); those are removed before publication.
+**Status: second draft, September 2026.** The *Draft notes* sections have been stripped from the manuscript; every open question they held is collected in [`draft-notes-archive.md`](draft-notes-archive.md), and the manuscript that still carried them inline is preserved at the git tag `with-draft-notes`.
 
 ## How the book keeps score
 
@@ -41,13 +41,16 @@ Every chapter closes with **The ledger** (what was built, measured or found), **
 | Epilogue | Own Your Cloud | |
 | Appendices | The Owner's Reference (A–H) | |
 
-About 52,000 words of narrative, plus about 4,500 words of appendices.
+About 59,000 words of narrative, plus about 7,800 words of appendices.
 
 ## Repository layout
 
 ```
 TABLE_OF_CONTENTS.md   the book's plan, with a blurb and sources for each chapter
 chapters/              the manuscript, one Markdown file per chapter
+figures/               figure SVGs, plus a brief for the ones not yet drawn
+measurements/          raw data behind the measured claims, and how it was taken
+draft-notes-archive.md every open question, stripped out of the manuscript
 html/                  rendered pages (html/index.html is the table of contents)
 tools/build_chapter.py renders one chapter to a styled HTML page
 tools/build_all.sh     renders every chapter with its part label

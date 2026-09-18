@@ -577,20 +577,5 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><code>06-sympozium/cost-analyzer.yaml</code>, <code>06-sympozium/incident-responder.yaml</code>, and <code>docs/superpowers/specs/2026-04-21-sympozium-sample-agents-design.md</code> — the April personas.</li>
 <li><code>docs/superpowers/specs/2026-03-29-iac-security-agent-design.md</code> and <code>make security-deploy</code> — the security service.</li>
 <li><code>kubectl get ensembles -n sympozium-system</code> — the chart's example teams, installed and switched off.</li>
-</ul>
-</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
-<p><em>For the author — remove before publication.</em></p>
-<ul>
-<li><strong>Re-verified on 17 September</strong> (Sympozium 0.10.75, Kubernetes 1.37): the ensemble lab, run end to end and cleaned up (both runs and all created objects deleted); the model-fit service; the April personas (server dry run, nothing created); the installed ensembles and skill packs; the security service's absence.</li>
-<li><strong>Persona count.</strong> 29 is the number of persona headings under §3.1–3.7 of the strategy document.</li>
-<li><strong>The analyst's error.</strong> The chapter states that Kind runs Kubernetes nodes as containers with no hypervisor involved; have a technical reviewer confirm the wording.</li>
-<li><strong>Model-fit caveat.</strong> The ratings are for model variants in the fit service's catalog, matched by family name — not the exact quantized builds Ollama serves (<code>qwen2.5:7b</code>, <code>llama3.2</code>). Lab 07 already warns to read each entry's notes rather than its label.</li>
-<li><strong>Model names omitted on purpose.</strong> The fit service's top picks are community fine-tunes whose names include other vendors' product names; the chapter describes them by size and architecture instead.</li>
-<li><strong>"Where the weeks went"</strong> is reconstructed from commit history and the repository's operating notes, not from time tracking.</li>
-<li><strong>The strategy document is stale</strong> in the places this chapter quotes: "every agent is one <code>SympoziumInstance</code>", the persona-pack assumption, and the April status snapshot.</li>
-<li><strong>Figures.</strong> 16.1: the catalog as 29 marks across the planes, with three lit. 16.2: the two-agent pipeline with its token counts, and the analyst's wrong claim passing through the reviewer unchanged.</li>
-<li><strong>Target-cluster agent's credential.</strong> Verified on 17 September: the <code>target-k8s-ops</code> tool pack sets <code>KUBECONFIG</code> to the mounted <code>target-cluster-kubeconfig</code> Secret, whose user is <code>target-cluster-admin</code>. Add this to Chapter 14's scorecard (rule 7) and to the fixes list — a read-only service account for the target cluster would move that rule below the model.</li>
-<li><strong>No <code>cluster-admin</code> bindings</strong> for any identity in <code>sympozium-system</code> (checked 17 September), which is why the RBAC Auditor as specified would not have flagged Chapter 14's finding.</li>
-<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
-</ul></aside>
+</ul></div>
 </article>

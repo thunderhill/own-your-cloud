@@ -629,20 +629,5 @@ istio-system   istio-eastwest   istio-east-west   172.18.255.221   True         
 <li><code>bash 06-sympozium/labs/09-metrics/run-metrics.sh</code> — the model comparison, read from each run's <code>status.tokenUsage</code>.</li>
 <li><code>kubectl get pod &lt;run-pod&gt; -n sympozium-system -o jsonpath='{.spec.serviceAccountName}'</code> — the identity to verify against. <code>06-sympozium/agent-istio-rbac.yaml</code> explains the group binding and its history.</li>
 <li><code>CLAUDE.md</code>, the <code>target-cluster-agent</code> pitfall — the probe pod that mounts the agent's kubeconfig Secret and runs <code>kubectl</code> with no model in the loop.</li>
-</ul>
-</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
-<p><em>For the author — remove before publication.</em></p>
-<ul>
-<li><strong>Correction made to the table of contents.</strong> It gave the lab 09 comparison as "llama3.2 at 22.4 tok/s against qwen2.5:7b at 15.1." Those are average run durations in seconds. Throughput was 4.0 against 11.0 tokens per second. Fixed in <code>book/TABLE_OF_CONTENTS.md</code>.</li>
-<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders, as in Chapter 8.</li>
-<li><strong>Evidence not yet in the repo.</strong> The 16 September answers (<code>ronics-01</code>, <code>target-node-1</code>/<code>target-node-2</code>, and the per-run-account permission error) come from the session record of the upgrade, not from a committed file. Commit a verification log before print, or the chapter's opening exhibit fails its own "Open the repo" promise.</li>
-<li><strong>Demo script is out of date.</strong> Scenes 3 and 6 of <code>demo-mesh-sre.sh</code> verify as <code>sympozium-agent</code>; since chart 0.10.75 the agent's runs use per-run accounts. Derive the account from a live run pod instead. Separately, scene 6's narration points to "pod-name suffixes and the gateway address"; in the August recording, the only unguessable detail the agent actually produced was the age.</li>
-<li><strong><code>CLAUDE.md</code> needs two corrections.</strong> Its <code>mesh-sre-agent</code> section still recommends verifying as <code>sympozium-agent</code>. Its 0.10.75 entry says the agent was "confabulating a 'permission issue' writeup"; the recorded answer was accurate and named the real per-run account.</li>
-<li><strong>The group binding is broader than the agent.</strong> It grants read on mesh and VM configuration to every service account in <code>sympozium-system</code>. Decide whether the book should recommend a narrower design, or present this as the demo-grade trade-off it is.</li>
-<li><strong>Lab 10's scorer.</strong> Its README treats two or more tool calls as a real investigation, but run 1 passed with one. Consider requiring the literal missing tag in the answer.</li>
-<li><strong>Lab figures predate later upgrades.</strong> Labs 09 and 10 were captured on the 0.10.38 release, before the 0.10.47, 0.10.57, and 0.10.75 upgrades and the Kubernetes 1.37 rebuild. Re-run both before print.</li>
-<li><strong>Prompt-phrasing anecdotes conflict.</strong> The demo script's comments say asking for a judgment gets more real content than asking for a relay; on 16 September, asking for exact output beat asking for a sentence. Both are single observations — keep either from hardening into advice.</li>
-<li><strong>Dependencies.</strong> The sidecar explanation overlaps Chapter 13, and the "nudge, not a control" refusal finding is Chapter 14's; trim whichever repeats once those are written.</li>
-<li><strong>Figures.</strong> 15.1: the two node lists beside the probe pod's output. 15.2: the ladder of evidence. 15.3: stills of scenes 5 and 6 side by side (extractable from the video with <code>ffmpeg</code>).</li>
-</ul></aside>
+</ul></div>
 </article>

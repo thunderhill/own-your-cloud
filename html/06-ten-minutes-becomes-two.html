@@ -513,18 +513,5 @@ registry                 172.18.0.4
 <li><code>scripts/fix-registry-hosts.sh</code> and <code>make registry-fix</code> — the alias translation, rewritten on demand.</li>
 <li><code>ui/backend/handlers/registry.go</code> — <code>REGISTRY_URL</code> versus <code>REGISTRY_ALIAS</code>.</li>
 <li><code>docker network inspect kind</code> — who actually holds <code>172.18.0.2</code> today.</li>
-</ul>
-</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
-<p><em>For the author — remove before publication.</em></p>
-<ul>
-<li><strong>"Ten minutes becomes two."</strong> The chapter's title is the team's stated estimate, repeated in <code>README.md</code>, <code>docs/DEVELOPER.md</code>, <code>docs/USER_GUIDE.md</code> (which says 2–5 minutes), and the strategy document. No measurement is recorded. Find the original numbers, or keep the chapter's framing of it as an estimate from before the instrument existed.</li>
-<li><strong>containerDisk header claim.</strong> <code>build-containerdisk.sh</code> promises 30–60 s spin-up; <code>docs/sub-60s-cluster-strategy.md</code> records a June baseline of 90–150 s (sequential worker). Update or remove the header claim.</li>
-<li><strong>Image dates</strong> were read from each tag's image configuration in the registry: <code>:latest</code> 2026-03-03, <code>:preinit</code> 2026-04-18, <code>:warm</code> 2026-09-16. The <code>:preinit</code> date predates the June pre-init experiments in Chapter 8; confirm which bake produced it.</li>
-<li><strong>Checked live on 17 September:</strong> address ownership on the Kind network; a plain HTTP request to the alias (connection failed) versus the registry's real address (<code>200</code>); the translation file's contents; a cold pull of <code>ubuntu-noble-k3s:preinit</code> (1.29 GB, 4.2 s) and a cached pull (0.1 s), after which the image was removed from the node; which tags were cached (only <code>:warm</code>).</li>
-<li><strong><code>CLAUDE.md</code> is stale on the alias.</strong> It says <code>172.18.0.2</code> belongs to <code>cluster2-control-plane</code>; after the rebuild it belongs to <code>cluster1-control-plane</code>.</li>
-<li><strong>Pull policy.</strong> No manifest sets <code>imagePullPolicy</code>; the June notes say the <code>:latest</code> containerDisk is pulled on every start. That follows Kubernetes' usual default for <code>:latest</code> tags, but was not re-verified for KubeVirt containerDisks here.</li>
-<li><strong>The Meridian regulator's questionnaire</strong> is fiction. The answer to it — nothing downloaded at boot, one bake per image — is the platform's real design.</li>
-<li><strong>Figures.</strong> 6.1: the pipeline — base image → bake VM → baked volume → <code>qcow2</code> → container image → registry → node cache → VM. 6.2: the alias — three containers on one network, and the translation file that makes one address mean another.</li>
-<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
-</ul></aside>
+</ul></div>
 </article>

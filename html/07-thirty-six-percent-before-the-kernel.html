@@ -602,16 +602,5 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><code>03-target-cluster/target-cluster-warm.yaml</code> — the <code>warm-ghost-node-cleanup</code> step, and why it must run first.</li>
 <li>The ghost, live: list the target cluster's nodes the moment the control plane turns <code>Ready</code>, and look for <code>ubuntu-bake-vm-warm</code>.</li>
 <li><strong>Without the repo:</strong> Appendix G.2 quotes the <code>warm-ghost-node-cleanup</code> step and the ordering comment above it.</li>
-</ul>
-</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
-<p><em>For the author — remove before publication.</em></p>
-<ul>
-<li><strong>This discovery corrected earlier drafts in this pass.</strong> Chapter 8's postscript and Chapter 18's measurement section, ledger, and Meridian memo previously reported 23.9 s as a both-nodes time; the table of contents did too. All now carry the corrected 33.7 s. The 23.9 s figure in <code>CLAUDE.md</code>, added earlier at the author's request, is corrected as well.</li>
-<li><strong>The scripts are not fixed yet.</strong> Both <code>scripts/phase-timings.sh</code> and <code>scripts/time-to-ready.sh</code> wait for "two nodes Ready" by count. Fix by naming the nodes (or excluding <code>ubuntu-bake-vm-warm</code>), by failing loudly when a node's timestamp is missing instead of treating it as zero, and by giving the worker's install path a "started" marker the instrument can find. Alternatively, remove the ghost from the image at bake time.</li>
-<li><strong>Measurement method for the corrected numbers:</strong> from just before <code>kubectl apply</code>, poll the target cluster's nodes every 0.5 s by name (<code>-cp-</code>, <code>-workers-</code>), then read each node's <code>Ready</code> <code>lastTransitionTime</code> from the API (1-second granularity). The table uses the API transition times; the polled observations agree within about a second (control plane 25.1 / 25.2 / 25.6 s, worker 31.0 / 36.3 / 34.5 s). Host load was 1.2–2.3. The measuring script lives outside the repository; consider adding it.</li>
-<li><strong>Cannot be re-checked:</strong> the 9 September runs (artifacts not kept) and June's 48.520 s from <code>time-to-ready.sh</code>, which may have included the ghost. The ghost cleanup dates from 23 June.</li>
-<li><strong>Chapter 8 repeats the 9 September phase table.</strong> Now that this chapter introduces it, trim Chapter 8's copy to a back-reference.</li>
-<li><strong>Figures.</strong> 7.1: the boot timeline with its data sources — object timestamps, pod status, console, probe — on one clock. 7.2: the ghost — a node list at the moment the control plane turns Ready.</li>
-<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
-</ul></aside>
+</ul></div>
 </article>

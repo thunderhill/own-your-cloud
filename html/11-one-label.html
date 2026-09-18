@@ -571,22 +571,5 @@ if [[ -n &quot;$b&quot; ]]; then okc=$((okc+1)); else failc=$((failc+1)); fi
 <li><code>07-istio-advanced/verify.sh</code>, section 5 — what the Act 3 checks do and do not assert.</li>
 <li><code>istioctl proxy-config endpoints deploy/waypoint.demo-apps --context kind-cluster1 | grep echo</code> — whether the waypoint can see the other cluster.</li>
 <li><strong>Without the repo:</strong> Appendix G.4 quotes both counters side by side — the act's non-empty-body check, and the console's status-code check.</li>
-</ul>
-</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
-<p><em>For the author — remove before publication.</em></p>
-<ul>
-<li><strong>Three measurements on 17 September</strong>, each with a restore-on-exit trap (scratchpad <code>ch11-failover.sh</code>, <code>ch11-outage.sh</code>, <code>ch11-route.sh</code>, with <code>.log</code> files). Temporary changes were limited to <code>demo-apps</code>: echo replicas scaled to zero (cluster1 three times, cluster2 once), the <code>istio.io/use-waypoint=none</code> label on Service <code>echo</code>, and a re-applied <code>echo-internal-split</code> route. Afterwards: 2/1 replicas on both clusters, the original two routes, the original labels. <code>verify.sh</code> ran between the second and third scripts: 22/22.</li>
-<li><strong>The August morning inference is not proven.</strong> It rests on the order in which the acts ran, the evening commit's 503 measurement, and a demonstration that the counter prints the same line for a total outage. Say "cannot be recovered", not "was 503".</li>
-<li><strong>Why the waypoint gotcha stopped reproducing is not established.</strong> 1.30.3 is no longer installed to compare against. Check the Istio 1.31 release notes before naming a cause.</li>
-<li><strong>The even split.</strong> 60 of 60 calls were <code>200</code>; per pod: three cluster1 pods at 10 each, and all 30 remote calls on one cluster2 pod (<code>x8dph</code>). Hypotheses, not verified: the east-west endpoint is weighted by the remote pod count (3 + 3), and one pooled tunnel connection pins remote calls to one pod. Whether <code>spec.trafficDistribution: PreferClose</code> changes the split was not tested.</li>
-<li><strong>Latency numbers</strong> are curl <code>time_total</code> inside the client pod, on one laptop: local means little about a real WAN.</li>
-<li><strong>Not re-run on 17 September:</strong> the identity-swap revocation beat, request mirroring, the 301 redirect, and XFCC after a waypoint restart (the header was present, but the restart itself wasn't repeated).</li>
-<li><strong>Canary figures differ across runs:</strong> 89/11 (August, 100 requests), 93/7 (16 September, from Chapter 18), 8% (17 September, 60 requests). All are within the act's accepted band.</li>
-<li><strong>ListenerSet.</strong> Whether it ever worked in August is unknown; the August commit does not list it among verified results. There is no <code>ReferenceGrant</code> anywhere in the repository.</li>
-<li><strong>Unsupported combination.</strong> Istio 1.31 on Kubernetes 1.37 is outside Istio's tested range (Chapter 18).</li>
-<li><strong>Repo fixes not made:</strong> count status codes in <code>run.sh</code>; assert (or remove) the locality claim; add a <code>ReferenceGrant</code> or drop the ListenerSet beat; update README gotcha 2 and the console's handler comment for 1.31; add a behavioural failover check to <code>verify.sh</code>.</li>
-<li><strong>Figures.</strong> 11.1: the Chapter 10 plumbing next to the one label. 11.2: the two refusal status lines. 11.3: the two identical <code>success=20 failed=0</code> screens — failover and total outage. 11.4: the 60-call distribution.</li>
-<li><strong>The Meridian scenes are fiction.</strong> The outage test and its output are real.</li>
-<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
-</ul></aside>
+</ul></div>
 </article>

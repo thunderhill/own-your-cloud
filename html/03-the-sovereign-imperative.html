@@ -506,17 +506,5 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><code>06-sympozium/agent-egress-ollama.yaml</code> — the agents' egress rule, and its ports.</li>
 <li><code>git ls-files 03-target-cluster/warm-ca</code> — the committed demo certificate authorities.</li>
 <li><code>07-istio-advanced/act5-observability/run.sh</code> — where observability is downloaded from.</li>
-</ul>
-</div><aside class="draft-notes"><h2 id="draft-notes">Draft notes</h2>
-<p><em>For the author — remove before publication.</em></p>
-<ul>
-<li><strong>Legal facts</strong> (GDPR 2018; Schrems II, July 2020; replacement framework July 2023; CLOUD Act 2018; India DPDP Act 2023) are stated from general knowledge. Have counsel review them, and cite primary sources before publication. Data Act dates: see Chapter 2's notes.</li>
-<li><strong>Market figures.</strong> The deck's $96.77 billion (2024) / 23.8% appear to come from an earlier edition of a market report. Grand View Research's current figures ($117.53 billion 2025, $648.87 billion 2033, 24.1% CAGR 2026–2033) come from a search-result summary; the report page returned HTTP 403 to direct fetch. Verify before publication: https://www.grandviewresearch.com/industry-analysis/sovereign-cloud-market-report.</li>
-<li><strong>Committed keys.</strong> On branch <code>perf/target-cluster-sub-40s</code> (17 September), <code>git ls-files 03-target-cluster/warm-ca</code> lists private keys. A project memory note says the keys were removed from tracking in a PR; that is either on another branch or out of date. Check <code>main</code> before publishing the sentence.</li>
-<li><strong>Provenance</strong> was checked only by searching the agent manifests in <code>06-sympozium/</code> for "provenance" and "digest". The platform may record the model name on runs elsewhere (Sympozium records <code>spec.model</code> on the Agent). The weights digest is the missing piece. Soften to "not recorded per run" if run records carry the model name.</li>
-<li><strong>"Fourteen models"</strong> is the host's <code>ollama list</code> on 17 September (Chapter 12).</li>
-<li><strong>Model sizes.</strong> Ollama reports <code>llama3.2</code> at 3.2B parameters and <code>qwen2.5:7b</code> at 7.6B (both Q4_K_M), read with <code>/api/show</code> on 17 September. The chapter rounds them to 3 and 7 billion. The confabulation is llama3.2's (Chapter 15); the refusal failure and the 3-of-3 triage are qwen2.5:7b's (Chapters 14 and 15).</li>
-<li><strong>Meridian's tender is fiction.</strong> Section eleven's wording is invented, but modelled on real public-sector requirements. Do not quote it as a real tender.</li>
-<li><strong>Character names.</strong> Anita Rao and Vikram Iyer remain placeholders.</li>
-</ul></aside>
+</ul></div>
 </article>
