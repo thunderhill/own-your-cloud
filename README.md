@@ -60,10 +60,13 @@ tools/build_all.sh     renders every chapter with its part label
 
 ```bash
 pip install markdown
-./tools/build_all.sh
+./tools/build_all.sh          # one styled HTML page per chapter, in html/
+./tools/build_pdf.sh          # the whole book as a single PDF
 ```
 
-Each page is self-contained HTML with light and dark themes; fonts load from Google Fonts.
+Each chapter page is self-contained HTML with light and dark themes; fonts load from Google Fonts.
+
+`build_pdf.sh` assembles every chapter into one print-styled document (figures inlined as data URIs, so it is a single self-contained file), renders it with headless Chrome, then uses Ghostscript to add page numbers and nested bookmarks — Chrome implements neither. The result is **`own-your-cloud.pdf`**: A4, 195 pages, a clickable contents page, 27 bookmarks, and vector figures. It needs `google-chrome` or `chromium`; `gs` and `poppler-utils` are optional and only affect page numbers and bookmarks.
 
 ## License
 
