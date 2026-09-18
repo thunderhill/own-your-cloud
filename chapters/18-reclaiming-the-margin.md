@@ -108,7 +108,7 @@ On owned hardware, capacity is set by what is **reserved**, not what is used. On
 
 Multiply that by any electricity price between 10 and 50 cents a kilowatt-hour, and the power for a million generated tokens costs roughly **3 to 17 cents**. The lesson is not that local AI is nearly free. It is that for local AI, the electricity is a rounding error. The cost is the hardware — which, on this GPU, holds one model at a time (Chapter 9) — and the people who run and check it.
 
-**The people.** The repository behind this book holds 81 commits, from 11 February to 9 September 2026, from **a single committer**. **63 of those 81 commits** carry an AI coding assistant as co-author. The platform's operating notes run to 612 lines, including 23 entries in a list of pitfalls — most of them a failure that looked like success.
+**The people.** The repository behind this book holds 81 commits, from 11 February to 9 September 2026, from **a single committer, Mahipal**. **63 of those 81 commits** carry an AI coding assistant as co-author. The platform's operating notes run to 612 lines, including 23 entries in a list of pitfalls — most of them a failure that looked like success.
 
 Read that carefully, because it is the easiest number in this book to misuse. It describes a lab: no on-call rota, no service-level agreement, no production users, no auditors. It says nothing about the cost of *operating* a sovereign platform at Meridian's scale. What it does suggest is narrower, and still worth a line in the model: in 2026, the effort to *build* such a platform is not the effort a 2021 estimate would assume. And the cost that never appears on a TCO slide is the one those 23 pitfalls describe: the continuous work of knowing what is true.
 
@@ -126,7 +126,7 @@ Put the slide's shape and the platform's measurements together, and the chapter'
 | Leaving | Switching fees (banned in the EU from 2027) and rebuilding proprietary services | Migration project, and paying for both during it | No migration tooling in the repository (Chapter 4) |
 | Power and facilities | Inside the rent | Power, cooling, space | 0.33 kWh per million generated tokens, GPU only |
 | AI inference | Per token, hosted | Hardware sized for the models | 34–37 tokens/s; one model at a time on a 6 GB GPU |
-| People | The supplier's staff | Platform team, on-call, training | A lab: one committer, 63 of 81 commits AI-co-authored |
+| People | The supplier's staff | Platform team, on-call, training | A lab: one committer (Mahipal), 63 of 81 commits AI-co-authored |
 | Upgrades | A button and a maintenance window | Yours | A week, for one major upgrade (Chapter 17) |
 | Knowing what's true | The supplier's status page | Your own checks | Gauges found wrong in Chapters 4, 5, 11 and 12 |
 
@@ -200,7 +200,7 @@ He read it back. "It's a very boring sentence."
 - **Depreciation (public record):** Microsoft (FY2022) and Alphabet (2023) moved servers from four- to six-year lives; Amazon moved part of its fleet from six to five years from January 2025, citing AI.
 - **Owned waste (build log, 17 September 2026):** 22.42 GiB reserved against 7.45 GiB used on the management cluster; a control-plane VM using 1% of its CPU and 14% of its memory.
 - **AI energy (build log):** `qwen2.5:7b` on an RTX 4050 laptop GPU at 6.4 W idle and 38–42 W generating; 34–37 tokens/s; 1.19 J per token; 0.33 kWh per million generated tokens, GPU only.
-- **Effort (build log):** 81 commits from one committer over seven months, 63 of them co-authored with an AI coding assistant — a lab, not an operation.
+- **Effort (build log):** 81 commits from one committer, Mahipal, over seven months, 63 of them co-authored with an AI coding assistant — a lab, not an operation.
 - **Not claimed:** any saving for Meridian.
 
 ## Ask your team
@@ -234,6 +234,6 @@ He read it back. "It's a very boring sentence."
   - GPU-board power only: not CPU, memory, the rest of the laptop, or cooling. The laptop was on AC power.
   - Chapter 15's "11.0 tokens per second" is a different metric: whole agent runs, including prompt processing and tool calls.
   - The 3–17 cents range is illustrative arithmetic at 10–50 cents per kWh, not a measured price.
-- **The effort figures** are `git rev-list --count HEAD` (81), `git shortlog -sne` (1 author) and a count of commit messages containing "Co-Authored-By: Claude" (63). The last commit is 9 September. 28 working-tree changes (including this book and the September upgrade) were uncommitted at the time of writing. The author should decide whether to name the committer, and how to describe the AI assistance.
+- **The effort figures** are `git rev-list --count HEAD` (81), `git shortlog -sne` (1 author) and a count of commit messages containing "Co-Authored-By: Claude" (63). The last commit is 9 September. 28 working-tree changes (including this book and the September upgrade) were uncommitted at the time of writing. **Decided:** the committer is named (Mahipal) in the text above; how much further to describe the AI assistance is still open.
 - **The Meridian scenes are fiction.** The board-pack sentence sets up the epilogue, where savings are still "not yet measured".
 - **Character names.** Anita Rao and Vikram Iyer remain placeholders.

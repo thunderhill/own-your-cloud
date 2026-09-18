@@ -60,3 +60,7 @@ pip install markdown
 ```
 
 Each page is self-contained HTML with light and dark themes; fonts load from Google Fonts.
+
+## License
+
+All rights reserved — see [`LICENSE`](LICENSE).
