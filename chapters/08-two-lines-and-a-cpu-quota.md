@@ -354,6 +354,7 @@ She opened the board summary on her laptop, found the line that said *< 40 s*, a
 - `03-target-cluster/target-cluster-warm.yaml` — the `advertise-address` line in the control plane's `preK3sCommands`.
 - `make kubevirt-perf` — applies the CPU ceiling; the header of `scripts/configure-kubevirt-perf.sh` explains it.
 - `git show c7ad792` — the commit that landed both fixes, with the measurements in its message.
+- **Without the repo:** Appendix G.2 quotes the `advertise-address` line with its measurement comment; G.3 quotes the `supportContainerResources` patch.
 
 ## Draft notes
 

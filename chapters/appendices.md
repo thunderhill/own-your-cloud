@@ -4,7 +4,7 @@
 >
 > — `07-istio-advanced/verify.sh`
 
-Six appendices, for readers who want to check the book rather than take its word. Each was checked against the repository and the running platform on 17 September 2026. Where the repository's own documentation disagrees with what was running, both are shown.
+Seven appendices, for readers who want to check the book rather than take its word. Each was checked against the repository and the running platform on 17 September 2026 (Appendix G, on 18 September). Where the repository's own documentation disagrees with what was running, both are shown.
 
 - **A. The repo, stage by stage** — what each directory does, and the `make` targets that matter.
 - **B. Addresses that must not move** — the network address plan, as reserved and as found.
@@ -12,6 +12,7 @@ Six appendices, for readers who want to check the book rather than take its word
 - **D. The measurement protocol** — the figures as last measured, and the rules for measuring them again.
 - **E. The ten labs** — the agent-platform labs, with their original honesty markers and what this book re-checked.
 - **F. A glossary for the boardroom** — one plain-English sentence per term.
+- **G. Key files, quoted** — the load-bearing code and manifests, verbatim, for readers without the companion repository.
 
 ## Appendix A — The repo, stage by stage
 
@@ -362,6 +363,414 @@ Two statements in the labs index are now out of date. It describes `SympoziumIns
 - **Warm standby** — a pre-built spare kept running so it can be handed over instantly; fast, but it holds capacity idle.
 - **ztunnel** — the ambient mesh's per-machine component: it encrypts traffic and carries identities, but sees connections, not individual requests.
 
+## Appendix G — Key files, quoted
+
+*Read from the companion repository on 18 September 2026, branch `upgrade/k8s-1.37-istio-1.31-sympozium-0.10.75`.*
+
+The chapters' **Open the repo** blocks point at files in the companion repository. Readers who do not have it should not have to take the book's word for what those files say, so the load-bearing ones are reproduced here, verbatim, each captioned with its path.
+
+Two conventions. Where a file is long, an excerpt is shown and the elision is marked `# …`; nothing inside a quoted block is paraphrased or tidied. And where an SSH public key appears in a committed manifest, it is elided as `[public key elided]` — the key is real, and it is in the repository, but it is the author's and not the reader's business.
+
+### G.1 The warm cluster manifest — seven objects
+
+Chapter 5 describes a cluster as a written declaration; this is that declaration. Seven objects, applied together, produce two virtual machines running a Kubernetes cluster. Chapters 7, 8 and 9 all measure this file.
+
+```yaml
+# 03-target-cluster/target-cluster-warm.yaml (excerpt — header comment)
+# WARM-boot variant of target-cluster.yaml — target time-to-ready <40s.
+#
+# Combines two ideas:
+#   1. WARM IMAGE (BAKE_MODE=warm, image tag :warm). The golden image was baked
+#      with a FIXED custom CA set (03-target-cluster/warm-ca/) and a fixed token,
+#      with the API VIP in the serving-cert SAN. Its etcd DB, certs, and system
+#      charts are fully initialized. First boot does NO `k3s server
+#      --cluster-reset` and NO cert purge — it just starts k3s from warm state.
+#   2. PARALLEL WORKER (from target-cluster-parallel.yaml). The worker boots
+#      alongside the control plane via a static bootstrap secret + skip-preflight,
+#      so it is not serialized behind the CP.
+#
+# ── REQUIRED ORDER ──────────────────────────────────────────────────────────
+#   ./scripts/seed-cluster-secrets.sh        # seed ca/cca/etcd/token FIRST
+#   kubectl apply -f 03-target-cluster/target-cluster-warm.yaml
+#
+# DEMO USE ONLY: fixed CA + token are committed (see warm-ca/).
+```
+
+The seven objects, in the order they appear in the file:
+
+| # | Kind | Name | What it is |
+|---|---|---|---|
+| 1 | `Cluster` | `target-cluster` | The cluster itself: pod and service address ranges, and pointers to the two objects below |
+| 2 | `KubevirtCluster` | `target-cluster` | The infrastructure side: pins the API server's address to `172.18.255.215` |
+| 3 | `KThreesControlPlane` | `target-cluster-control-plane` | The control plane: k3s version, one replica, and the boot commands |
+| 4 | `KubevirtMachineTemplate` | `target-cluster-cp` | The control-plane machine: 4 cores, 8 GiB, booting the `:warm` image |
+| 5 | `Secret` | `target-cluster-workers-bootstrap` | The worker's static cloud-init, so it need not wait for the control plane |
+| 6 | `MachineDeployment` | `target-cluster-workers` | One worker, with CAPI's stability preflight skipped |
+| 7 | `KubevirtMachineTemplate` | `target-cluster-workers` | The worker machine: 4 cores, 6 GiB, same image |
+
+```yaml
+# 03-target-cluster/target-cluster-warm.yaml (excerpt — object 1 of 7)
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: target-cluster
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+        - 10.42.0.0/16
+    services:
+      cidrBlocks:
+        - 10.43.0.0/16
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+    kind: KThreesControlPlane
+    name: target-cluster-control-plane
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+    kind: KubevirtCluster
+    name: target-cluster
+```
+
+```yaml
+# 03-target-cluster/target-cluster-warm.yaml (excerpt — object 4 of 7)
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: KubevirtMachineTemplate
+metadata:
+  name: target-cluster-cp
+  namespace: default
+spec:
+  template:
+    spec:
+      virtualMachineBootstrapCheck:
+        checkStrategy: none
+      virtualMachineTemplate:
+        metadata:
+          namespace: default
+        spec:
+          runStrategy: Always
+          template:
+            spec:
+              domain:
+                cpu:
+                  cores: 4
+                memory:
+                  guest: 8Gi
+                ioThreadsPolicy: shared
+                devices:
+                  disks:
+                    - disk:
+                        bus: virtio
+                      name: systemdisk
+                  interfaces:
+                    - bridge: {}
+                      name: default
+              networks:
+                - name: default
+                  pod: {}
+              volumes:
+                - containerDisk:
+                    image: 172.18.0.2:5000/ubuntu-noble-k3s:warm
+                  name: systemdisk
+```
+
+And the worker's static bootstrap — the object that lets the worker boot beside the control plane rather than behind it (Chapter 8):
+
+```yaml
+# 03-target-cluster/target-cluster-warm.yaml (excerpt — object 5 of 7)
+# Static worker bootstrap (identical to target-cluster-parallel.yaml). Embeds the
+# fixed WARM token so the agent can join the moment the CP API answers. The k3s
+# agent retries the server VIP until it is reachable.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: target-cluster-workers-bootstrap
+  namespace: default
+type: cluster.x-k8s.io/secret
+stringData:
+  value: |
+    #cloud-config
+
+    write_files:
+    -   path: /etc/rancher/k3s/config.yaml
+        owner: root:root
+        permissions: '0640'
+        content: |
+          kubelet-arg:
+          - cloud-provider=external
+          server: https://172.18.255.215:6443
+          token: f00dcafef00dcafef00dcafef00dcafe
+
+    runcmd:
+      - "mkdir -p /home/ubuntu/.ssh && echo '[public key elided]' > /home/ubuntu/.ssh/authorized_keys && chown -R ubuntu:ubuntu /home/ubuntu/.ssh && chmod 700 /home/ubuntu/.ssh && chmod 600 /home/ubuntu/.ssh/authorized_keys"
+      # `agent` MUST be positional: the baked /opt/install.sh parses only positional
+      # args and ignores INSTALL_K3S_EXEC, so without it the worker starts the k3s
+      # SERVER unit, which fails ~0.8s later and — because install.sh runs under
+      # `set -e` — aborts the script before writing the bootstrap-success sentinel.
+      - INSTALL_K3S_SKIP_DOWNLOAD=true INSTALL_K3S_EXEC='agent' sh /opt/install.sh agent && mkdir -p /run/cluster-api && echo success > /run/cluster-api/bootstrap-success.complete
+      - "systemctl daemon-reload && systemctl enable k3s-agent && systemctl start k3s-agent"
+```
+
+Note the `kubelet-arg: cloud-provider=external` in that worker configuration. It is the line behind Chapter 5's finding: the worker comes up `Ready` and carries a taint no controller ever clears, so it accepts no workloads.
+
+The annotation that lets the worker start at all, rather than waiting:
+
+```yaml
+# 03-target-cluster/target-cluster-warm.yaml (excerpt — object 6 of 7)
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  name: target-cluster-workers
+  namespace: default
+  annotations:
+    # Skip CAPI's "ControlPlaneIsStable" preflight so the worker MachineSet scales
+    # up immediately and the worker VM boots in parallel with the control plane.
+    machineset.cluster.x-k8s.io/skip-preflight-checks: All
+```
+
+### G.2 `advertise-address` — the first of the two one-line fixes
+
+Chapter 8's headline: two configuration lines cut the build from 50.0 to 34.5 seconds. This is the first, with the comment that explains it, quoted whole because the comment is the evidence.
+
+```yaml
+# 03-target-cluster/target-cluster-warm.yaml (excerpt — inside KThreesControlPlane.preK3sCommands)
+      # Advertise the API VIP, not this VM's pod IP. KubeVirt bridge binding gives
+      # the VM the launcher pod's address, and that address is reachable from the
+      # NODE but NOT from other pods (measured: node->VM:6443 = 200 in 0.3ms,
+      # pod->VM:6443 = timeout). The worker's k3s agent is itself a pod, so when
+      # the supervisor hands it the CP's pod IP it dials an address it can never
+      # reach and eats the full 10.000s dial timeout — and the kubelet does not
+      # start until that expires. Advertising the VIP, which every VM already
+      # reaches, makes the first dial succeed: median time-to-ready 50.0s -> 42.7s,
+      # run-to-run spread 6.1s -> 1.6s. Must run after KThrees writes config.yaml.
+      - "echo 'advertise-address: 172.18.255.215' >> /etc/rancher/k3s/config.yaml"
+```
+
+The same file also carries the ghost node of Chapter 7 — the leftover `Node` object baked into the image, and the asynchronous cleanup whose lateness let a stopwatch stop early:
+
+```yaml
+# 03-target-cluster/target-cluster-warm.yaml (excerpt — KThreesControlPlane.postK3sCommands)
+    postK3sCommands:
+      # Reap the bake VM's leftover Node object (carried in the warm SQLite
+      # state) once the API is up. Transient unit so it survives cloud-init.
+      - systemd-run --unit=warm-ghost-node-cleanup --no-block /bin/bash -c 'for i in $(seq 1 60); do /usr/local/bin/k3s kubectl delete node ubuntu-bake-vm-warm --ignore-not-found && break; sleep 2; done'
+```
+
+### G.3 `supportContainerResources` — the second one-line fix
+
+Chapter 8's second fix, worth 8.2 seconds on every cluster build, and the one that is cluster state rather than repository state — which is why Chapter 17 found it missing after the rebuild.
+
+```bash
+# scripts/configure-kubevirt-perf.sh (excerpt)
+{"spec":{"configuration":{"supportContainerResources":[
+  {"type":"container-disk",
+   "resources":{"requests":{"cpu":"100m","memory":"40M"},"limits":{"cpu":"${CPU_LIMIT}","memory":"100M"}}},
+  {"type":"guest-console-log",
+   "resources":{"requests":{"cpu":"100m","memory":"60M"},"limits":{"cpu":"${CPU_LIMIT}","memory":"100M"}}}
+]}}}
+```
+
+### G.4 Two ways to count a failover
+
+Chapter 11's sharpest finding is a comparison, so both sides belong here. First, the demonstration script — which counts any non-empty response body as a success, and therefore prints `success=20 failed=0` when both clusters are down:
+
+```bash
+# 07-istio-advanced/act3-multicluster/run.sh (excerpt)
+call() { $K1 exec -n "$NS_APPS" deploy/client-trusted -c curl -- \
+         curl -s --max-time 10 http://echo/ 2>/dev/null || true; }
+
+# …
+
+  b=$(call)
+  if [[ -n "$b" ]]; then okc=$((okc+1)); else failc=$((failc+1)); fi
+done
+detail "success=${okc}  failed=${failc}"
+if (( okc >= 18 )); then
+  ok "Traffic failed over to cluster2 with zero config change and no app restart"
+else
+  fail "Failover incomplete: ${failc}/20 requests failed"
+fi
+```
+
+And the web console, checking the same thing correctly — on the status code:
+
+```go
+// ui/backend/handlers/cross_cluster.go (excerpt)
+	ok := func(p ProbeResult) bool { return p.StatusCode >= 200 && p.StatusCode < 300 }
+
+	httpbinAlive := ok(probes[0])
+	nginxAlive := ok(probes[2])
+	// Failover: a local service is down but the cross-cluster path is still up
+	failoverActive := (!httpbinAlive && ok(probes[1])) || (!nginxAlive && ok(probes[3]))
+```
+
+Two checks of one behaviour, in one repository, written weeks apart. One cannot fail.
+
+### G.5 The egress allowlist that allows more than it names
+
+Chapter 14 grades the eight architecture constraints. This is the file behind the verdict on the egress rule: the last two rules carry ports but no destination, so they permit those ports to *anywhere*.
+
+```yaml
+# 06-sympozium/agent-egress-ollama.yaml (quoted whole)
+---
+# AgentRun pods are labeled app.kubernetes.io/part-of=sympozium, which makes
+# them subject to the helm-installed `sympozium-allow-otel` NetworkPolicy
+# (policyType: Egress, only ports 4317/4318 allowed). With kindnet enforcing,
+# that implicitly blocks egress to Ollama on the docker bridge.
+#
+# This policy adds the missing egress paths (DNS + Ollama) for sympozium pods.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sympozium-allow-ollama
+  namespace: sympozium-system
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: sympozium
+  policyTypes:
+  - Egress
+  egress:
+  # DNS
+  - to:
+    - namespaceSelector: {}
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+  # Ollama via the host-ollama shim Service (Endpoints → 172.18.0.1:11434)
+  - ports:
+    - port: 11434
+      protocol: TCP
+  # Kubernetes API (skill-k8s-ops needs it)
+  - ports:
+    - port: 443
+      protocol: TCP
+    - port: 6443
+      protocol: TCP
+```
+
+### G.6 An agent as a Kubernetes object
+
+Chapter 13's central claim is that an agent is an object like any other. This is one, whole — model, endpoint, tools, policy, and the briefing it is given.
+
+```yaml
+# 06-sympozium/cluster2-agent.yaml (excerpt — the Agent object)
+apiVersion: sympozium.ai/v1alpha1
+kind: Agent
+metadata:
+  name: cluster2-agent
+  namespace: sympozium-system
+  annotations:
+    sympozium.ai/description: "Cluster2 management-plane agent (KubeVirt VMs, CDI, CAPI, cluster nodes)"
+spec:
+  agents:
+    default:
+      model: qwen2.5:7b
+      baseURL: http://host-ollama.sympozium-system.svc.cluster.local:11434/v1
+      sandbox:
+        enabled: false
+  authRefs:
+    - provider: ollama
+      secret: llm-credentials
+  skills:
+    - skillPackRef: web-endpoint   # drives declarative serving (requiresServer=true)
+    - skillPackRef: k8s-ops        # kubectl/virtctl sidecar for task (chat) runs
+  policyRef: sandbox-restricted
+  observability:
+    enabled: false
+  memory:
+    enabled: false
+    maxSizeKB: 256
+    # Environment briefing — keep SHORT (7B model). Edit here; re-run the
+    # installer (or kubectl apply -k 06-sympozium/) to reproduce.
+    systemPrompt: |
+      You operate "cluster2", the management cluster of a KubeVirt multi-cluster platform. Topology:
+      - cluster2 (where your kubectl/virtctl run): a Kind cluster hosting Cluster API (CAPI), KubeVirt + CDI (VMs run as pods), MetalLB, and Sympozium. Your in-cluster tools talk to THIS cluster's API only.
+      - target-cluster: a k3s cluster whose nodes are KubeVirt VirtualMachines hosted on cluster2, provisioned by CAPI. Inspect from cluster2 with: kubectl get clusters,machines -A (group cluster.x-k8s.io); kubectl get virtualmachines,virtualmachineinstances -A (group kubevirt.io); kubectl get datavolumes -A (CDI). target-cluster API VIP is 172.18.255.215.
+      - cluster1: a SEPARATE Kind cluster (Istio ambient mesh, httpbin/sleep). You have NO kubectl access to it from here.
+      Always use full resource names (virtualmachines, virtualmachineinstances, clusters, machines). Read-only unless the user explicitly approves a change.
+```
+
+Read that briefing against Chapter 17. It describes `cluster1` as running `httpbin/sleep` — which was true before the September rebuild and is not true now. The agent is told a fact about its own environment that has expired, and nothing in the platform notices.
+
+### G.7 The documented knob that controlled nothing
+
+Chapter 17's most quotable find. The outer variable, with the warning added after the discovery:
+
+```bash
+# bake-common.sh (excerpt — header comment)
+#     K3S_VERSION    — DOES NOT actually control the bake (found 2026-09-16,
+#                      upgrading v1.31.4+k3s1 -> v1.37.0+k3s1): the version
+#                      that reaches the VM is a SEPARATE hardcoded literal
+#                      inside the embedded /usr/local/bin/bake.sh cloud-init
+#                      content below (search this file for the second
+#                      K3S_VERSION= assignment) — that content block is
+#                      written to the VM verbatim, so this outer bash
+#                      variable never reaches it. Keep both literals in sync
+#                      by hand until someone wires the interpolation through.
+#                      (default here: v1.37.0+k3s1)
+
+K3S_VERSION="${K3S_VERSION:-v1.37.0+k3s1}"
+```
+
+And the literal that actually reaches the machine, a hundred lines below it. The `<< 'CLOUDINIT'` — note the quotes — is what makes the block above inert: a quoted heredoc expands nothing.
+
+```bash
+# bake-common.sh (excerpt — the embedded cloud-init content)
+  cat << 'CLOUDINIT'
+  # …
+  - path: /usr/local/bin/bake.sh
+    content: |
+      #!/bin/bash
+      set -e
+      K3S_VERSION="v1.37.0+k3s1"
+      # …
+      curl -sfL https://get.k3s.io | \
+        INSTALL_K3S_VERSION="$K3S_VERSION" \
+        INSTALL_K3S_SKIP_START=true \
+```
+
+Two assignments of one name, in one file, a hundred lines apart. Setting the documented one changes nothing at all.
+
+### G.8 The dead image, and the patch that survives a rebuild
+
+Chapter 17's first real obstacle, and the fix that now runs automatically — quoted with its comment, because the comment records the uncertainty honestly rather than claiming a clean diagnosis.
+
+```bash
+# 02-capi-init/init-management-cluster.sh (excerpt)
+# ship their kube-rbac-proxy sidecar as `gcr.io/kubebuilder/kube-rbac-proxy:v0.16.0`,
+# a reference that no longer resolves (ImagePullBackOff, "not found") --
+# apparently a dead/retired gcr.io path, though clusterctl fetches the release
+# manifest fresh on every `init` so it's unclear whether this was ever pullable
+# from this repo's install path. Whatever the history, the *deployment* that
+# was actually running before this rebuild used
+# `quay.io/brancz/kube-rbac-proxy:v0.16.0` (confirmed pullable), so that's the
+# known-good pin here. Without this, both provider Deployments sit at 1/2
+# ready forever and the `kubectl wait --for=condition=available` calls below
+# silently time out into their `|| true` fallback -- so `make capi-init`
+# reports success while KThreesControlPlane's mutating webhook is dead,
+# and the first `target-cluster` deploy fails opaquely on
+# "failed calling webhook ...kthreescontrolplane: connection refused".
+for ns in capi-k3s-bootstrap-system capi-k3s-control-plane-system; do
+  deploy="$(kubectl get deploy -n "$ns" -o name 2>/dev/null | head -1)"
+  [[ -n "$deploy" ]] || continue
+  if kubectl get "$deploy" -n "$ns" -o jsonpath='{.spec.template.spec.containers[?(@.name=="kube-rbac-proxy")].image}' 2>/dev/null \
+      | grep -q '^gcr.io/kubebuilder/'; then
+    echo "==> Patching $deploy ($ns): kube-rbac-proxy gcr.io image -> quay.io/brancz (known pullable)"
+    kubectl patch "$deploy" -n "$ns" --type=strategic \
+      -p='{"spec":{"template":{"spec":{"containers":[{"name":"kube-rbac-proxy","image":"quay.io/brancz/kube-rbac-proxy:v0.16.0"}]}}}}'
+  fi
+done
+```
+
+The `|| true` that the comment mentions is the pattern Appendix C.2 catalogues: a wait that fails, a fallback that swallows the failure, and a script that reports success.
+
 ## Draft notes
 
 *For the author — remove before publication.*
@@ -379,3 +788,6 @@ Two statements in the labs index are now out of date. It describes `SympoziumIns
 - **Catalog rows marked "Not fixed"** reflect the state on 17 September; revisit before publication. Rows sourced only from `CLAUDE.md` (C.1, C.8, C.9, most of C.10) were not re-reproduced for this appendix.
 - **MetalLB annotations.** Both spellings "worked on 17 September": `metallb.io/…` via the live Act 1/3/4 gateways, `metallb.universe.tf/…` via Chapter 10's re-plumb. Check whether the older spelling is deprecated in the installed MetalLB version.
 - **Glossary** definitions are deliberately non-technical. Have an engineer check that each is still true enough, and a non-engineer check that each is understandable.
+- **Appendix G is the priority subset, not a complete audit.** The nine load-bearing excerpts are quoted (read 18 September from branch `upgrade/k8s-1.37-istio-1.31-sympozium-0.10.75`). Every other file named in an "Open the repo" block is still a bare pointer. Before publication, walk each remaining block and decide, reference by reference, whether the argument depends on the file's contents — if it does, quote it here; if it does not, leave the pointer.
+- **SSH key elided** in G.1. The committed manifest carries a real public key; the book prints `[public key elided]`. Anyone diffing the book against the repository will see the difference — say so here rather than let it look like a transcription error.
+- **G.6 quotes a stale briefing on purpose.** `cluster2-agent`'s `systemPrompt` still describes cluster1 as running `httpbin/sleep`, which the September rebuild ended. If that prompt is fixed in the repository before publication, re-quote it and rewrite the paragraph beneath, which depends on the staleness.

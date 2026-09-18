@@ -227,6 +227,7 @@ Anita looked for a long time. "So the check I asked to see go red can't."
 - `ui/backend/handlers/istio_actions.go` — `HandleIstioFailover`: the counter that checks for `200`, with convergence measured.
 - `07-istio-advanced/verify.sh`, section 5 — what the Act 3 checks do and do not assert.
 - `istioctl proxy-config endpoints deploy/waypoint.demo-apps --context kind-cluster1 | grep echo` — whether the waypoint can see the other cluster.
+- **Without the repo:** Appendix G.4 quotes both counters side by side — the act's non-empty-body check, and the console's status-code check.
 
 ## Draft notes
 

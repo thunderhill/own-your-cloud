@@ -208,6 +208,7 @@ Anita looked at the display for a moment. "When a number improves and nobody can
 - `docs/sub-60s-cluster-strategy.md` — "Phase-level measurement", with the 9 September budget.
 - `03-target-cluster/target-cluster-warm.yaml` — the `warm-ghost-node-cleanup` step, and why it must run first.
 - The ghost, live: list the target cluster's nodes the moment the control plane turns `Ready`, and look for `ubuntu-bake-vm-warm`.
+- **Without the repo:** Appendix G.2 quotes the `warm-ghost-node-cleanup` step and the ordering comment above it.
 
 ## Draft notes
 

@@ -183,6 +183,7 @@ Anita let that sit. "And the demo?"
 - `03-target-cluster/target-cluster-warm.yaml` — the seven objects, and the worker's `kubelet-arg` in its bootstrap Secret.
 - On the management cluster: `kubectl get cluster,kthreescontrolplane,machinedeployment,machine,kubevirtmachine,vm,vmi`.
 - On the target cluster: `kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name} {.spec.taints}{"\n"}{end}'`.
+- **Without the repo:** Appendix G.1 quotes the manifest's seven objects, including the worker bootstrap Secret and its `kubelet-arg`.
 
 ## Draft notes
 

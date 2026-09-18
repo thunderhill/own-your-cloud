@@ -246,6 +246,7 @@ Vikram read the third line twice. "The copy doesn't exist yet."
 - `kubectl get agents.sympozium.ai,agentruns.sympozium.ai -n sympozium-system` — the live records, by their fully qualified names.
 - `ui/backend/handlers/ai.go` (the chat proxy and its action allowlist) and `ui/backend/handlers/dashboard_proxy.go` (the embedded console).
 - `06-sympozium/labs/README.md` — "the one correction that matters most."
+- **Without the repo:** Appendix G.6 quotes the `cluster2-agent` Agent object whole, briefing included.
 
 ## Draft notes
 

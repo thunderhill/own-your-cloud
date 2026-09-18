@@ -139,6 +139,7 @@ Meridian's CTO, twelve months later. Short. It ends on the flyer's line.
 - **D. The measurement protocol** — `phase-timings.sh`, why N≥7 on a noisy host, counting nodes by name rather than by number, and the figures as last measured: teardown 18.9 s, bring-up 33.7 s for both nodes.
 - **E. The ten labs** — quick reference, with the ✅ / ⚠️ honesty markers preserved.
 - **F. A glossary for the boardroom** — CAPI, KubeVirt, ambient mesh, waypoint, SPIFFE, agentic control plane, sovereign cloud — one plain-English sentence each.
+- **G. Key files, quoted** — the load-bearing manifests and code, verbatim with their repo paths, so the book can be checked without the companion repository: the warm manifest's seven objects, the two one-line speed fixes, the two ways to count a failover, the egress allowlist, an agent as an object, the `K3S_VERSION` that controlled nothing, and the dead-image patch.
 
 ---
 

@@ -252,6 +252,7 @@ Anita read it and went back to one line. "One afternoon. Because we'd never done
 - `07-istio-advanced/README.md` — the note recording the unsupported combination; `make istio-adv-verify` reruns the 22 checks.
 - `./scripts/phase-timings.sh --runs 3` — the bring-up measurement protocol.
 - `scripts/import-base-images.sh` — the script the rebuild could not find.
+- **Without the repo:** Appendix G.7 quotes both `K3S_VERSION` assignments and the quoted heredoc between them; G.8 quotes the dead-image patch.
 
 ## Draft notes
 

@@ -71,6 +71,16 @@ Every chapter ends the same way:
 
 The book is in five parts. **The Bill** is why. **The Factory** is how clusters get made. **The Fabric** is how they talk to each other. **The Brain** is what AI can safely do with them. **The Dividend** comes back to the money.
 
+## How to read the build logs
+
+The platform described in the build logs is a real repository, and the **Open the repo** block at the end of each chapter names the files and commands that reproduce what the chapter describes. An engineer with the repository open can check every claim in it.
+
+Most readers will not have it open — and a book whose argument depends on a file the reader cannot see is asking to be taken on faith, which is the one thing this book is trying not to do. So everything load-bearing is quoted inline: the manifest that declares a cluster, the two configuration lines that made it faster, the check that could not fail, the agent defined as a Kubernetes object, the version variable that controlled nothing. Where a quote is too long for the page it sits in, it moves to **Appendix G — Key files, quoted**, with its path as the caption.
+
+Three rules hold for every quoted block. It is verbatim, never paraphrased — if code is worth citing as evidence, it is worth showing as written. Where a file is trimmed to fit, the cut is marked, and nothing is silently tidied: comments that admit uncertainty stay in, because those are frequently the most honest lines in the repository. And a quote is evidence of what the file said on the date given, not a promise about what it says now.
+
+An engineer who wants to run any of it will need the repository. A reader who only wants to know whether the book is telling the truth should not have to.
+
 It starts where Anita did: with an invoice, and a question written above the total.
 
 ## Draft notes

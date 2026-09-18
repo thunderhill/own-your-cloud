@@ -204,6 +204,7 @@ She drew a box around row seven. "That one first. Then the network rule. Then th
 - `kubectl auth can-i --list -n sympozium-system --as=system:serviceaccount:sympozium-system:sympozium-run-<run-name>` — what a real agent run can actually do.
 - `06-sympozium/mesh-sre-agent.yaml` — RULE 1, and the header explaining why the metrics path is closed.
 - `ui/backend/handlers/ai.go` — `allowedActions`.
+- **Without the repo:** Appendix G.5 quotes `agent-egress-ollama.yaml` whole — the port-only rules are visible in it.
 
 ## Draft notes
 
