@@ -55,3 +55,48 @@ List prices, no committed-use discount, accessed **18 September 2026**.
 | Amazon EKS control plane, standard support | $0.10 / cluster-hour | https://aws.amazon.com/eks/pricing/ |
 
 EC2 instance prices are not quoted: the AWS on-demand pricing tables are rendered by script and could not be read directly, so no EC2 figure is asserted. The EKS line is quoted only to show that a managed control plane is not always free.
+
+
+---
+
+## Chapter 17 — the recovery drill (boundaries pre-registered)
+
+**This section was written and committed BEFORE the first measured run.**
+
+The drill times the full "replace instead of repair" cycle: destroy → infrastructure gone → seed → rebuild → workload → first HTTP 200. The book has never timed this. It also re-measures teardown, previously published from a single run.
+
+The estimate straddles one minute. Moving a boundary after seeing the data — starting the clock at the rebuild instead of the destroy, or stopping at "pod Ready" instead of "served a request" — would land a prettier number and would be exactly the failure this book exists to catch. So the marks are fixed here, in advance:
+
+| Mark | Established by |
+|---|---|
+| **T0** | the destroy command is issued |
+| **T1** | that command returns |
+| **T2** | no `target-cluster` API object remains **and** no `qemu-kvm -name guest=default_target-cluster*` process remains, polled at 0.25 s |
+| **T3** | `scripts/seed-cluster-secrets.sh` returns and all four of `target-cluster-{ca,cca,etcd,token}` are confirmed present |
+| **T4** | immediately before `kubectl apply -f 03-target-cluster/target-cluster-warm.yaml` |
+| **T5** | a node whose name contains `-cp-` first reports `Ready=True` |
+| **T6** | a node whose name contains `-workers-` first reports `Ready=True` |
+| **T7** | immediately before the workload is applied, with the negative control already having failed |
+| **T9** | the first request through the Service to return HTTP 200, judged by exit code, never piped |
+
+**Published figures:** headline **MTTR = T9 − T0**; plus T1−T0, T2−T0 (teardown, now N>1), T6−T4 (comparable to the 33.7 s build), T5−T4, T9−T7.
+
+### Why not the existing scripts
+
+`scripts/time-to-ready-by-name.sh` is correct about the ghost node and its by-name matching is copied here. It cannot serve as the engine: it discards the delete, starts its build clock while VMs may still be terminating, has no workload phase, and captures host load once per invocation rather than per run. `time-to-ready.sh` and `phase-timings.sh` wait by node *count* and are subject to the ghost bug. `make target-cluster` would drag `ensure-warm-image` — and a possible 5–8 minute bake — inside the clock.
+
+### Workload choice
+
+`rancher/mirrored-library-busybox:1.37.0` with `imagePullPolicy: IfNotPresent`, because it is **baked into the `:warm` golden image** and present on both nodes of every freshly built cluster. Verified on 19 September: the rehearsal produced **zero `Pulling` events**. An `nginx:alpine` workload would have put a ~26 MB Docker Hub pull inside the recovery clock and measured the internet instead of the platform.
+
+### Pre-flight gates — abort, never adjust
+
+Context is `kind-cluster2`; `supportContainerResources` present with `cpu: "1"` (worth ~8 s per VM start, and it is cluster state, not manifest state); the `:warm` image cached, recording its image **ID** rather than trusting the tag; no UI backend or warm-pool controller running, which would rebuild a standby mid-drill; MemAvailable recorded; the `ollama-warm` schedule's `lastRunTime` recorded before and after each run, since it has a four-minute cadence and a run is shorter than that.
+
+### What this drill cannot claim
+
+- **It is not a production MTTR.** No detection, no decision, no data recovery, no HA, no storage re-attach, no DNS or ingress reprogramming, no other tenants. It is a lower bound on mechanical rebuild time.
+- **It is not provisioning from scratch.** The `:warm` image carries a pre-initialised k3s datastore, which is why each run records `kube-system`'s `creationTimestamp` next to the nodes'. They differ: the namespace carries the *bake* date, the nodes the *build* date. This is restore-from-image.
+- **"Both nodes Ready" is not two nodes of capacity.** The worker carries `node.cloudprovider.kubernetes.io/uninitialized:NoSchedule` and nothing removes it, so the drill's workload lands on the control plane.
+- **No data survived, because there is none.**
+- **It does not generalise to two concurrent clusters** — the fixed CA and token make exactly one `target-cluster` safe at a time.
