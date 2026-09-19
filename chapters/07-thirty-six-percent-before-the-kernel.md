@@ -112,7 +112,7 @@ What the team did with that table is the next chapter. This chapter has one more
 
 ## The stopwatch that stopped early
 
-After the platform upgrade in Chapter 18, the same instrument reported a cluster build of **23.9 seconds** — 23.9, 24.1, and 23.7 across three runs, a spread of only 0.4 seconds. Ten seconds faster than before the upgrade, and steadier. The number went into the platform's operating notes, into two chapters of this book, and into an answer about how the platform got under forty seconds.
+After the platform upgrade in Chapter 19, the same instrument reported a cluster build of **23.9 seconds** — 23.9, 24.1, and 23.7 across three runs, a spread of only 0.4 seconds. Ten seconds faster than before the upgrade, and steadier. The number went into the platform's operating notes, into two chapters of this book, and into an answer about how the platform got under forty seconds.
 
 It was wrong, and the instrument's own output said so to anyone who looked closely.
 

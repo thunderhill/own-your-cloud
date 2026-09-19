@@ -94,7 +94,7 @@ From the chapters' draft notes. Each line is the brief.
 
 **Chapter 16** — 16.1: the catalog as 29 marks across the three planes, with three lit. 16.2: the two-agent pipeline with its token counts, and the analyst's wrong claim passing through the reviewer unchanged.
 
-**Chapter 17** (new) — no figures specified. The Transfers / Does not transfer table may be worth setting as one.
+**Chapter 18** (new) — no figures specified. The Transfers / Does not transfer table may be worth setting as one.
 
 ## Embedding
 

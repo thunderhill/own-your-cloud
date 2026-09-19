@@ -127,7 +127,7 @@ Act 5 installs **Kiali**, the mesh map, and **Prometheus**, which stores its met
 Three facts about that stage belong in front of a board:
 
 - **The map is open to anyone.** Kiali at `172.18.255.204` reported its authentication strategy as `anonymous`. Anyone who can reach the address can browse every namespace, workload and identity in the mesh, and a map of your systems is itself sensitive. This is the default in Istio's sample installation, which is what the act uses.
-- **The history is temporary.** Prometheus is set to keep fifteen days of data, on storage that disappears whenever its pod restarts. On 17 September its history began on 16 September at 07:29 UTC, the moment of Chapter 18's rebuild.
+- **The history is temporary.** Prometheus is set to keep fifteen days of data, on storage that disappears whenever its pod restarts. On 17 September its history began on 16 September at 07:29 UTC, the moment of Chapter 19's rebuild.
 - **The stage is downloaded, not owned.** The act fetches both installations at install time from Istio's public GitHub branch for the release, not from a pinned, local copy. The mesh's root certificate was created so the demo *"works air-gapped"*. Its observability does not.
 
 ## The screen that says live

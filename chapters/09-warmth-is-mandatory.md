@@ -70,7 +70,7 @@ Checked against the running platform on 17 September, the fastest path in the pl
 
 The UI backend reports no standby: `{"state":"none"}`. The pool is opt-in, and the script that starts the UI leaves it off by default. It also lives only as long as that backend process runs, so the command-line deploy path has never benefited from it.
 
-Its standby manifest still points at the image tagged `ubuntu-noble-k3s:latest`, and that image was built on **3 March**. It was not rebuilt during the September upgrade in Chapter 18. Turning the pool on today would build its standby from a six-month-old image, under a manifest that now declares a much newer k3s. Nobody has tried it.
+Its standby manifest still points at the image tagged `ubuntu-noble-k3s:latest`, and that image was built on **3 March**. It was not rebuilt during the September upgrade in Chapter 19. Turning the pool on today would build its standby from a six-month-old image, under a manifest that now declares a much newer k3s. Nobody has tried it.
 
 Its readiness check counts *two Ready nodes*, the same pattern that fooled the stopwatch in Chapter 7. A standby built from the warm image would be declared ready while its worker was still booting, because that image carries the ghost node. Whether the March image carries anything similar has not been checked.
 

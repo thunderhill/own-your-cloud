@@ -707,7 +707,7 @@ pod  -&gt; CP VM pod IP:6443   =  timeout
 </tr>
 </tbody>
 </table></div>
-<p>There is one catch, and it belongs in the ledger. This setting lives in the running cluster's KubeVirt configuration, not in a manifest in Git. Rebuild the management cluster and it is gone. The fix was wrapped in a script, <code>scripts/configure-kubevirt-perf.sh</code>, and wired into the management cluster's setup so that a rebuild would reapply it. A week later, after a rebuild from nothing, it was found missing anyway and had to be applied by hand. That story is Chapter 18.</p>
+<p>There is one catch, and it belongs in the ledger. This setting lives in the running cluster's KubeVirt configuration, not in a manifest in Git. Rebuild the management cluster and it is gone. The fix was wrapped in a script, <code>scripts/configure-kubevirt-perf.sh</code>, and wired into the management cluster's setup so that a rebuild would reapply it. A week later, after a rebuild from nothing, it was found missing anyway and had to be applied by hand. That story is Chapter 19.</p>
 <h2 id="where-it-landed">Where it landed</h2>
 <pre><code>baseline                 50.0 s   (52.7 / 50.0 / 46.6, spread 6.1 s)
 + advertise-address      42.7 s   (42.7 / 42.8 / 41.2, spread 1.6 s)

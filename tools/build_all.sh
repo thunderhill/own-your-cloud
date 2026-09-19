@@ -10,7 +10,7 @@ part_for() {
     0[5-9]-*) echo "Part II — The Factory" ;;
     1[0-2]-*) echo "Part III — The Fabric" ;;
     1[3-6]-*) echo "Part IV — The Brain" ;;
-    1[7-9]-*) echo "Part V — The Dividend" ;;
+    1[7-9]-*|20-*) echo "Part V — The Dividend" ;;
     99-*) echo "After Part V" ;;
     appendices*) echo "Reference" ;;
     *) echo "Draft" ;;

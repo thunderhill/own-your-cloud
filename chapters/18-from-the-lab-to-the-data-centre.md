@@ -1,4 +1,4 @@
-# Chapter 17 — From the Lab to the Data Centre
+# Chapter 18 — From the Lab to the Data Centre
 
 > *That is not a data centre, and the book never pretends it is. What transfers from a laptop to a data centre is not scale. It is the pattern, the measurements, and — more often than the vendor brochures would suggest — the failures.*
 >
@@ -68,7 +68,7 @@ Virtual machine disks are the platform's real state. In the lab they are files o
 
 Backup is a separate requirement, and the distinction matters to a board because the two are frequently conflated. Replication protects against a disk dying. It does not protect against a deletion, a bad upgrade, or a corrupted image being faithfully replicated three times. Velero is the common tool for backing up Kubernetes objects and, with the right driver, the volumes behind them.
 
-The honest framing is the one the platform's own history supplies. Chapter 18 describes deleting both clusters and rebuilding them from the repository in an afternoon. That is a real disaster-recovery rehearsal, and most organizations have never run one. But note what it proved and what it did not: it proved the *platform* could be rebuilt. No workload data was in it. A restore that returns a running cluster with an empty database has restored nothing a business cares about.
+The honest framing is the one the platform's own history supplies. Chapter 19 describes deleting both clusters and rebuilding them from the repository in an afternoon. That is a real disaster-recovery rehearsal, and most organizations have never run one. But note what it proved and what it did not: it proved the *platform* could be rebuilt. No workload data was in it. A restore that returns a running cluster with an empty database has restored nothing a business cares about.
 
 So the design guidance is a sequence, not a product: choose replicated storage; back up objects and volumes; and then restore from that backup into a different cluster, on a schedule, as a test that is allowed to fail. Until the restore has happened, the backup is a hypothesis.
 
@@ -85,7 +85,7 @@ Four more differences, each of which the lab simply does not have:
 
 ## Capacity planning, from the one measurement that transfers
 
-This is the section where the lab genuinely earns something, because Chapter 19 measured the thing most capacity plans get wrong.
+This is the section where the lab genuinely earns something, because Chapter 20 measured the thing most capacity plans get wrong.
 
 On the management cluster, 59 running pods had **reserved 22.42 GiB** of memory while the cluster was **using 7.45 GiB** — about a third. The target cluster's control-plane machine had been given 4 cores and 8 GiB, and was using **59 millicores, 1% of its processor allowance**, and 1,114 MiB of memory. Those are measurements, from 17 September 2026, on this platform.
 
@@ -106,7 +106,7 @@ For a data centre that produces this sizing method:
 
 ## GitOps — the answer this book already argued for
 
-Chapter 18 is the reason this section exists, and it makes the case better than any vendor's slide.
+Chapter 19 is the reason this section exists, and it makes the case better than any vendor's slide.
 
 When both clusters were deleted and rebuilt, four things turned out to exist nowhere but in the running clusters: the Kind clusters themselves, KubeVirt and CDI, a hand-applied container image patch that no script recorded, and the KubeVirt CPU setting worth eight seconds on every machine start. One of those, the image patch, had been made once, by hand, months earlier, and was recovered only because someone thought to read the old cluster before deleting it. The chapter's conclusion is this book's central claim about sovereignty: *everything that lives only in a running cluster is not owned; it is on loan from that cluster's continued existence.*
 
@@ -116,7 +116,7 @@ GitOps is the mechanism that makes that conclusion enforceable rather than aspir
 - **The rebuild is the normal path, not an emergency one.** If the repository is the source of truth, rebuilding from it is what the system does continuously, which is the only version of a disaster-recovery plan that is tested every day.
 - **Change has a review and an audit trail** — which is also what Constraint 6 of the platform's own agent strategy asks for, and what an agent that proposes changes will eventually need in order to be allowed to make them.
 
-The design guidance is therefore blunt: **put the four unscripted things in Git first, before adding anything new.** The cluster definitions, the platform components and their versions, the tuning that is currently cluster state, and the base images. Chapter 18 already produced that list at no extra cost, by the expensive method of losing everything on purpose.
+The design guidance is therefore blunt: **put the four unscripted things in Git first, before adding anything new.** The cluster definitions, the platform components and their versions, the tuning that is currently cluster state, and the base images. Chapter 19 already produced that list at no extra cost, by the expensive method of losing everything on purpose.
 
 ## Observability that remembers
 
@@ -126,19 +126,19 @@ For a data centre, three requirements follow, in this order of usefulness:
 
 1. **Retention long enough to answer a question about last quarter**, which means durable storage behind the metrics system and a stated retention period, chosen against the audit obligations rather than the disk price.
 2. **Logs and traces with the same lifetime**, so that an incident review can reach the evidence rather than the dashboard's memory of it.
-3. **The AI-specific meter the platform still lacks:** tokens by model, by tenant. Chapter 19 measured energy per token on the GPU and found the electricity is a rounding error, which makes the meter a capacity and chargeback instrument rather than a power one — but it remains the closest thing to an invoice line that local AI has.
+3. **The AI-specific meter the platform still lacks:** tokens by model, by tenant. Chapter 20 measured energy per token on the GPU and found the electricity is a rounding error, which makes the meter a capacity and chargeback instrument rather than a power one — but it remains the closest thing to an invoice line that local AI has.
 
 And one rule carried forward unchanged from Part III: a dashboard is not evidence. Every panel a decision rests on should be traceable to a check that can fail, and every such check should have been watched failing at least once.
 
 ## Running outside the vendor's tested range, on purpose
 
-Chapter 18 records a deliberate decision to run Istio on a Kubernetes version outside its tested range, written down next to the version number. That decision was correct for a pilot and is a live risk in a data centre, so it needs a policy rather than a habit.
+Chapter 19 records a deliberate decision to run Istio on a Kubernetes version outside its tested range, written down next to the version number. That decision was correct for a pilot and is a live risk in a data centre, so it needs a policy rather than a habit.
 
 Design guidance, and this is the part most organizations skip until an incident forces it:
 
 - **Decide who carries the risk.** Either an internal team is willing to debug a mesh nobody upstream has tested this combination of, or the organization buys support and then lives inside the supported matrix. Both are defensible. Running unsupported while assuming someone else will help is not.
 - **Record every exception where the next person will trip over it** — which the platform already does, in the mesh's README, and which is the cheapest control in this chapter.
-- **Distinguish passing from supported.** The platform's own 22 of 22 checks passed on an unsupported combination. That proves the assertions held, not that the combination is tested. Chapter 18 says so explicitly, and the distinction is exactly what an auditor will ask about.
+- **Distinguish passing from supported.** The platform's own 22 of 22 checks passed on an unsupported combination. That proves the assertions held, not that the combination is tested. Chapter 19 says so explicitly, and the distinction is exactly what an auditor will ask about.
 - **Budget for the upgrade treadmill.** A supported posture means tracking upstream release cadences and their support windows, and that is a standing cost in people, not a project.
 
 ## Transfers, and does not
@@ -148,14 +148,14 @@ The two-column slide Anita put on the wall, filled in from the book's own chapte
 | Transfers as-is | Does not transfer |
 |---|---|
 | The declarative model: a cluster is a written declaration, applied (Chapters 4, 5; Appendix G.1) | Single control planes and a single failure domain — everything in this book runs one of each |
-| Build and teardown speed: 33.7 s and 18.9 s, which are properties of the software, not the hardware (Chapter 7) | The storage under it: local files, never replicated, never restored from |
+| Build and teardown speed: 34.4 s and 45.7 s, which are properties of the software, not the hardware (Chapters 7 and 17) | The storage under it: local files, never replicated, never restored from |
 | Cluster API and KubeVirt as the factory, including VMs as first-class objects (Chapter 4) | A flat Docker bridge with a hardcoded address range (Appendix B) |
 | The service mesh's model: one label for cross-cluster failover, identity-based authorization with no sidecars (Chapter 11) | MetalLB in layer-2 mode; production wants BGP peering with real routers |
 | Golden images and air-gapped boot — nothing fetched from the internet at start-up (Chapter 6) | Fixed certificate authorities and a join token committed to the repository (Chapter 3) |
 | The warm-standby pattern, and its explicit price in idle capacity (Chapter 9) | One standby, one resident model — a depth of one is a lab constraint, not a design |
 | Agents as Kubernetes objects, with policy, identity and tools declared (Chapters 13, 14) | Unauthenticated consoles, an unlocked model gateway, anonymous Kiali (Chapter 12) |
 | Local models on owned hardware, and the measured energy per token (Chapters 3, 19) | One consumer GPU holding one model at a time (Chapter 9) |
-| The capacity lesson: reservations govern, and the reservation-to-use gap is the margin (Chapter 19) | The absolute figures — 22.42 GiB reserved, 7.45 GiB used — which are one host's numbers, not a sizing model |
+| The capacity lesson: reservations govern, and the reservation-to-use gap is the margin (Chapter 20) | The absolute figures — 22.42 GiB reserved, 7.45 GiB used — which are one host's numbers, not a sizing model |
 | **The discipline**: measure by name, assert on values, keep the before picture, record the dead ends (Chapters 7, 10, 11, 15, 18) | The assumption that anything here has been operated — no on-call, no SLA, no users, no auditor |
 
 Read the right-hand column as a work plan and it is long but ordinary: well-understood components, wired in by people who have done it before. Read the left-hand column as what a year of a single engineer and an AI assistant produced, and the interesting claim of this book survives the move to a data centre — not *we built a cloud on a laptop*, but *we found out what is true, cheaply, before spending the money.*
@@ -180,7 +180,7 @@ She thought about the year: a worker marked `Ready` that could not run anything;
 
 ## The ledger
 
-- **Measured, and carried into this chapter:** build 33.7 s and teardown 18.9 s (Chapter 7); a warm claim in 467 ms (Chapter 9); 22.42 GiB reserved against 7.45 GiB used, and a control-plane machine using 1% of its processor allowance (Chapter 19); energy per generated token on the GPU (Chapter 19).
+- **Measured, and carried into this chapter:** build 33.7 s (Chapter 7, reproduced at 34.4 s in Chapter 17) and teardown 45.7 s (Chapter 17, superseding an 18.9 s single run); a warm claim in 467 ms (Chapter 9); 22.42 GiB reserved against 7.45 GiB used, and a control-plane machine using 1% of its processor allowance (Chapter 20); energy per generated token on the GPU (Chapter 20).
 - **Designed, not built:** every requirement in this chapter — high availability, replicated storage, tested restores, BGP and segmentation, external DNS and PKI, secrets management, OIDC identity, GitOps reconciliation, observability retention, and a support policy. **None of it exists on the platform.**
 - **Already known to be missing, from the book's own findings:** replicated storage, any restore test, real authentication on the consoles, destination-scoped egress, secrets outside version control, and four pieces of platform state that live only in a running cluster (Chapters 3, 12, 14, 18).
 - **The cheapest item on the list:** writing the exception down next to the version number. The platform already does it.
@@ -188,7 +188,7 @@ She thought about the year: a worker marked `Ready` that could not run anything;
 
 ## Ask your team
 
-1. **Which parts of our platform exist only in a running system — and what would we have to reverse-engineer if we lost it tonight?** Chapter 18 produced that list by accident; produce yours on purpose.
+1. **Which parts of our platform exist only in a running system — and what would we have to reverse-engineer if we lost it tonight?** Chapter 19 produced that list by accident; produce yours on purpose.
 2. **When did we last restore from a backup into a different cluster, and who watched it?** A backup that has never been restored is a hypothesis with a budget line.
 3. **Where are we running outside a vendor's tested range, who decided it, and who carries the risk if it breaks at three in the morning?**
 

@@ -31,13 +31,13 @@ Installs MetalLB, which gives Services on the laptop's Docker network real IP ad
 
 ### 02-capi-init
 
-`init-management-cluster.sh` turns `cluster2` into a cluster factory. It installs Cluster API v1.14.2, the KubeVirt infrastructure provider (CAPK) v0.11.2, and the k3s bootstrap and control-plane providers v0.3.0. It then replaces a dead proxy image those providers ship (Chapter 18), and runs `scripts/configure-kubevirt-perf.sh`, which applies the CPU setting that cut eight seconds from every VM start (Chapter 8). That auto-run can silently do nothing — not, as first diagnosed, because it races KubeVirt's start-up, but because the script's own readiness waits can outlast whatever time limit its caller imposes, and it is killed before reaching that last step (Chapter 18). Check afterwards that the setting landed. *Targets:* `make capi-init`, `make kubevirt-perf`.
+`init-management-cluster.sh` turns `cluster2` into a cluster factory. It installs Cluster API v1.14.2, the KubeVirt infrastructure provider (CAPK) v0.11.2, and the k3s bootstrap and control-plane providers v0.3.0. It then replaces a dead proxy image those providers ship (Chapter 19), and runs `scripts/configure-kubevirt-perf.sh`, which applies the CPU setting that cut eight seconds from every VM start (Chapter 8). That auto-run can silently do nothing — not, as first diagnosed, because it races KubeVirt's start-up, but because the script's own readiness waits can outlast whatever time limit its caller imposes, and it is killed before reaching that last step (Chapter 19). Check afterwards that the setting landed. *Targets:* `make capi-init`, `make kubevirt-perf`.
 
 ### 03-target-cluster
 
 The cluster declarations. `target-cluster-warm.yaml` is the default: seven objects in 258 lines, parallel worker boot, fixed demonstration certificate authorities in `warm-ca/` (Chapter 4). `target-cluster-lite.yaml`, `target-cluster.yaml` and `target-cluster-parallel.yaml` are older, slower paths on the `:latest` image. `generate-cluster.sh` and the `.tmpl.yaml` files render variants. The golden-image tooling sits at the top level (`bake-common.sh`, `bake-golden-image*.sh`, `build-containerdisk.sh`) and in `scripts/` (`seed-cluster-secrets.sh`, `gen-warm-ca.sh`, `fix-registry-hosts.sh`). *Targets:* `make target-cluster` (which runs `registry-fix`, then `ensure-warm-image`, then seeds the secrets and applies the warm manifest); `make clean`.
 
-*Caution:* `ensure-warm-image` checks that the image *tag* exists, not what is inside it. After the September upgrade, the `:latest` and `:preinit` images still carried the old k3s binary (Chapter 18).
+*Caution:* `ensure-warm-image` checks that the image *tag* exists, not what is inside it. After the September upgrade, the `:latest` and `:preinit` images still carried the old k3s binary (Chapter 19).
 
 ### 04-verify
 
@@ -75,7 +75,7 @@ The Makefile defines 65 targets. These are the ones this book used.
 |---|---|---|
 | `make all` | `prereqs` → `metallb` → `capi-init` → `target-cluster` | Assumes the four unscripted prerequisites above |
 | `make target-cluster` | Builds the default warm cluster | 33.7 s to both nodes ready (Appendix D) |
-| `make clean` | Deletes the target cluster | 18.9 s until every VM is gone |
+| `make clean` | Deletes the target cluster | 45.7 s until every object is gone; the machines stop at 35.6 s (Chapter 17) |
 | `make verify` | Checks the target cluster and refreshes agent credentials | |
 | `make kubevirt-perf` | Applies the KubeVirt CPU setting | Cluster state, not manifest state: re-run after rebuilding `cluster2` |
 | `make phase-timings` | Per-phase breakdown of a cluster build | Counts nodes, not names — see Appendix D |
@@ -151,9 +151,9 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 
 | Cause | Where | Fix or status |
 |---|---|---|
-| A provider shipped a proxy image that no longer exists; readiness waits timed out into an <code>&#124;&#124; true</code> fallback, so setup reported success | `make capi-init` (Chapter 18) | Image patched automatically in `init-management-cluster.sh` |
-| The KubeVirt CPU setting's applying step never ran because the setup script itself was killed by an external time limit mid-readiness-wait (corrected 18 September; first misdiagnosed as a race with KubeVirt's own start-up) | `configure-kubevirt-perf.sh` auto-run (Chapter 18) | Check `supportContainerResources` after any `capi-init`; re-run `make kubevirt-perf` |
-| A documented `K3S_VERSION` override never reached the image being baked | `bake-common.sh` (Chapter 18) | Both version literals updated and commented |
+| A provider shipped a proxy image that no longer exists; readiness waits timed out into an <code>&#124;&#124; true</code> fallback, so setup reported success | `make capi-init` (Chapter 19) | Image patched automatically in `init-management-cluster.sh` |
+| The KubeVirt CPU setting's applying step never ran because the setup script itself was killed by an external time limit mid-readiness-wait (corrected 18 September; first misdiagnosed as a race with KubeVirt's own start-up) | `configure-kubevirt-perf.sh` auto-run (Chapter 19) | Check `supportContainerResources` after any `capi-init`; re-run `make kubevirt-perf` |
+| A documented `K3S_VERSION` override never reached the image being baked | `bake-common.sh` (Chapter 19) | Both version literals updated and commented |
 | Image checks tested whether a tag existed, not what it contained | `ensure-warm-image`, `pre-pull` | `:warm` rebaked; `:latest` and `:preinit` still stale |
 | Built-in SkillPacks "silently dropped" at install — really the chart applying them before its own admission webhook was serving | `helm install` | `fix-missing-builtin-skillpacks.sh` |
 | Agent runs created in quick succession raced into a terminal `Failed`, which the controller never retries | Serving re-pin | Delete the failed run and let the controller recreate it |
@@ -244,10 +244,10 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 |---|---|---|
 | Cluster bring-up, both nodes ready | **33.7 s** median (30.4 / 35.1 / 33.7) | 17 September, by node name, warm manifest, Kubernetes 1.37 |
 | Control plane alone | **24.7 s** median | Same runs |
-| Teardown | Delete command returned at **10.15 s**; every VM and machine gone at **18.9 s** | 17 September, a single run |
+| Teardown | Delete command returns at **10.13 s**; machines stop at **35.6 s**; last object gone at **45.73 s** | 19 September, N=5 (spread 1.24 s). Supersedes an 18.9 s figure from a single run on 17 September |
 | Standby claim | **467 ms** median (1.059 / 0.467 / 0.465) | 18 September, by name-based readiness check, warm-image standby; was 194 ms in June |
 | Model load, cold vs warm | 2.3–2.6 s cold; 0.14–0.17 s warm | 17 September, GPU, qwen2.5:7b and llama3.2 (Chapter 9) |
-| Local model energy | 1.19 J per generated token; 0.33 kWh per million tokens (GPU only) | 17 September, qwen2.5:7b (Chapter 19) |
+| Local model energy | 1.19 J per generated token; 0.33 kWh per million tokens (GPU only) | 17 September, qwen2.5:7b (Chapter 20) |
 | Cross-cluster failover | 30 of 30 HTTP 200, all from `cluster2` | 17 September, Istio 1.31 (Chapter 11) |
 
 And the history behind the headline number:
@@ -286,8 +286,8 @@ Guest console timestamps count seconds since boot, not time of day. The script a
 6. **Keep the raw data.** The raw files behind the 9 September phase table no longer exist to re-check.
 7. **Judge a request by its status code, never its body.** An error page is a body (Chapter 11).
 8. **Watch every check fail once, on purpose,** before it goes on a dashboard (Chapter 11).
-9. **Measure use against reservation.** On owned hardware, reservations set capacity (Chapter 19).
-10. **For models, separate cold from warm, and meter energy against tokens.** Read the model server's own `load_duration`, and sample GPU power every 200 ms alongside its `eval_count` (Chapters 9 and 19).
+9. **Measure use against reservation.** On owned hardware, reservations set capacity (Chapter 20).
+10. **For models, separate cold from warm, and meter energy against tokens.** Read the model server's own `load_duration`, and sample GPU power every 200 ms alongside its `eval_count` (Chapters 9 and 20).
 11. **Record what you changed, and put it back.** Every live experiment in this book ran with a restore step, and was checked afterwards.
 
 ### D.4 Measuring bring-up by name
@@ -299,7 +299,7 @@ The repository's two original timing scripts, `time-to-ready.sh` and `phase-timi
 3. Start the clock, and apply `03-target-cluster/target-cluster-warm.yaml`.
 4. Every half-second, fetch the target kubeconfig if you don't have it yet, and list nodes with their `Ready` condition.
 5. Record, separately, the first moment a node whose name contains `-cp-` is `Ready`, and the first moment a node whose name contains `-workers-` is `Ready`.
-6. Cross-check both against each node's `Ready` `lastTransitionTime` from the API.
+6. Cross-check both against each node's `Ready` `lastTransitionTime` from the API. *(The committed script does not do this step — it was performed by hand for the 17 September figures. Either do it by hand, or treat the polled values as the measurement, which is what Chapter 17's drill does.)*
 7. Afterwards, refresh the agents' copy of the target credentials (`06-sympozium/refresh-target-kubeconfig.sh`).
 
 Run it directly:
@@ -308,9 +308,26 @@ Run it directly:
 make time-to-ready-by-name RUNS=3
 ```
 
-### D.5 The parallel-metering run
+(The script previously required the manifest positionally before `--runs`, so that invocation failed with `manifest not found: --runs`. Fixed 19 September; either argument order now works.)
 
-Chapter 19's cost comparison was measured on 18 September 2026 with `measurements/ch19-meter.sh`: an `nginx` deployment on the target cluster, sampled every 20 seconds for ten minutes, recording the host container's CPU and memory, the GPU's power draw, the target control plane's CPU and memory, and one HTTP probe of the workload per sample. All 30 samples returned `200`.
+### D.5 The recovery drill
+
+Chapter 17's cycle — destroy, rebuild, deploy, serve — measured on 19 September 2026, N=5 after one discarded rehearsal, with the boundary table committed to `measurements/README.md` **before the first measured run**. Raw data: `measurements/ch17-recovery-drill-20260919-163611.tsv`; script: `measurements/ch-recovery-drill.sh`.
+
+| Figure | Median | Spread |
+|---|---:|---:|
+| Destroy to first served request | **81.96 s** | 3.63 s |
+| Delete command returns | 10.13 s | 0.98 s |
+| Teardown, last object gone | 45.73 s | 1.24 s |
+| Build, both nodes Ready | 34.39 s | 4.24 s |
+| Build, control plane alone | 25.60 s | 0.78 s |
+| Workload to first HTTP 200 | 1.34 s | 0.58 s |
+
+Pre-flight gates abort rather than adjust: the `:warm` image must already be cached (recording its image ID, not just its tag), `supportContainerResources` must be present at `cpu: "1"`, and no warm-pool controller may be running. The workload is `rancher/mirrored-library-busybox`, baked into the golden image — every run recorded zero `Pulling` events, so nothing was fetched from the internet inside the clock.
+
+### D.6 The parallel-metering run
+
+Chapter 20's cost comparison was measured on 18 September 2026 with `measurements/ch19-meter.sh`: an `nginx` deployment on the target cluster, sampled every 20 seconds for ten minutes, recording the host container's CPU and memory, the GPU's power draw, the target control plane's CPU and memory, and one HTTP probe of the workload per sample. All 30 samples returned `200`.
 
 The raw samples are kept at `measurements/ch19-parallel-metering-20260918.tsv`, and `measurements/README.md` holds the full assumptions table and the dated price sources. Two things could not be measured on this host and are therefore assumptions, not figures: whole-host power (`/sys/class/powercap/intel-rapl:0/energy_uj` is root-only on this kernel, and the battery reads zero on AC) and the hardware's purchase price.
 
@@ -322,7 +339,7 @@ The labs in `06-sympozium/labs/` were written in July against Sympozium 0.10.38.
 
 | # | Lab | What it shows | Marker (July, 0.10.38) | Re-checked in this book |
 |---|---|---|---|---|
-| 01 | `chat-serving` | An agent as an OpenAI-compatible chat endpoint | ✅ works | Serving endpoints answered on 17 September (`verify.sh`); live completions through all three agents on 16 September (Chapter 18) |
+| 01 | `chat-serving` | An agent as an OpenAI-compatible chat endpoint | ✅ works | Serving endpoints answered on 17 September (`verify.sh`); live completions through all three agents on 16 September (Chapter 19) |
 | 02 | `agentrun` | A one-shot task as a Kubernetes object | ✅ works — needs explicit `agentId`, `model`, `sessionKey`, `skills` | Re-run; required fields confirmed by a server dry run (Chapter 13) |
 | 03 | `schedule` | Timed agent work | ⚠️ prompt-only tasks work; skill-using tasks don't | The platform's warm-up schedule was found stopped (Chapters 9 and 14) |
 | 04 | `policy` | Tool gating, egress, sandbox | ⚠️ explicit override blocked; default deny not enforced; network policy inert | Override still refused; denied tool still used; network policy *is* now enforced, but the sandbox policy selects no pods (Chapter 14) |
@@ -572,7 +589,7 @@ The same file also carries the ghost node of Chapter 7 — the leftover `Node` o
 
 ### G.3 `supportContainerResources` — the second one-line fix
 
-Chapter 8's second fix, worth 8.2 seconds on every cluster build, and the one that is cluster state rather than repository state — which is why Chapter 18 found it missing after the rebuild.
+Chapter 8's second fix, worth 8.2 seconds on every cluster build, and the one that is cluster state rather than repository state — which is why Chapter 19 found it missing after the rebuild.
 
 ```bash
 # scripts/configure-kubevirt-perf.sh (excerpt)
@@ -710,11 +727,11 @@ spec:
       Always use full resource names (virtualmachines, virtualmachineinstances, clusters, machines). Read-only unless the user explicitly approves a change.
 ```
 
-Read that briefing against Chapter 18. It describes `cluster1` as running `httpbin/sleep` — which was true before the September rebuild and is not true now. The agent is told a fact about its own environment that has expired, and nothing in the platform notices.
+Read that briefing against Chapter 19. It describes `cluster1` as running `httpbin/sleep` — which was true before the September rebuild and is not true now. The agent is told a fact about its own environment that has expired, and nothing in the platform notices.
 
 ### G.7 The documented knob that controlled nothing
 
-Chapter 18's most quotable find. The outer variable, with the warning added after the discovery:
+Chapter 19's most quotable find. The outer variable, with the warning added after the discovery:
 
 ```bash
 # bake-common.sh (excerpt — header comment)
@@ -753,7 +770,7 @@ Two assignments of one name, in one file, a hundred lines apart. Setting the doc
 
 ### G.8 The dead image, and the patch that survives a rebuild
 
-Chapter 18's first real obstacle, and the fix that now runs automatically — quoted with its comment, because the comment records the uncertainty honestly rather than claiming a clean diagnosis.
+Chapter 19's first real obstacle, and the fix that now runs automatically — quoted with its comment, because the comment records the uncertainty honestly rather than claiming a clean diagnosis.
 
 ```bash
 # 02-capi-init/init-management-cluster.sh (excerpt)
@@ -792,7 +809,7 @@ The book draws on three kinds of source, and they are not equally checkable. Thi
 
 The **Build log** sections come from the platform repository, `sovereign_cloud`. It is the only source a reader can run. Every build-log claim names the file or command behind it in that chapter's **Open the repo** block, and the load-bearing files are quoted in Appendix G.
 
-One caveat, recorded in Chapter 18's draft notes: most of the material this book cites lives on the working branch `upgrade/k8s-1.37-istio-1.31-sympozium-0.10.75`, not on `main`. A reader who clones the default branch will not find much of it.
+One caveat, recorded in Chapter 19's draft notes: most of the material this book cites lives on the working branch `upgrade/k8s-1.37-istio-1.31-sympozium-0.10.75`, not on `main`. A reader who clones the default branch will not find much of it.
 
 ### H.2 Briefing material (not public, not in the repository)
 
@@ -800,7 +817,7 @@ Four items are the author's own briefing material. They are described here rathe
 
 | Referred to in the book as | What it is |
 |---|---|
-| **The strategy deck** | *Reclaiming Margins with Sovereign Cloud*, a strategic briefing deck dated February 2026, in five chapters. Parts I and V adapt its argument; Chapter 19 takes its TCO slide apart. None of its figures carries a source, and the book says so each time it quotes one. |
+| **The strategy deck** | *Reclaiming Margins with Sovereign Cloud*, a strategic briefing deck dated February 2026, in five chapters. Parts I and V adapt its argument; Chapter 20 takes its TCO slide apart. None of its figures carries a source, and the book says so each time it quotes one. |
 | **The sovereign-cloud flyer** | A one-page campaign flyer, version 2, unbranded — six promises and a *"Save $Millions — Creating a Cloud Owning Culture"* band. The epilogue reads it claim by claim. A separate version of the same flyer carries a real company's branding; the book does not quote that one, and does not name the company. |
 | **The recorded factory demonstration** | A screen recording, 8 minutes 56 seconds, of the cluster-provisioning path in Chapters 4 and 5. Used only as a source of stills. |
 | **The recorded agent demonstration** | A screen recording, 2 minutes 50 seconds, of the agent console in Chapter 13. Used only as a source of stills. |

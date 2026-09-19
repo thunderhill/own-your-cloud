@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 7,800 words · about 34 minutes to read</dd>
+      <dd>About 8,000 words · about 35 minutes to read</dd>
     </dl>
   </header>
 
@@ -427,10 +427,10 @@ td strong { color: var(--accent); font-weight: 600; }
 <h3 id="01-metallb">01-metallb</h3>
 <p>Installs MetalLB, which gives Services on the laptop's Docker network real IP addresses, and configures the address pool for <code>cluster2</code> (now <code>.211–.225</code>, widened by <code>07-istio-advanced</code>). <strong>Do not run it against <code>cluster1</code></strong>: it tries to substitute a placeholder that does not exist in its configuration file, so it would advertise <code>cluster2</code>'s range on the shared network (Appendix B). <em>Target:</em> <code>make metallb</code>.</p>
 <h3 id="02-capi-init">02-capi-init</h3>
-<p><code>init-management-cluster.sh</code> turns <code>cluster2</code> into a cluster factory. It installs Cluster API v1.14.2, the KubeVirt infrastructure provider (CAPK) v0.11.2, and the k3s bootstrap and control-plane providers v0.3.0. It then replaces a dead proxy image those providers ship (Chapter 18), and runs <code>scripts/configure-kubevirt-perf.sh</code>, which applies the CPU setting that cut eight seconds from every VM start (Chapter 8). That auto-run can silently do nothing — not, as first diagnosed, because it races KubeVirt's start-up, but because the script's own readiness waits can outlast whatever time limit its caller imposes, and it is killed before reaching that last step (Chapter 18). Check afterwards that the setting landed. <em>Targets:</em> <code>make capi-init</code>, <code>make kubevirt-perf</code>.</p>
+<p><code>init-management-cluster.sh</code> turns <code>cluster2</code> into a cluster factory. It installs Cluster API v1.14.2, the KubeVirt infrastructure provider (CAPK) v0.11.2, and the k3s bootstrap and control-plane providers v0.3.0. It then replaces a dead proxy image those providers ship (Chapter 19), and runs <code>scripts/configure-kubevirt-perf.sh</code>, which applies the CPU setting that cut eight seconds from every VM start (Chapter 8). That auto-run can silently do nothing — not, as first diagnosed, because it races KubeVirt's start-up, but because the script's own readiness waits can outlast whatever time limit its caller imposes, and it is killed before reaching that last step (Chapter 19). Check afterwards that the setting landed. <em>Targets:</em> <code>make capi-init</code>, <code>make kubevirt-perf</code>.</p>
 <h3 id="03-target-cluster">03-target-cluster</h3>
 <p>The cluster declarations. <code>target-cluster-warm.yaml</code> is the default: seven objects in 258 lines, parallel worker boot, fixed demonstration certificate authorities in <code>warm-ca/</code> (Chapter 4). <code>target-cluster-lite.yaml</code>, <code>target-cluster.yaml</code> and <code>target-cluster-parallel.yaml</code> are older, slower paths on the <code>:latest</code> image. <code>generate-cluster.sh</code> and the <code>.tmpl.yaml</code> files render variants. The golden-image tooling sits at the top level (<code>bake-common.sh</code>, <code>bake-golden-image*.sh</code>, <code>build-containerdisk.sh</code>) and in <code>scripts/</code> (<code>seed-cluster-secrets.sh</code>, <code>gen-warm-ca.sh</code>, <code>fix-registry-hosts.sh</code>). <em>Targets:</em> <code>make target-cluster</code> (which runs <code>registry-fix</code>, then <code>ensure-warm-image</code>, then seeds the secrets and applies the warm manifest); <code>make clean</code>.</p>
-<p><em>Caution:</em> <code>ensure-warm-image</code> checks that the image <em>tag</em> exists, not what is inside it. After the September upgrade, the <code>:latest</code> and <code>:preinit</code> images still carried the old k3s binary (Chapter 18).</p>
+<p><em>Caution:</em> <code>ensure-warm-image</code> checks that the image <em>tag</em> exists, not what is inside it. After the September upgrade, the <code>:latest</code> and <code>:preinit</code> images still carried the old k3s binary (Chapter 19).</p>
 <h3 id="04-verify">04-verify</h3>
 <p><code>verify-cluster.sh</code> waits for the target cluster's virtual machines and checks its health. It also refreshes the agents' copy of the target cluster's credentials. <em>Target:</em> <code>make verify</code>.</p>
 <h3 id="05-istio">05-istio</h3>
@@ -469,7 +469,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <tr>
 <td><code>make clean</code></td>
 <td>Deletes the target cluster</td>
-<td>18.9 s until every VM is gone</td>
+<td>45.7 s until every object is gone; the machines stop at 35.6 s (Chapter 17)</td>
 </tr>
 <tr>
 <td><code>make verify</code></td>
@@ -719,17 +719,17 @@ td strong { color: var(--accent); font-weight: 600; }
 <tbody>
 <tr>
 <td>A provider shipped a proxy image that no longer exists; readiness waits timed out into an <code>&#124;&#124; true</code> fallback, so setup reported success</td>
-<td><code>make capi-init</code> (Chapter 18)</td>
+<td><code>make capi-init</code> (Chapter 19)</td>
 <td>Image patched automatically in <code>init-management-cluster.sh</code></td>
 </tr>
 <tr>
 <td>The KubeVirt CPU setting's applying step never ran because the setup script itself was killed by an external time limit mid-readiness-wait (corrected 18 September; first misdiagnosed as a race with KubeVirt's own start-up)</td>
-<td><code>configure-kubevirt-perf.sh</code> auto-run (Chapter 18)</td>
+<td><code>configure-kubevirt-perf.sh</code> auto-run (Chapter 19)</td>
 <td>Check <code>supportContainerResources</code> after any <code>capi-init</code>; re-run <code>make kubevirt-perf</code></td>
 </tr>
 <tr>
 <td>A documented <code>K3S_VERSION</code> override never reached the image being baked</td>
-<td><code>bake-common.sh</code> (Chapter 18)</td>
+<td><code>bake-common.sh</code> (Chapter 19)</td>
 <td>Both version literals updated and commented</td>
 </tr>
 <tr>
@@ -1049,8 +1049,8 @@ td strong { color: var(--accent); font-weight: 600; }
 </tr>
 <tr>
 <td>Teardown</td>
-<td>Delete command returned at <strong>10.15 s</strong>; every VM and machine gone at <strong>18.9 s</strong></td>
-<td>17 September, a single run</td>
+<td>Delete command returns at <strong>10.13 s</strong>; machines stop at <strong>35.6 s</strong>; last object gone at <strong>45.73 s</strong></td>
+<td>19 September, N=5 (spread 1.24 s). Supersedes an 18.9 s figure from a single run on 17 September</td>
 </tr>
 <tr>
 <td>Standby claim</td>
@@ -1065,7 +1065,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <tr>
 <td>Local model energy</td>
 <td>1.19 J per generated token; 0.33 kWh per million tokens (GPU only)</td>
-<td>17 September, qwen2.5:7b (Chapter 19)</td>
+<td>17 September, qwen2.5:7b (Chapter 20)</td>
 </tr>
 <tr>
 <td>Cross-cluster failover</td>
@@ -1134,8 +1134,8 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>Keep the raw data.</strong> The raw files behind the 9 September phase table no longer exist to re-check.</li>
 <li><strong>Judge a request by its status code, never its body.</strong> An error page is a body (Chapter 11).</li>
 <li><strong>Watch every check fail once, on purpose,</strong> before it goes on a dashboard (Chapter 11).</li>
-<li><strong>Measure use against reservation.</strong> On owned hardware, reservations set capacity (Chapter 19).</li>
-<li><strong>For models, separate cold from warm, and meter energy against tokens.</strong> Read the model server's own <code>load_duration</code>, and sample GPU power every 200 ms alongside its <code>eval_count</code> (Chapters 9 and 19).</li>
+<li><strong>Measure use against reservation.</strong> On owned hardware, reservations set capacity (Chapter 20).</li>
+<li><strong>For models, separate cold from warm, and meter energy against tokens.</strong> Read the model server's own <code>load_duration</code>, and sample GPU power every 200 ms alongside its <code>eval_count</code> (Chapters 9 and 20).</li>
 <li><strong>Record what you changed, and put it back.</strong> Every live experiment in this book ran with a restore step, and was checked afterwards.</li>
 </ol>
 <h3 id="d4-measuring-bring-up-by-name">D.4 Measuring bring-up by name</h3>
@@ -1146,14 +1146,59 @@ td strong { color: var(--accent); font-weight: 600; }
 <li>Start the clock, and apply <code>03-target-cluster/target-cluster-warm.yaml</code>.</li>
 <li>Every half-second, fetch the target kubeconfig if you don't have it yet, and list nodes with their <code>Ready</code> condition.</li>
 <li>Record, separately, the first moment a node whose name contains <code>-cp-</code> is <code>Ready</code>, and the first moment a node whose name contains <code>-workers-</code> is <code>Ready</code>.</li>
-<li>Cross-check both against each node's <code>Ready</code> <code>lastTransitionTime</code> from the API.</li>
+<li>Cross-check both against each node's <code>Ready</code> <code>lastTransitionTime</code> from the API. <em>(The committed script does not do this step — it was performed by hand for the 17 September figures. Either do it by hand, or treat the polled values as the measurement, which is what Chapter 17's drill does.)</em></li>
 <li>Afterwards, refresh the agents' copy of the target credentials (<code>06-sympozium/refresh-target-kubeconfig.sh</code>).</li>
 </ol>
 <p>Run it directly:</p>
 <pre><code>make time-to-ready-by-name RUNS=3
 </code></pre>
-<h3 id="d5-the-parallel-metering-run">D.5 The parallel-metering run</h3>
-<p>Chapter 19's cost comparison was measured on 18 September 2026 with <code>measurements/ch19-meter.sh</code>: an <code>nginx</code> deployment on the target cluster, sampled every 20 seconds for ten minutes, recording the host container's CPU and memory, the GPU's power draw, the target control plane's CPU and memory, and one HTTP probe of the workload per sample. All 30 samples returned <code>200</code>.</p>
+<p>(The script previously required the manifest positionally before <code>--runs</code>, so that invocation failed with <code>manifest not found: --runs</code>. Fixed 19 September; either argument order now works.)</p>
+<h3 id="d5-the-recovery-drill">D.5 The recovery drill</h3>
+<p>Chapter 17's cycle — destroy, rebuild, deploy, serve — measured on 19 September 2026, N=5 after one discarded rehearsal, with the boundary table committed to <code>measurements/README.md</code> <strong>before the first measured run</strong>. Raw data: <code>measurements/ch17-recovery-drill-20260919-163611.tsv</code>; script: <code>measurements/ch-recovery-drill.sh</code>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Figure</th>
+<th style="text-align: right;">Median</th>
+<th style="text-align: right;">Spread</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Destroy to first served request</td>
+<td style="text-align: right;"><strong>81.96 s</strong></td>
+<td style="text-align: right;">3.63 s</td>
+</tr>
+<tr>
+<td>Delete command returns</td>
+<td style="text-align: right;">10.13 s</td>
+<td style="text-align: right;">0.98 s</td>
+</tr>
+<tr>
+<td>Teardown, last object gone</td>
+<td style="text-align: right;">45.73 s</td>
+<td style="text-align: right;">1.24 s</td>
+</tr>
+<tr>
+<td>Build, both nodes Ready</td>
+<td style="text-align: right;">34.39 s</td>
+<td style="text-align: right;">4.24 s</td>
+</tr>
+<tr>
+<td>Build, control plane alone</td>
+<td style="text-align: right;">25.60 s</td>
+<td style="text-align: right;">0.78 s</td>
+</tr>
+<tr>
+<td>Workload to first HTTP 200</td>
+<td style="text-align: right;">1.34 s</td>
+<td style="text-align: right;">0.58 s</td>
+</tr>
+</tbody>
+</table></div>
+<p>Pre-flight gates abort rather than adjust: the <code>:warm</code> image must already be cached (recording its image ID, not just its tag), <code>supportContainerResources</code> must be present at <code>cpu: "1"</code>, and no warm-pool controller may be running. The workload is <code>rancher/mirrored-library-busybox</code>, baked into the golden image — every run recorded zero <code>Pulling</code> events, so nothing was fetched from the internet inside the clock.</p>
+<h3 id="d6-the-parallel-metering-run">D.6 The parallel-metering run</h3>
+<p>Chapter 20's cost comparison was measured on 18 September 2026 with <code>measurements/ch19-meter.sh</code>: an <code>nginx</code> deployment on the target cluster, sampled every 20 seconds for ten minutes, recording the host container's CPU and memory, the GPU's power draw, the target control plane's CPU and memory, and one HTTP probe of the workload per sample. All 30 samples returned <code>200</code>.</p>
 <p>The raw samples are kept at <code>measurements/ch19-parallel-metering-20260918.tsv</code>, and <code>measurements/README.md</code> holds the full assumptions table and the dated price sources. Two things could not be measured on this host and are therefore assumptions, not figures: whole-host power (<code>/sys/class/powercap/intel-rapl:0/energy_uj</code> is root-only on this kernel, and the battery reads zero on AC) and the hardware's purchase price.</p>
 <h2 id="appendix-e-the-ten-labs">Appendix E — The ten labs</h2>
 <p class="dateline dateline-record">Build log · July–September 2026</p>
@@ -1174,7 +1219,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <td><code>chat-serving</code></td>
 <td>An agent as an OpenAI-compatible chat endpoint</td>
 <td>✅ works</td>
-<td>Serving endpoints answered on 17 September (<code>verify.sh</code>); live completions through all three agents on 16 September (Chapter 18)</td>
+<td>Serving endpoints answered on 17 September (<code>verify.sh</code>); live completions through all three agents on 16 September (Chapter 19)</td>
 </tr>
 <tr>
 <td>02</td>
@@ -1495,7 +1540,7 @@ metadata:
       - systemd-run --unit=warm-ghost-node-cleanup --no-block /bin/bash -c 'for i in $(seq 1 60); do /usr/local/bin/k3s kubectl delete node ubuntu-bake-vm-warm --ignore-not-found &amp;&amp; break; sleep 2; done'
 </code></pre>
 <h3 id="g3-supportcontainerresources-the-second-one-line-fix">G.3 <code>supportContainerResources</code> — the second one-line fix</h3>
-<p>Chapter 8's second fix, worth 8.2 seconds on every cluster build, and the one that is cluster state rather than repository state — which is why Chapter 18 found it missing after the rebuild.</p>
+<p>Chapter 8's second fix, worth 8.2 seconds on every cluster build, and the one that is cluster state rather than repository state — which is why Chapter 19 found it missing after the rebuild.</p>
 <pre><code class="language-bash"># scripts/configure-kubevirt-perf.sh (excerpt)
 {&quot;spec&quot;:{&quot;configuration&quot;:{&quot;supportContainerResources&quot;:[
   {&quot;type&quot;:&quot;container-disk&quot;,
@@ -1614,9 +1659,9 @@ spec:
       - cluster1: a SEPARATE Kind cluster (Istio ambient mesh, httpbin/sleep). You have NO kubectl access to it from here.
       Always use full resource names (virtualmachines, virtualmachineinstances, clusters, machines). Read-only unless the user explicitly approves a change.
 </code></pre>
-<p>Read that briefing against Chapter 18. It describes <code>cluster1</code> as running <code>httpbin/sleep</code> — which was true before the September rebuild and is not true now. The agent is told a fact about its own environment that has expired, and nothing in the platform notices.</p>
+<p>Read that briefing against Chapter 19. It describes <code>cluster1</code> as running <code>httpbin/sleep</code> — which was true before the September rebuild and is not true now. The agent is told a fact about its own environment that has expired, and nothing in the platform notices.</p>
 <h3 id="g7-the-documented-knob-that-controlled-nothing">G.7 The documented knob that controlled nothing</h3>
-<p>Chapter 18's most quotable find. The outer variable, with the warning added after the discovery:</p>
+<p>Chapter 19's most quotable find. The outer variable, with the warning added after the discovery:</p>
 <pre><code class="language-bash"># bake-common.sh (excerpt — header comment)
 #     K3S_VERSION    — DOES NOT actually control the bake (found 2026-09-16,
 #                      upgrading v1.31.4+k3s1 -&gt; v1.37.0+k3s1): the version
@@ -1647,7 +1692,7 @@ K3S_VERSION=&quot;${K3S_VERSION:-v1.37.0+k3s1}&quot;
 </code></pre>
 <p>Two assignments of one name, in one file, a hundred lines apart. Setting the documented one changes nothing at all.</p>
 <h3 id="g8-the-dead-image-and-the-patch-that-survives-a-rebuild">G.8 The dead image, and the patch that survives a rebuild</h3>
-<p>Chapter 18's first real obstacle, and the fix that now runs automatically — quoted with its comment, because the comment records the uncertainty honestly rather than claiming a clean diagnosis.</p>
+<p>Chapter 19's first real obstacle, and the fix that now runs automatically — quoted with its comment, because the comment records the uncertainty honestly rather than claiming a clean diagnosis.</p>
 <pre><code class="language-bash"># 02-capi-init/init-management-cluster.sh (excerpt)
 # ship their kube-rbac-proxy sidecar as `gcr.io/kubebuilder/kube-rbac-proxy:v0.16.0`,
 # a reference that no longer resolves (ImagePullBackOff, &quot;not found&quot;) --
@@ -1678,7 +1723,7 @@ done
 <p>The book draws on three kinds of source, and they are not equally checkable. This appendix says which is which.</p>
 <h3 id="h1-the-companion-repository">H.1 The companion repository</h3>
 <p>The <strong>Build log</strong> sections come from the platform repository, <code>sovereign_cloud</code>. It is the only source a reader can run. Every build-log claim names the file or command behind it in that chapter's <strong>Open the repo</strong> block, and the load-bearing files are quoted in Appendix G.</p>
-<p>One caveat, recorded in Chapter 18's draft notes: most of the material this book cites lives on the working branch <code>upgrade/k8s-1.37-istio-1.31-sympozium-0.10.75</code>, not on <code>main</code>. A reader who clones the default branch will not find much of it.</p>
+<p>One caveat, recorded in Chapter 19's draft notes: most of the material this book cites lives on the working branch <code>upgrade/k8s-1.37-istio-1.31-sympozium-0.10.75</code>, not on <code>main</code>. A reader who clones the default branch will not find much of it.</p>
 <h3 id="h2-briefing-material-not-public-not-in-the-repository">H.2 Briefing material (not public, not in the repository)</h3>
 <p>Four items are the author's own briefing material. They are described here rather than linked, because no path or URL would resolve for a reader. Where the book quotes them, it quotes them verbatim and says so.</p>
 <div class="table-wrap"><table>
@@ -1691,7 +1736,7 @@ done
 <tbody>
 <tr>
 <td><strong>The strategy deck</strong></td>
-<td><em>Reclaiming Margins with Sovereign Cloud</em>, a strategic briefing deck dated February 2026, in five chapters. Parts I and V adapt its argument; Chapter 19 takes its TCO slide apart. None of its figures carries a source, and the book says so each time it quotes one.</td>
+<td><em>Reclaiming Margins with Sovereign Cloud</em>, a strategic briefing deck dated February 2026, in five chapters. Parts I and V adapt its argument; Chapter 20 takes its TCO slide apart. None of its figures carries a source, and the book says so each time it quotes one.</td>
 </tr>
 <tr>
 <td><strong>The sovereign-cloud flyer</strong></td>

@@ -118,15 +118,19 @@ The three-plane agent fleet — Infrastructure, Tenant, Mesh — plus Security, 
 ## Part V — The Dividend
 *Back to the boardroom.*
 
-**17. From the Lab to the Data Centre**
-The honest mapping: what a laptop platform transfers to a production data centre, and what it does not. High availability and failure domains; storage and backup; networking beyond one Docker bridge; capacity planning built on Chapter 19's measured reservation-versus-use gap; secrets, identity and GitOps — the last presented as the direct answer to Chapter 18's "state that lives only in a running cluster"; observability retention; and a support strategy for the deliberate decision to run outside a vendor's tested range. Every claim is labelled **design guidance**, not measurement. Nothing in this chapter was built.
+**17. The Same Cluster Twice**
+What sub-minute bring-up actually changes, measured: **81.96 s** from the destroy command to a served request (N=5, boundaries pre-registered before the first run). The build reproduces at 34.39 s; the teardown, published from a single run at 18.9 s, turns out to be **45.73 s**, and the API objects outlive the machines. Four consequences the platform can demonstrate — recovery as a command, debugging with a control group, upgrades as rebuilds, drills as routine — and four it cannot, because the fixed identity that buys the 34-second build forbids concurrent clusters. Proved on purpose: an admin credential from five rebuilds ago opens a 32-second-old cluster with cluster-admin.
+> Source: `measurements/ch-recovery-drill.sh` and its raw data; DORA; Palantir on ephemeral compute.
+
+**18. From the Lab to the Data Centre**
+The honest mapping: what a laptop platform transfers to a production data centre, and what it does not. High availability and failure domains; storage and backup; networking beyond one Docker bridge; capacity planning built on Chapter 20's measured reservation-versus-use gap; secrets, identity and GitOps — the last presented as the direct answer to Chapter 19's "state that lives only in a running cluster"; observability retention; and a support strategy for the deliberate decision to run outside a vendor's tested range. Every claim is labelled **design guidance**, not measurement. Nothing in this chapter was built.
 > Source: the book's own chapters, re-read as requirements. No new measurements.
 
-**18. The Day We Upgraded Everything**
+**19. The Day We Upgraded Everything**
 Kubernetes 1.35 → 1.37, Istio 1.30 → 1.31, k3s 1.31 → 1.37; both clusters destroyed and rebuilt from nothing. What nobody had scripted (the clusters themselves, KubeVirt, CDI) — and the base-image script that existed all along but that nobody could find. The dead image that reported success. The version variable that had never controlled anything. The Istio release rated for "up to 1.36" that passed 22 of 22 checks anyway. And a cluster that seemed to come back ten seconds faster, until the stopwatch was checked: 33.7 s for both nodes, unchanged. The moral: *reproducibility is the real sovereignty*, and institutional memory is a balance-sheet asset.
 > Source: `CLAUDE.md` (2026-09-16 entries), `02-capi-init/init-management-cluster.sh`, `07-istio-advanced/README.md`.
 
-**19. Reclaiming the Margin**
+**20. Reclaiming the Margin**
 The briefing deck's $12.5M → $8.2M five-year TCO, taken apart line by line: savings that add up exactly with no line for what owning costs, 70% of it in lines no invoice records, and a 5–7 year payback that fits only at the expensive end. Then what the platform measured — reservations against use, 0.33 kWh per million generated tokens, the effort in the repo — a TCO worksheet, the seven-step Sovereign Cloud Journey, a **"Cloud Owning Culture"**, and what to ask your vendors, including the one you become.
 > Source: deck ch. 5, slide 19; the unbranded sovereign-cloud flyer, v2 (Appendix H).
 
@@ -140,7 +144,7 @@ Meridian's CTO, twelve months later. Short. It ends on the flyer's line.
 - **A. The repo, stage by stage** — `00-prereqs` through `07-istio-advanced`, one paragraph each, and the `make` targets that matter.
 - **B. Addresses that must not move** — the MetalLB IP allocation table and pool discipline.
 - **C. The failure-mode catalog** — the pitfalls and the chapters' findings, reorganized by *symptom*: four causes behind one identical "exit 2, zero log output" crash; scripts that reported success; statuses wrong in both directions; the registry alias; the admission race; per-run identities.
-- **D. The measurement protocol** — `phase-timings.sh`, why N≥7 on a noisy host, counting nodes by name rather than by number, and the figures as last measured: teardown 18.9 s, bring-up 33.7 s for both nodes.
+- **D. The measurement protocol** — `phase-timings.sh`, why N≥7 on a noisy host, counting nodes by name rather than by number, and the figures as last measured: teardown 45.7 s, bring-up 33.7 s for both nodes.
 - **E. The ten labs** — quick reference, with the ✅ / ⚠️ honesty markers preserved.
 - **F. A glossary for the boardroom** — CAPI, KubeVirt, ambient mesh, waypoint, SPIFFE, agentic control plane, sovereign cloud — one plain-English sentence each.
 - **G. Key files, quoted** — the load-bearing manifests and code, verbatim with their repo paths, so the book can be checked without the companion repository: the warm manifest's seven objects, the two one-line speed fixes, the two ways to count a failover, the egress allowlist, an agent as an object, the `K3S_VERSION` that controlled nothing, and the dead-image patch.
@@ -152,7 +156,7 @@ Meridian's CTO, twelve months later. Short. It ends on the flyer's line.
 
 **Must be written from scratch (no existing source):**
 - All of Part IV in CxO-readable prose — the repo holds the technical truth, nothing holds the narrative.
-- The **TCO bridge** in ch. 19: connecting 24-second clusters, warm pools, and local models to dollars. The deck's figures are industry-generic; Meridian needs real cost data to land.
+- The **TCO bridge** in ch. 20: connecting 24-second clusters, warm pools, and local models to dollars. The deck's figures are industry-generic; Meridian needs real cost data to land.
 - The Meridian framing device and the recurring chapter closers.
 - A boardroom-level explanation of KubeVirt and "why VMs still matter" (ch. 4) — absent from both the deck and the repo.
 

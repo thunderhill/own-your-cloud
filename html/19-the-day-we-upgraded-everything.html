@@ -395,8 +395,8 @@ td strong { color: var(--accent); font-weight: 600; }
 <article class="chapter">
   <header class="masthead">
     <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part V — The Dividend</span><span class="sep">/</span><span>Draft 1</span></p>
-    <p class="ch-number" aria-hidden="true">18</p>
-    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 18: </span>The Day We Upgraded Everything</h1>
+    <p class="ch-number" aria-hidden="true">19</p>
+    <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 19: </span>The Day We Upgraded Everything</h1>
     <blockquote class="epigraph"><p><em>Do not assume <code>latest</code> is safe just because a past jump was.</em></p>
 <p>— <code>CLAUDE.md</code>, the repository's operating notes</p>
 </blockquote>
@@ -546,7 +546,7 @@ Programmed=False (ListenersNotValid)
 </tbody>
 </table></div>
 <p><strong>33.7 seconds</strong>, against 34.5 before the upgrade. Within the noise of three runs, the upgrade changed nothing. Six minor versions of k3s and two of Kubernetes, and a cluster that builds in the same time — which is a perfectly good result, as long as nobody claims it is a better one.</p>
-<p>Tearing the cluster down was measured separately, once: the delete command returned after <strong>10.15 seconds</strong> while Cluster API worked through its finalizers, and every VM and machine object was gone at <strong>18.9 seconds</strong>.</p>
+<p>Tearing the cluster down was measured separately, once: the delete command returned after <strong>10.15 seconds</strong> while Cluster API worked through its finalizers, and every VM and machine object was gone at <strong>18.9 seconds</strong>. That was a single run, and it did not survive being measured again: five runs in Chapter 17 put it at <strong>45.73 seconds</strong>, with the machines themselves stopping at 35.6 s. The figure below is left as it was recorded on the day.</p>
 <h2 id="the-balance-sheet-of-memory">The balance sheet of memory</h2>
 <p>Here is the day's accounting in the terms the risk committee asked for.</p>
 <p><strong>Rebuilt from the repository:</strong> both host clusters, the golden image, the target cluster, the service mesh with all five acts, and the agent platform with its three agents. <strong>Recovered from the old cluster, because nothing else held it:</strong> the Kind cluster setup, the KubeVirt and CDI installation, and a working proxy image for the k3s providers. <strong>Found wrong in the repository:</strong> a version variable that controlled nothing, an image check that tested presence rather than contents, and a service-account binding that had quietly stopped applying. <strong>Already known, and therefore cheap:</strong> five errors that cost one attempt each.</p>
@@ -566,7 +566,7 @@ Programmed=False (ListenersNotValid)
 <li><strong>Upgraded:</strong> Kubernetes 1.35.0 → 1.37.0 on both host clusters; k3s v1.31.4 → v1.37.0 in the target cluster; Istio 1.30.3 → 1.31.0; Sympozium 0.10.57 → 0.10.75; <code>kind</code> 0.31.0 → 0.33.0; the client library 0.36.2 → 0.37.0.</li>
 <li><strong>Upgraded without anyone choosing it:</strong> Cluster API 1.14.0 → 1.14.2, installed at whatever version <code>clusterctl</code> fetched that day; and cert-manager on <code>cluster2</code> at 1.21.1, brought in by <code>clusterctl</code>, while the agent platform's install script pins 1.16.2 — it found cert-manager already present and skipped its own.</li>
 <li><strong>Rebuilt and verified:</strong> both host clusters, the golden image, the target cluster, all five mesh acts (22 of 22 checks), and the agent platform.</li>
-<li><strong>Measured:</strong> bring-up 33.7 s median for both nodes (control plane alone, 24.7 s) — no measurable change from 34.5 s; teardown 18.9 s. An earlier reading of 23.9 s was the control plane only (Chapter 7).</li>
+<li><strong>Measured:</strong> bring-up 33.7 s median for both nodes (control plane alone, 24.7 s) — no measurable change from 34.5 s; teardown 18.9 s — superseded by Chapter 17's 45.73 s across five runs. An earlier reading of 23.9 s was the control plane only (Chapter 7).</li>
 <li><strong>Written back into the repository:</strong> the dead-image patch, the bake-script warning, the unsupported-mesh decision, and an upgrade entry in the operating notes.</li>
 <li><strong>Still owed:</strong> the Kind clusters, KubeVirt, and CDI documented as prerequisites but still not scripted; a mesh outside its tested range; a ListenerSet whose status and Service disagree; <code>:latest</code> and <code>:preinit</code> images still carrying k3s v1.31.4; a minimal base image never re-imported; Kind node images pinned by tag rather than digest; timing scripts that count a ghost node as a worker; and a recorded cause for the missing CPU setting that is wrong.</li>
 </ul>

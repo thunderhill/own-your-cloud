@@ -601,13 +601,21 @@
       <li class="chapter">
         <span class="ch-num">17</span>
         <div>
-          <h3 class="ch-title">From the Lab to the Data Centre</h3>
-          <p class="ch-blurb">The honest mapping: what a laptop platform transfers to a production data centre, and what it does not. High availability and failure domains; replicated storage and a restore nobody has run; networking beyond one Docker bridge; capacity planning built on Chapter 19's measured reservation-versus-use gap; secrets, identity, and GitOps as the direct answer to Chapter 18's "state that lives only in a running cluster"; observability retention; and a support policy for running outside a vendor's tested range. Every claim is labelled <em>design guidance</em>. <strong>Nothing in this chapter was built.</strong></p>
-          <p class="ch-source">the book's own chapters, re-read as requirements · no new measurements</p>
+          <h3 class="ch-title">The Same Cluster Twice</h3>
+          <p class="ch-blurb">What sub-minute bring-up actually changes, measured: <span class="n">81.96 s</span> from the destroy command to a served request, N=5, with the boundaries pre-registered before the first run. The build reproduces at <span class="n">34.39 s</span>; the teardown, published from a single run at 18.9 s, turns out to be <span class="n">45.73 s</span>. Four consequences the platform can demonstrate, and four it cannot &mdash; because the fixed identity that buys the 34-second build forbids concurrent clusters. Proved on purpose: an admin credential from five rebuilds ago opens a 32-second-old cluster.</p>
+          <p class="ch-source"><code>measurements/ch-recovery-drill.sh</code> &middot; DORA &middot; Palantir on ephemeral compute</p>
         </div>
       </li>
       <li class="chapter">
         <span class="ch-num">18</span>
+        <div>
+          <h3 class="ch-title">From the Lab to the Data Centre</h3>
+          <p class="ch-blurb">The honest mapping: what a laptop platform transfers to a production data centre, and what it does not. High availability and failure domains; replicated storage and a restore nobody has run; networking beyond one Docker bridge; capacity planning built on Chapter 20's measured reservation-versus-use gap; secrets, identity, and GitOps as the direct answer to Chapter 19's "state that lives only in a running cluster"; observability retention; and a support policy for running outside a vendor's tested range. Every claim is labelled <em>design guidance</em>. <strong>Nothing in this chapter was built.</strong></p>
+          <p class="ch-source">the book's own chapters, re-read as requirements · no new measurements</p>
+        </div>
+      </li>
+      <li class="chapter">
+        <span class="ch-num">19</span>
         <div>
           <h3 class="ch-title">The Day We Upgraded Everything</h3>
           <p class="ch-blurb">Kubernetes 1.35 → 1.37, Istio 1.30 → 1.31, k3s 1.31 → 1.37; both clusters destroyed and rebuilt from nothing. What nobody had scripted — the clusters themselves, KubeVirt, CDI — and the base-image script that existed all along but that nobody could find. The dead image that reported success. The version variable that had never controlled anything. The Istio release rated for "up to 1.36" that passed <span class="n">22 of 22</span> checks anyway. And a cluster that seemed to come back ten seconds faster, until the stopwatch was checked: <span class="n">33.7 s</span> for both nodes, unchanged. The moral: <em>reproducibility is the real sovereignty</em>, and institutional memory is a balance-sheet asset.</p>
@@ -615,7 +623,7 @@
         </div>
       </li>
       <li class="chapter">
-        <span class="ch-num">19</span>
+        <span class="ch-num">20</span>
         <div>
           <h3 class="ch-title">Reclaiming the Margin</h3>
           <p class="ch-blurb">The briefing deck's <span class="n">$12.5M → $8.2M</span> five-year TCO, taken apart line by line: savings that add up exactly with no line for what owning costs, <span class="n">70%</span> of it in lines no invoice records, and a <span class="n">5–7 year</span> payback that fits only at the expensive end. Then what the platform measured — reservations against use, <span class="n">0.33 kWh</span> per million generated tokens, the effort in the repo — a TCO worksheet, the seven-step Sovereign Cloud Journey, a <em>"Cloud Owning Culture"</em>, and what to ask your vendors, including the one you become.</p>
@@ -638,7 +646,7 @@
       <li><span class="ltr">A</span><span><strong>The repo, stage by stage</strong> — <code>00-prereqs</code> through <code>07-istio-advanced</code>, one paragraph each, and the <code>make</code> targets that matter.</span></li>
       <li><span class="ltr">B</span><span><strong>Addresses that must not move</strong> — the MetalLB IP allocation table and pool discipline.</span></li>
       <li><span class="ltr">C</span><span><strong>The failure-mode catalog</strong> — the pitfalls and the chapters' findings, reorganized by <em>symptom</em>: four causes behind one identical "exit 2, zero log output" crash; scripts that reported success; statuses wrong in both directions; the registry alias; the admission race; per-run identities.</span></li>
-      <li><span class="ltr">D</span><span><strong>The measurement protocol</strong> — <code>phase-timings.sh</code>, why N≥7 on a noisy host, counting nodes by name rather than by number, and the figures as last measured: teardown <span class="n">18.9 s</span>, bring-up <span class="n">33.7 s</span> for both nodes.</span></li>
+      <li><span class="ltr">D</span><span><strong>The measurement protocol</strong> — <code>phase-timings.sh</code>, why N≥7 on a noisy host, counting nodes by name rather than by number, and the figures as last measured: teardown <span class="n">45.7 s</span>, bring-up <span class="n">33.7 s</span> for both nodes.</span></li>
       <li><span class="ltr">E</span><span><strong>The ten labs</strong> — quick reference, with the ✅ / ⚠️ honesty markers preserved.</span></li>
       <li><span class="ltr">F</span><span><strong>A glossary for the boardroom</strong> — CAPI, KubeVirt, ambient mesh, waypoint, SPIFFE, agentic control plane, sovereign cloud — one plain-English sentence each.</span></li>
       <li><span class="ltr">G</span><span><strong>Key files, quoted</strong> — the load-bearing manifests and code, verbatim with their repo paths, so the book can be checked without the companion repository.</span></li>
@@ -653,7 +661,7 @@
         <h3>Must be written from scratch</h3>
         <ul>
           <li>All of Part IV in CxO-readable prose — the repo holds the technical truth; nothing holds the narrative.</li>
-          <li>The TCO bridge in ch. 18: 24-second clusters, warm pools, and local models, in dollars. The deck's figures are industry-generic; Meridian needs real cost data.</li>
+          <li>The TCO bridge in ch. 19: 24-second clusters, warm pools, and local models, in dollars. The deck's figures are industry-generic; Meridian needs real cost data.</li>
           <li>The Meridian device and the recurring closers.</li>
           <li>A boardroom-level case for KubeVirt and "why VMs still matter" (ch. 4) — absent from both sources.</li>
         </ul>

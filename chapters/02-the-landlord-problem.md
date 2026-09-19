@@ -40,7 +40,7 @@ Analogies persuade by what they leave out, and this one leaves out the boiler.
 
 A tenant who wakes to a broken boiler calls the landlord. An owner fixes it. Owning the brain of your cluster means owning its mistakes too, and this book records plenty of them:
 
-- In September 2026, Kubernetes and everything around it were upgraded on the platform this book describes. It took a week of rebuilding. The rebuild turned up a dead container image that never started, behind a setup script that reported success anyway, a version setting that had never controlled what it claimed to, and a mesh release running outside its tested range. That is Chapter 18.
+- In September 2026, Kubernetes and everything around it were upgraded on the platform this book describes. It took a week of rebuilding. The rebuild turned up a dead container image that never started, behind a setup script that reported success anyway, a version setting that had never controlled what it claimed to, and a mesh release running outside its tested range. That is Chapter 19.
 - For months, the dashboard reported a worker machine as `Ready` while a single configuration line prevented it from running any workload at all. That is Chapter 5.
 - A software component pinned to a *moving* version tag quietly updated itself one day and then crashed about every thirty seconds, with no log output, for thousands of restarts before anyone diagnosed it. That is recorded in the repository's own list of pitfalls.
 
@@ -87,7 +87,7 @@ The deck is honest about what ownership demands, and this chapter should be too.
 
 This book adds three items from experience:
 
-- **Upgrades are yours.** On a managed service, a Kubernetes upgrade is a button and a maintenance window. Here it was a week (Chapter 18).
+- **Upgrades are yours.** On a managed service, a Kubernetes upgrade is a button and a maintenance window. Here it was a week (Chapter 19).
 - **Measurement is yours.** Nobody tells an owner how long things take, or whether a dashboard is telling the truth. Chapters 5, 7 and 11 are about building that for yourself.
 - **Pinning is yours.** An owner who does not fix software versions in place has quietly handed the landlord's role to whoever publishes the latest release.
 

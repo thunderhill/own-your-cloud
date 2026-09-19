@@ -42,7 +42,7 @@ Then she came to the band at the bottom, and stopped.
 
 *Save $Millions.*
 
-Nobody had measured that — not here. The platform could build a cluster from a written order with both machines ready in a median of 33.7 seconds, and tear it down in 18.9. It could keep a spare cluster warm and hand it over in under half a second. Those were measurements.
+Nobody had measured that — not here. The platform could build a cluster from a written order with both machines ready in a median of 33.7 seconds, and tear it down in 45.7. It could keep a spare cluster warm and hand it over in under half a second. Those were measurements.
 
 And in September the pilot had finally metered one workload both ways: a single web service, running steadily, priced against a public list price for the same two machines. Owning the metal came out roughly an order of magnitude cheaper per hour. Then the engineering time went on the same sheet, and the picture turned over: at one workload, owning lost. The line crossed somewhere around the second or third steady workload, and after that it ran away.
 
@@ -86,11 +86,11 @@ Anita turned the page back round, and put her finger on the line in the corner t
 
 *The year, measured — collected from the chapters of this book.*
 
-- **The factory:** a two-machine Kubernetes cluster built from a written declaration, both machines ready in a median of 33.7 s and torn down in 18.9 s, on open-source Cluster API and KubeVirt, on owned hardware (Chapters 4, 7 and 8).
+- **The factory:** a two-machine Kubernetes cluster built from a written declaration, both machines ready in a median of 33.7 s and torn down in 45.7 s, on open-source Cluster API and KubeVirt, on owned hardware (Chapters 4, 7 and 8).
 - **The fabric:** failover between two clusters measured by status code, 30 calls out of 30, with one label replacing hand-written cross-cluster plumbing (Chapters 10 and 11).
 - **The brain:** AI agents on models hosted in the building; a planted fault triaged correctly in 3 runs out of 3; a smaller model that invented output when its tool failed quietly (Chapters 13–16).
 - **The gauges:** a worker reported `Ready` that could not run work; a cluster reported unavailable while it served workloads; a map labelled `live` drawing fourteen things that did not exist; a failover check that printed success during a total outage (Chapters 4, 5, 11 and 12).
-- **The money:** one workload metered both ways on the lab platform (Chapter 19) — rented $0.250 per workload-hour at list price, owned metal $0.02–$0.06, and owning only paying for its own build effort at roughly the second or third steady workload. Against **Meridian's** own invoice: still not measured. That is the difference the chapter is careful about.
+- **The money:** one workload metered both ways on the lab platform (Chapter 20) — rented $0.250 per workload-hour at list price, owned metal $0.02–$0.06, and owning only paying for its own build effort at roughly the second or third steady workload. Against **Meridian's** own invoice: still not measured. That is the difference the chapter is careful about.
 
 ## Ask your team
 

@@ -447,7 +447,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <h2 id="the-promise-that-is-worth-testing">The promise that is worth testing</h2>
 <p class="dateline dateline-record">Build log · June–September 2026</p>
 <p>If owning is going to compete with renting, it has to match the cloud's signature promise: capacity in seconds, not months. That is testable, and the rest of this book tests it.</p>
-<p>On the platform in this book, a complete Kubernetes cluster — a control plane and a worker, each running as its own virtual machine — is built from a written declaration to both machines ready in a median of <strong>33.7 seconds</strong>, measured on 17 September 2026 (Chapter 7). Tearing one down takes <strong>18.9 seconds</strong>. Claiming a pre-built standby took <strong>467 milliseconds</strong>, median of three runs measured 18 September 2026 — about 72 times faster than the cold build (Chapter 9).</p>
+<p>On the platform in this book, a complete Kubernetes cluster — a control plane and a worker, each running as its own virtual machine — is built from a written declaration to both machines ready in a median of <strong>33.7 seconds</strong>, measured on 17 September 2026 (Chapter 7). Tearing one down takes <strong>45.7 seconds</strong> (Chapter 17; an earlier single-run figure of 18.9 s did not survive being measured five times). Claiming a pre-built standby took <strong>467 milliseconds</strong>, median of three runs measured 18 September 2026 — about 72 times faster than the cold build (Chapter 9).</p>
 <p>Speed, it turns out, is not something only a landlord can offer. But the same chapters also show what it cost to get there. The first measured build took 50 seconds. Four attempts to make it faster failed. The two changes that worked took months of instrumentation to find (Chapter 8). And the dashboard reported the worker as ready for months while it was unable to run anything (Chapter 5).</p>
 <p>That is the honest shape of the ROI question. Owning can match renting on speed. What it costs in people and attention is the part the rest of this book counts.</p>
 <hr class="scene-break" />
@@ -464,7 +464,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>The paradox (public record):</strong> committed cloud spend averaging about 50% of cost of revenue among benchmarked public software companies; repatriation reported at one-third to one-half of the cloud cost for equivalent workloads (Andreessen Horowitz, 2021).</li>
 <li><strong>The evidence (public record):</strong> Dropbox, $74.6 million saved over two years; 37signals, a cloud bill cut from $3.2 million to $1.3 million a year, with more than $10 million projected over five years.</li>
 <li><strong>Not supported:</strong> the deck's 2–3x multiplier, 15–25% annual increases, and "80% of IT budgets" have no source. Its $1.3 trillion 2025 market figure does not match Gartner's $723.4 billion forecast.</li>
-<li><strong>Measured on owned hardware (build log):</strong> a two-VM Kubernetes cluster ready in 33.7 s median; torn down in 18.9 s.</li>
+<li><strong>Measured on owned hardware (build log):</strong> a two-VM Kubernetes cluster ready in 33.7 s median; torn down in 45.7 s.</li>
 </ul>
 <h2 id="ask-your-team">Ask your team</h2>
 <ol>

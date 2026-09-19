@@ -38,7 +38,7 @@ Those figures deserve the same honesty as the rest of Part II. They are stated i
 
 ## Baking
 
-Baking a golden image is a four-step job run by `bake-common.sh`, and on 16 September it was run from scratch during the rebuild in Chapter 18.
+Baking a golden image is a four-step job run by `bake-common.sh`, and on 16 September it was run from scratch during the rebuild in Chapter 19.
 
 1. **Clone the base image.** A stock Ubuntu Noble cloud image, already imported into the cluster as a DataVolume by the Containerized Data Importer, is cloned into a new volume. On 16 September: about 50 seconds.
 2. **Boot a bake VM** from the clone, with a cloud-init script that does the real work.
@@ -88,7 +88,7 @@ cluster2-control-plane   172.18.0.3
 registry                 172.18.0.4
 ```
 
-Every image reference on the platform points at the control-plane node of `cluster1` — a Kubernetes node that runs no registry. Before the rebuild in Chapter 18, the repository's notes recorded `.2` as `cluster2`'s node instead, and in June as `cluster1`'s. The address in the image names has moved from one neighbor to another and back. In every record the repository keeps, it has never been the registry's own.
+Every image reference on the platform points at the control-plane node of `cluster1` — a Kubernetes node that runs no registry. Before the rebuild in Chapter 19, the repository's notes recorded `.2` as `cluster2`'s node instead, and in June as `cluster1`'s. The address in the image names has moved from one neighbor to another and back. In every record the repository keeps, it has never been the registry's own.
 
 Images still pull, because the container runtime on each `cluster2` node is given a small translation file:
 
@@ -104,7 +104,7 @@ That arrangement fails in two ways, and both have happened.
 
 **The registry's address drifts.** When containers reconnect to the network, the registry can come back at a different address. The translation file still points at the old one, and new VMs sit in `ImagePullBackOff`, failing to reach `172.18.0.2:5000`.
 
-**The file disappears.** It lives inside the node's container, so recreating a node — as Chapter 18 did to both clusters — deletes it.
+**The file disappears.** It lives inside the node's container, so recreating a node — as Chapter 19 did to both clusters — deletes it.
 
 The repair is `scripts/fix-registry-hosts.sh`, added in June. It looks up the registry's current address and rewrites the translation file on every `cluster2` node. The Makefile runs it before the deploy and pre-pull targets. The UI's own deploy path does not.
 
@@ -120,7 +120,7 @@ By 17 September the registry held three tags of the platform image, and the gap 
 
 Everything inside an image was decided on the day it was baked, and every cluster built from it inherits those decisions:
 
-- **A Kubernetes version.** Chapter 18 had to rebake `:warm` because every tag still carried k3s v1.31, and the variable the bake script documented for choosing the version turned out never to have controlled anything.
+- **A Kubernetes version.** Chapter 19 had to rebake `:warm` because every tag still carried k3s v1.31, and the variable the bake script documented for choosing the version turned out never to have controlled anything.
 - **A ghost.** The warm image's Node object for its own bake VM (Chapter 7).
 - **Fixed certificates and a join token**, baked into the warm image on purpose, safe only while one cluster runs at a time.
 - **An Ubuntu base** as it stood on the day it was imported.

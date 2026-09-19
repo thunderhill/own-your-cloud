@@ -166,7 +166,7 @@ Measured on 17 September by HTTP status, on Istio 1.31 and Kubernetes 1.37, with
 envoy://inner_connect_originate/172.18.255.221:15008   HEALTHY   inbound-vip|80|http|echo.demo-apps.svc.cluster.local
 ```
 
-The problem recorded that August evening no longer reproduces. The opt-out the console applies is now unnecessary, though harmless. What changed is not established. The Istio upgrade of Chapter 18 is the obvious candidate.
+The problem recorded that August evening no longer reproduces. The opt-out the console applies is now unnecessary, though harmless. What changed is not established. The Istio upgrade of Chapter 19 is the obvious candidate.
 
 **The other August gotcha still reproduces.** Act 2 also leaves a route that splits in-mesh traffic between the `echo-v1` and `echo-v2` Services — and those Services are not global. With that route re-applied and cluster1's copies scaled to zero, 20 of 20 calls returned `503`. After the route was deleted, the second call returned `200`, 0.15 seconds later, and the next 20 all did. A route that points at local-only services overrides global routing. Act 3 deletes the route for exactly this reason.
 
@@ -212,7 +212,7 @@ Anita looked for a long time. "So the check I asked to see go red can't."
 - **Re-verified (17 September; Istio 1.31.0, Kubernetes 1.37):** verification script 22 passed, 0 failed. Rogue route refused. Identity rules 200 / 403 / 403 / 200. Caller identity delivered to the application.
 - **Measured by HTTP status:** cluster1 scaled to zero → 30 of 30 `200`, all from cluster2. Both clusters at zero → 20 of 20 `503`, which Act 3's counter reports as `success=20 failed=0`.
 - **Found:** the ListenerSet beat refused for a missing `ReferenceGrant`, and never asserted; healthy traffic split 30/30 across clusters, despite the manifest's comment; a local/remote classifier that sees one of three remote pods; a verification section that checks configuration, not behaviour; one August gotcha that no longer reproduces, and one that still does.
-- **Corrected elsewhere:** Chapter 18 had cited `success=20 failed=0` as proof of failover. It now cites the status-code measurement.
+- **Corrected elsewhere:** Chapter 19 had cited `success=20 failed=0` as proof of failover. It now cites the status-code measurement.
 - **Cleaned up:** every replica count, label and route changed for measurement was put back, and checked.
 
 ## Ask your team

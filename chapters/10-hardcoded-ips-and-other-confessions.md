@@ -171,7 +171,7 @@ The proper answer arrived in August as `07-istio-advanced/`: five acts, each of 
 | L7 policy | none (ztunnel is L4-only) | waypoint + `AuthorizationPolicy` on SPIFFE identity |
 | Cross-cluster | `ServiceEntry` + hardcoded MetalLB IP + NodePort proxy | `istio.io/global: "true"` |
 
-A single label on a Service replaces the address book, the fixed address and the hand-written proxy. Chapter 11 tells that story, including the day a waypoint silently broke it. (The "after" column has since moved to Istio 1.31; Chapter 18.)
+A single label on a Service replaces the address book, the fixed address and the hand-written proxy. Chapter 11 tells that story, including the day a waypoint silently broke it. (The "after" column has since moved to Istio 1.31; Chapter 19.)
 
 It would have been easy to delete `05-istio/` that same day. Instead the README records that it *"is left untouched. It stays as the 'before' picture."* A company keeps last year's accounts for the same reason: an improvement you cannot compare against is only a claim.
 

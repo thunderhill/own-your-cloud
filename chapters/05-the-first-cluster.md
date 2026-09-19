@@ -50,7 +50,7 @@ The platform runs on a single workstation, and it is built from three Kubernetes
 
 The third cluster, `target-cluster`, is the product. It is a k3s cluster whose control plane and worker are virtual machines running *inside* `cluster2`.
 
-The repository builds the factory in numbered stages — `00-prereqs` installs the `clusterctl` tool, `01-metallb` the load balancer, `02-capi-init` the Cluster API providers, `03-target-cluster` the target cluster, `04-verify` a health check — with `make all` running the first four. As Chapter 18 found, the stages assume a few things already exist: the Kind clusters themselves, KubeVirt, and CDI are installed by hand.
+The repository builds the factory in numbered stages — `00-prereqs` installs the `clusterctl` tool, `01-metallb` the load balancer, `02-capi-init` the Cluster API providers, `03-target-cluster` the target cluster, `04-verify` a health check — with `make all` running the first four. As Chapter 19 found, the stages assume a few things already exist: the Kind clusters themselves, KubeVirt, and CDI are installed by hand.
 
 ## One apply
 
@@ -82,7 +82,7 @@ Cluster/target-cluster
                         └─ Pod/virt-launcher-target-cluster-cp-s9j8h-…
 ```
 
-One link is missing. The VirtualMachine has no owner reference back to the `KubevirtMachine` that created it; the provider manages it without one. So deleting a cluster is not a single cascade that Kubernetes performs on its own. It is a sequence of controllers noticing, finalizing, and deleting, one object at a time — which is part of why, in Chapter 18, tearing a cluster down took nearly nineteen seconds.
+One link is missing. The VirtualMachine has no owner reference back to the `KubevirtMachine` that created it; the provider manages it without one. So deleting a cluster is not a single cascade that Kubernetes performs on its own. It is a sequence of controllers noticing, finalizing, and deleting, one object at a time — which is part of why, in Chapter 19, tearing a cluster down took nearly nineteen seconds.
 
 ## Six layers deep
 

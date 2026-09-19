@@ -1,4 +1,4 @@
-# Chapter 19 — Reclaiming the Margin
+# Chapter 20 — Reclaiming the Margin
 
 > *The question is no longer whether you can afford to become your own cloud provider, but whether you can afford not to.*
 >
@@ -93,7 +93,7 @@ The three largest owners of servers in the world disagree about how long a serve
 
 The platform in this book cannot supply Meridian's numbers. It can supply something the slide lacks: inputs that were measured. Four of them matter for a TCO.
 
-**Speed.** A two-machine Kubernetes cluster is built from its declaration to both machines ready in a median of 33.7 seconds, and torn down in 18.9 (Chapter 7). For steady workloads, "we rent because renting is faster" is no longer a line that has to be paid for.
+**Speed.** A two-machine Kubernetes cluster is built from its declaration to both machines ready in a median of 33.7 seconds, and torn down in 45.7 (Chapters 7 and 17). For steady workloads, "we rent because renting is faster" is no longer a line that has to be paid for.
 
 **Reservation versus use.** Waste is not only a cloud problem. On the management cluster that afternoon:
 
@@ -121,13 +121,13 @@ Put the slide's shape and the platform's measurements together, and the chapter'
 | Line | Renting | Owning | What this book measured |
 |---|---|---|---|
 | Capacity | On the invoice | Hardware, amortized over its refresh cycle (4–6 years, per the public record) | 22.42 GiB reserved against 7.45 GiB used |
-| Speed to capacity | Minutes | The factory's build time | 33.7 s to a two-machine cluster; 18.9 s to remove one |
+| Speed to capacity | Minutes | The factory's build time | 33.7 s to a two-machine cluster; 45.7 s to remove one |
 | Software | Managed-service fees and licences | Open source, plus optional support | The whole stack is open source (Chapters 3–4) |
 | Leaving | Switching fees (banned in the EU from 2027) and rebuilding proprietary services | Migration project, and paying for both during it | No migration tooling in the repository (Chapter 4) |
 | Power and facilities | Inside the rent | Power, cooling, space | 0.33 kWh per million generated tokens, GPU only |
 | AI inference | Per token, hosted | Hardware sized for the models | 34–37 tokens/s; one model at a time on a 6 GB GPU |
 | People | The supplier's staff | Platform team, on-call, training | A lab: one committer (Mahipal), 70 of 88 commits AI-co-authored, over 18 days |
-| Upgrades | A button and a maintenance window | Yours | A week, for one major upgrade (Chapter 18) |
+| Upgrades | A button and a maintenance window | Yours | A week, for one major upgrade (Chapter 19) |
 | Knowing what's true | The supplier's status page | Your own checks | Gauges found wrong in Chapters 4, 5, 11 and 12 |
 
 ## One workload, metered both ways
@@ -184,7 +184,7 @@ Put that on the same worksheet. At an assumed $400–$1,200 per engineer-day, sp
 
 **The crossover is at roughly two to three steady workloads.** Below it, the build effort swamps everything and the cloud is cheaper. Above it, the hardware arithmetic starts to look like the a16z paper's "one-third to one-half," and keeps improving.
 
-That is the first line in this book that is true about money, and it is worth being precise about how small it is. It is one workload, on one laptop, for ten minutes, against one provider's list price, with three of its four cost inputs assumed rather than measured. It does not capture high availability, replicated storage, backup, support contracts, on-call, an SLA, facilities, networking hardware, or any of the right-hand column of Chapter 17 — every one of which the rented price *includes* and the owned price does not.
+That is the first line in this book that is true about money, and it is worth being precise about how small it is. It is one workload, on one laptop, for ten minutes, against one provider's list price, with three of its four cost inputs assumed rather than measured. It does not capture high availability, replicated storage, backup, support contracts, on-call, an SLA, facilities, networking hardware, or any of the right-hand column of Chapter 18 — every one of which the rented price *includes* and the owned price does not.
 
 So the honest statement of the result is narrow, and it is still the most useful sentence the platform has produced about cost:
 

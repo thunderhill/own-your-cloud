@@ -82,7 +82,7 @@ Idle capacity costs money wherever it runs. The difference is who sends the bill
 
 If owning is going to compete with renting, it has to match the cloud's signature promise: capacity in seconds, not months. That is testable, and the rest of this book tests it.
 
-On the platform in this book, a complete Kubernetes cluster — a control plane and a worker, each running as its own virtual machine — is built from a written declaration to both machines ready in a median of **33.7 seconds**, measured on 17 September 2026 (Chapter 7). Tearing one down takes **18.9 seconds**. Claiming a pre-built standby took **467 milliseconds**, median of three runs measured 18 September 2026 — about 72 times faster than the cold build (Chapter 9).
+On the platform in this book, a complete Kubernetes cluster — a control plane and a worker, each running as its own virtual machine — is built from a written declaration to both machines ready in a median of **33.7 seconds**, measured on 17 September 2026 (Chapter 7). Tearing one down takes **45.7 seconds** (Chapter 17; an earlier single-run figure of 18.9 s did not survive being measured five times). Claiming a pre-built standby took **467 milliseconds**, median of three runs measured 18 September 2026 — about 72 times faster than the cold build (Chapter 9).
 
 Speed, it turns out, is not something only a landlord can offer. But the same chapters also show what it cost to get there. The first measured build took 50 seconds. Four attempts to make it faster failed. The two changes that worked took months of instrumentation to find (Chapter 8). And the dashboard reported the worker as ready for months while it was unable to run anything (Chapter 5).
 
@@ -110,7 +110,7 @@ The CFO ran his finger down the first column. "Most of it is steady."
 - **The paradox (public record):** committed cloud spend averaging about 50% of cost of revenue among benchmarked public software companies; repatriation reported at one-third to one-half of the cloud cost for equivalent workloads (Andreessen Horowitz, 2021).
 - **The evidence (public record):** Dropbox, $74.6 million saved over two years; 37signals, a cloud bill cut from $3.2 million to $1.3 million a year, with more than $10 million projected over five years.
 - **Not supported:** the deck's 2–3x multiplier, 15–25% annual increases, and "80% of IT budgets" have no source. Its $1.3 trillion 2025 market figure does not match Gartner's $723.4 billion forecast.
-- **Measured on owned hardware (build log):** a two-VM Kubernetes cluster ready in 33.7 s median; torn down in 18.9 s.
+- **Measured on owned hardware (build log):** a two-VM Kubernetes cluster ready in 33.7 s median; torn down in 45.7 s.
 
 ## Ask your team
 

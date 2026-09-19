@@ -432,7 +432,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>The platform runs on a single workstation, and it is built from three Kubernetes clusters.</p>
 <p><code>cluster1</code> and <code>cluster2</code> are Kind clusters: Kubernetes whose "nodes" are Docker containers. <code>cluster1</code> hosts the service-mesh demonstrations in Part III. <code>cluster2</code> is the <strong>management cluster</strong> — the factory. It runs Cluster API, which manages clusters as Kubernetes objects; KubeVirt, which runs virtual machines as Kubernetes workloads; CDI, which imports disk images; MetalLB, which hands out load-balancer addresses; and the agent platform from Part IV.</p>
 <p>The third cluster, <code>target-cluster</code>, is the product. It is a k3s cluster whose control plane and worker are virtual machines running <em>inside</em> <code>cluster2</code>.</p>
-<p>The repository builds the factory in numbered stages — <code>00-prereqs</code> installs the <code>clusterctl</code> tool, <code>01-metallb</code> the load balancer, <code>02-capi-init</code> the Cluster API providers, <code>03-target-cluster</code> the target cluster, <code>04-verify</code> a health check — with <code>make all</code> running the first four. As Chapter 18 found, the stages assume a few things already exist: the Kind clusters themselves, KubeVirt, and CDI are installed by hand.</p>
+<p>The repository builds the factory in numbered stages — <code>00-prereqs</code> installs the <code>clusterctl</code> tool, <code>01-metallb</code> the load balancer, <code>02-capi-init</code> the Cluster API providers, <code>03-target-cluster</code> the target cluster, <code>04-verify</code> a health check — with <code>make all</code> running the first four. As Chapter 19 found, the stages assume a few things already exist: the Kind clusters themselves, KubeVirt, and CDI are installed by hand.</p>
 <h2 id="one-apply">One apply</h2>
 <p>The default target cluster is one file: <code>03-target-cluster/target-cluster-warm.yaml</code>, 258 lines declaring seven objects.</p>
 <div class="table-wrap"><table>
@@ -481,7 +481,7 @@ td strong { color: var(--accent); font-weight: 600; }
                    └─ VirtualMachineInstance/target-cluster-cp-s9j8h
                         └─ Pod/virt-launcher-target-cluster-cp-s9j8h-…
 </code></pre>
-<p>One link is missing. The VirtualMachine has no owner reference back to the <code>KubevirtMachine</code> that created it; the provider manages it without one. So deleting a cluster is not a single cascade that Kubernetes performs on its own. It is a sequence of controllers noticing, finalizing, and deleting, one object at a time — which is part of why, in Chapter 18, tearing a cluster down took nearly nineteen seconds.</p>
+<p>One link is missing. The VirtualMachine has no owner reference back to the <code>KubevirtMachine</code> that created it; the provider manages it without one. So deleting a cluster is not a single cascade that Kubernetes performs on its own. It is a sequence of controllers noticing, finalizing, and deleting, one object at a time — which is part of why, in Chapter 19, tearing a cluster down took nearly nineteen seconds.</p>
 <h2 id="six-layers-deep">Six layers deep</h2>
 <p>The chain above describes ownership. The picture below describes where the software actually runs, and it is the thing to hold in mind for the rest of Part II:</p>
 <ol>
