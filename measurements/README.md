@@ -100,3 +100,54 @@ Context is `kind-cluster2`; `supportContainerResources` present with `cpu: "1"` 
 - **"Both nodes Ready" is not two nodes of capacity.** The worker carries `node.cloudprovider.kubernetes.io/uninitialized:NoSchedule` and nothing removes it, so the drill's workload lands on the control plane.
 - **No data survived, because there is none.**
 - **It does not generalise to two concurrent clusters** — the fixed CA and token make exactly one `target-cluster` safe at a time.
+
+### Results — 19 September 2026
+
+`ch17-recovery-drill-20260919-163611.tsv`, N=5 after one discarded rehearsal. Host load 1.45–2.81 before runs; MemAvailable 13.1–13.6 GiB; the `ollama-warm` schedule did not fire during any run.
+
+| Figure | Median | All five runs | Spread |
+|---|---:|---|---:|
+| **MTTR — destroy to first HTTP 200** | **81.96 s** | 80.40 / 81.20 / 81.96 / 82.59 / 84.03 | 3.63 s |
+| Delete command returns | 10.13 s | 9.16 / 10.13 / 10.13 / 10.13 / 10.14 | 0.98 s |
+| Teardown — last API object gone | 45.73 s | 44.76 / 45.58 / 45.73 / 45.97 / 46.00 | 1.24 s |
+| Build — both nodes Ready | 34.39 s | 32.15 / 33.89 / 34.39 / 34.49 / 36.39 | 4.24 s |
+| Build — control plane alone | 25.60 s | 25.30 / 25.46 / 25.60 / 25.67 / 26.08 | 0.78 s |
+| Workload applied to first HTTP 200 | 1.34 s | 1.07 / 1.08 / 1.34 / 1.41 / 1.65 | 0.58 s |
+
+**The build reproduces; the teardown does not.** 34.39 s against the published 33.7 s is well within the spread. But teardown, published at **18.9 s from a single run**, re-measures at **45.73 s** — more than twice the published figure, with a spread of only 1.24 s across five runs.
+
+A separate run (N=1) split the two possible definitions of "gone", because the published figure counted API objects only:
+
+| Boundary | Time |
+|---|---:|
+| Delete command returns | 9.11 s |
+| qemu processes gone — the machines have actually stopped | 35.60 s |
+| Last API object gone — what 18.9 s was measuring | 45.33 s |
+
+So the objects outlive the machines by about ten seconds, and **neither definition reproduces 18.9 s.** The old figure was a single run and the book labelled it as such; it is superseded here.
+
+### Every run, the same four observations
+
+- **Zero `Pulling` events.** Nothing was fetched from the internet inside the clock.
+- **The ghost node was excluded by name**, every run: `ubuntu-bake-vm-warm`, `Ready`, never counted.
+- **The workload landed on the control plane**, every run — the worker's taint holds.
+- **`kube-system` reports `creationTimestamp: 2026-09-16T07:10:33Z`** while the nodes were created that day. The namespace carries the *bake* date. This is restore-from-image, not provision-from-scratch.
+
+### The shared-identity test
+
+Run 1's admin kubeconfig, issued for `target-cluster-cp-ptkvc`, was kept. After five further destroy-rebuild cycles, it was presented to `target-cluster-cp-lmrt2` — a different cluster, 32 seconds old:
+
+```
+$ kubectl --kubeconfig /tmp/drill-kubeconfig-run1 get nodes
+target-cluster-cp-lmrt2              Ready   control-plane   32s   v1.37.0+k3s1
+target-cluster-workers-xq7mb-vbjr2   Ready   <none>          23s   v1.37.0+k3s1
+
+$ kubectl --kubeconfig /tmp/drill-kubeconfig-run1 auth can-i '*' '*'
+yes
+```
+
+**It authenticates, with full cluster-admin.** Chapter 5 observed this by accident; this is the deliberate test. The fixed CA set that removes the certificate work from the boot path — and buys the 34-second build — also means every cluster built from the `:warm` image is cryptographically the same cluster.
+
+### One correction to Chapter 5
+
+Chapter 5 records the worker as having *"been given nothing to do."* A pod that tolerates `node.cloudprovider.kubernetes.io/uninitialized` and pins to the worker by hostname **runs there normally** (verified 19 September, `drill-workload-worker.yaml`). The worker is not broken hardware; it is excluded by a scheduling gate. Nothing ordinary will land on it, which is the operative fact, but the machine works.

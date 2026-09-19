@@ -106,14 +106,15 @@ run_one() {
   say "    delete returned        $(el "$T0" "$T1")s"
 
   # T2: objects gone AND qemu gone. Poll at 0.25s: 2s polling quantises an
-  # 18.9s figure by ~10%. The pgrep pattern is anchored on the qemu command so
-  # it cannot match this script's own command line (it returned 3 for 2 VMs
-  # when written loosely).
+  # 18.9s figure by ~10%.
   local deadline=$(( $(date +%s) + 240 ))
   while :; do
     local objs qemu
     objs="$(kubectl get vm,vmi,kubevirtmachine,machine,machineset,machinedeployment,kthreescontrolplane,cluster -n default -o name 2>/dev/null | grep -c target-cluster)"
-    qemu="$(pgrep -fc 'qemu-kvm -name guest=default_target-cluster' 2>/dev/null || echo 0)"
+    # ps, not pgrep: `pgrep -f` matches the shell whose own command line
+    # contains the pattern, so it can never reach zero. Anchoring on the
+    # process NAME via ps cannot self-match (our comm is ps/awk).
+    qemu="$(ps -eo comm=,args= | awk '/^qemu/ && /guest=default_target-cluster/' | wc -l)"
     [ "$objs" -eq 0 ] && [ "$qemu" -eq 0 ] && break
     [ "$(date +%s)" -ge "$deadline" ] && { say "    TIMEOUT waiting for teardown (objs=$objs qemu=$qemu)"; echo "FAILED"; return 1; }
     sleep 0.25
