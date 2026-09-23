@@ -452,7 +452,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>The first was a script, <code>06-sympozium/ollama-warm.sh</code>: send a one-token request and ask the model server to keep the model loaded for twenty-four hours. The second was the Phase 0 deliverable from Chapter 16: a heartbeat schedule that pings <code>cluster2-agent</code> every four minutes. Its comment explains why: <em>"Cold-start on CPU is ~28-30s; this schedule removes that latency from the first real KubeUI chat request."</em> Chapter 14 found that schedule had fired twice and stopped. The third tool is the one actually doing the job: the host's Ollama service runs with <code>OLLAMA_KEEP_ALIVE=-1</code>, which keeps a loaded model loaded indefinitely. That setting lives in the host's service configuration, not in the repository.</p>
 <h2 id="the-gpu-changed-the-price">The GPU changed the price</h2>
 <p class="dateline dateline-record">Build log · 17 September 2026</p>
-<p>The constraint's thirty seconds was a CPU number. The host now has an NVIDIA RTX 4050 laptop GPU with 6 GB of memory, and Ollama places each of the fleet's models entirely on it. So the cold start was measured again on 17 September, using the load time Ollama reports for each request — first with a model unloaded, then with it loaded:</p>
+<p>The constraint's thirty seconds was a CPU number. The host now has an NVIDIA RTX 4050 GPU with 6 GB of memory, and Ollama places each of the fleet's models entirely on it. So the cold start was measured again on 17 September, using the load time Ollama reports for each request — first with a model unloaded, then with it loaded:</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>

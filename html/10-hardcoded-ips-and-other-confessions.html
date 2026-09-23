@@ -413,7 +413,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>Vikram had the answer on the wall screen. Two clusters, drawn as boxes. Four live probes between them, all green. "And the traffic between the sites is encrypted?" the architect asked. "It all goes through the service mesh," Vikram said, and pressed a button that switched off a service in the first cluster. One probe went red. A moment later an amber badge lit across the top of the diagram: <strong>⚡ FAILOVER ACTIVE</strong>.</p>
 <p>The architect nodded and wrote something down.</p>
 <p>Afterwards, Anita stayed in the room. "Which service took over?"</p>
-<p>"None of them." Vikram brought the code up on his laptop. "The badge comes on when a service here is down <em>and</em> a call to a different service over there still works. The two aren't connected."</p>
+<p>"None of them." Vikram brought the code up on his workstation. "The badge comes on when a service here is down <em>and</em> a call to a different service over there still works. The two aren't connected."</p>
 <p>"So the screen showed two true facts, and a word that joined them."</p>
 <p>"Yes."</p>
 <p>"And the word is what the bank wrote down." She looked at the diagram a while longer. "How much of the rest of this picture is like that?"</p>
@@ -423,7 +423,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p class="dateline dateline-record">Build log · 12 March 2026</p>
 <h2 id="eight-steps-one-commit">Eight steps, one commit</h2>
 <p>Shortly after midnight on 12 March, a single commit added the platform's whole cross-cluster story: an eight-step interactive demo script, a mind-map diagram of the traffic path, a "Live Demo" tab in the web console with real probes and failure controls, and six more console panels for the service mesh. Thirty-six files; 5,362 lines added.</p>
-<p>The problem it took on was genuinely hard. <code>cluster1</code> is a Kind cluster on the laptop. The target cluster is k3s running inside two KubeVirt virtual machines, which run inside pods of a <em>second</em> Kind cluster, <code>cluster2</code>. For a program in cluster1 to call a program in the target cluster, a request has to leave one cluster, find the right virtual machine inside another, and get in.</p>
+<p>The problem it took on was genuinely hard. <code>cluster1</code> is a Kind cluster on the workstation. The target cluster is k3s running inside two KubeVirt virtual machines, which run inside pods of a <em>second</em> Kind cluster, <code>cluster2</code>. For a program in cluster1 to call a program in the target cluster, a request has to leave one cluster, find the right virtual machine inside another, and get in.</p>
 <p>And there is no shared address plan to lean on. cluster1 and cluster2 both number their pods from the same range, <code>10.244.0.0/24</code> — checked on both clusters on 17 September. The target cluster's control-plane machine holds the address <code>10.244.0.115</code>. Typed into cluster1, that address names a slot in cluster1's <em>own</em> pod network, not a machine in the other cluster.</p>
 <p>So the demo built a path by hand, and prints it at the end:</p>
 <pre><code>sleep pod → ztunnel → ServiceEntry → MetalLB 172.18.255.216
@@ -444,7 +444,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <blockquote>
 <p><strong>KubeVirt Masquerade</strong> — VM gets static IP 10.0.2.2. NAT via virt-launcher pod. All ports forwarded (DNAT).</p>
 </blockquote>
-<p><em>Masquerade</em> is one of two common ways to connect a virtual machine to a Kubernetes network. The machine sits behind its pod like a laptop behind a home router: it has a private address, <code>10.0.2.2</code>, and the pod translates traffic in and out. The other way, <em>bridge</em>, has the machine take the pod's address as its own, with nothing translated.</p>
+<p><em>Masquerade</em> is one of two common ways to connect a virtual machine to a Kubernetes network. The machine sits behind its pod like a workstation behind a home router: it has a private address, <code>10.0.2.2</code>, and the pod translates traffic in and out. The other way, <em>bridge</em>, has the machine take the pod's address as its own, with nothing translated.</p>
 <p>The same commit that added the diagram switched the target cluster from one to the other:</p>
 <pre><code class="language-diff">                   interfaces:
 -                    - masquerade: {}

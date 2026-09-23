@@ -70,7 +70,7 @@ Sovereignty is easy to assert and tedious to check. This is what the platform in
 
 **Where it holds:**
 
-- **The models are in the room.** All three of the platform's serving agents send their model calls to Ollama, running on the laptop's own GPU, through an address inside the cluster (Chapter 12). The host holds fourteen models, and none of the agents calls a hosted model service.
+- **The models are in the room.** All three of the platform's serving agents send their model calls to Ollama, running on the workstation's own GPU, through an address inside the cluster (Chapter 12). The host holds fourteen models, and none of the agents calls a hosted model service.
 - **A cluster boots without the internet.** Everything a new cluster needs — Kubernetes, its container images, its system settings — was downloaded once, when the golden image was built. Nothing is downloaded when a cluster is created (Chapter 6).
 - **The mesh's root of trust is local.** The certificate authority that issues every workload identity in the service mesh is generated on the platform itself. There is no external certificate authority, *"and it also means the demo works air-gapped"* (Chapter 11).
 - **The software is open source.** Cluster API, KubeVirt, k3s, Istio, Sympozium and Ollama are all open projects. No component requires a licence key from a supplier.
@@ -94,7 +94,7 @@ The models that fit on hardware you own are smaller than the frontier models ava
 - A 3-billion-parameter model, when its tool silently failed, invented plausible cluster output and presented it as fact (Chapter 15).
 - A 7-billion-parameter model, told in its instructions to refuse a class of question, did not reliably refuse (Chapter 14).
 - The same 7-billion-parameter model, in a scored triage exercise, found the correct root cause of a planted fault in 3 runs out of 3 (Chapter 15).
-- The laptop's GPU holds one model at a time, so which model is "warm" is a shared resource that agents compete for (Chapter 9).
+- The workstation's GPU holds one model at a time, so which model is "warm" is a shared resource that agents compete for (Chapter 9).
 
 Sovereign AI today means smaller models, owned hardware sized for them, and more verification around every answer. None of those is a reason not to do it. All of them are reasons to budget for it.
 

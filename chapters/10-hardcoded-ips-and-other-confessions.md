@@ -14,7 +14,7 @@ The architect nodded and wrote something down.
 
 Afterwards, Anita stayed in the room. "Which service took over?"
 
-"None of them." Vikram brought the code up on his laptop. "The badge comes on when a service here is down *and* a call to a different service over there still works. The two aren't connected."
+"None of them." Vikram brought the code up on his workstation. "The badge comes on when a service here is down *and* a call to a different service over there still works. The two aren't connected."
 
 "So the screen showed two true facts, and a word that joined them."
 
@@ -34,7 +34,7 @@ Afterwards, Anita stayed in the room. "Which service took over?"
 
 Shortly after midnight on 12 March, a single commit added the platform's whole cross-cluster story: an eight-step interactive demo script, a mind-map diagram of the traffic path, a "Live Demo" tab in the web console with real probes and failure controls, and six more console panels for the service mesh. Thirty-six files; 5,362 lines added.
 
-The problem it took on was genuinely hard. `cluster1` is a Kind cluster on the laptop. The target cluster is k3s running inside two KubeVirt virtual machines, which run inside pods of a *second* Kind cluster, `cluster2`. For a program in cluster1 to call a program in the target cluster, a request has to leave one cluster, find the right virtual machine inside another, and get in.
+The problem it took on was genuinely hard. `cluster1` is a Kind cluster on the workstation. The target cluster is k3s running inside two KubeVirt virtual machines, which run inside pods of a *second* Kind cluster, `cluster2`. For a program in cluster1 to call a program in the target cluster, a request has to leave one cluster, find the right virtual machine inside another, and get in.
 
 And there is no shared address plan to lean on. cluster1 and cluster2 both number their pods from the same range, `10.244.0.0/24` — checked on both clusters on 17 September. The target cluster's control-plane machine holds the address `10.244.0.115`. Typed into cluster1, that address names a slot in cluster1's *own* pod network, not a machine in the other cluster.
 
@@ -64,7 +64,7 @@ The mind map is this chapter's figure, and it is a good diagram: clear boxes, th
 
 > **KubeVirt Masquerade** — VM gets static IP 10.0.2.2. NAT via virt-launcher pod. All ports forwarded (DNAT).
 
-*Masquerade* is one of two common ways to connect a virtual machine to a Kubernetes network. The machine sits behind its pod like a laptop behind a home router: it has a private address, `10.0.2.2`, and the pod translates traffic in and out. The other way, *bridge*, has the machine take the pod's address as its own, with nothing translated.
+*Masquerade* is one of two common ways to connect a virtual machine to a Kubernetes network. The machine sits behind its pod like a workstation behind a home router: it has a private address, `10.0.2.2`, and the pod translates traffic in and out. The other way, *bridge*, has the machine take the pod's address as its own, with nothing translated.
 
 The same commit that added the diagram switched the target cluster from one to the other:
 

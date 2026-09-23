@@ -327,7 +327,7 @@ Anita looked at the spread before she looked at the median. "Half a second."
 
 "June is written down, with its numbers. Nobody here pays for it twice."
 
-She opened the board summary on her laptop, found the line that said *< 40 s*, and deleted it. Then she typed the replacement herself: *34.5 s median, three runs, spread 0.5 s — measured 9 September.*
+She opened the board summary on her workstation, found the line that said *< 40 s*, and deleted it. Then she typed the replacement herself: *34.5 s median, three runs, spread 0.5 s — measured 9 September.*
 
 "Put a date on every number," she said. "A number without a date and a spread is a slogan."
 

@@ -99,7 +99,7 @@ Chapter 15 argued that an agent's answer is a claim, not evidence. A reviewer ag
 
 A sovereign fleet runs on the hardware the organization owns, so the size of the fleet is bounded by that hardware rather than by an invoice. Lab 07 asks the platform's model-fit service what fits.
 
-On 17 September it described the host as an AMD Ryzen AI 9 HX 370 with an NVIDIA RTX 4050 laptop GPU — 6 GB of video memory — and about 30 GB of system memory, and it scored 1,365 candidate models against that hardware. Its top picks were 30- to 36-billion-parameter mixture-of-experts models, rated a *"Good"* fit at an estimated 26 to 32 tokens per second.
+On 17 September it described the host as an AMD Ryzen AI 9 HX 370 with an NVIDIA RTX 4050 GPU — 6 GB of video memory — and about 30 GB of system memory, and it scored 1,365 candidate models against that hardware. Its top picks were 30- to 36-billion-parameter mixture-of-experts models, rated a *"Good"* fit at an estimated 26 to 32 tokens per second.
 
 The two models the fleet actually uses are more revealing:
 

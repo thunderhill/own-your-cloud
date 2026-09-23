@@ -98,7 +98,7 @@ This is the factory as it stood on the day this chapter was checked.
 
 **The factory built what the order said.** Cluster API recorded two Machines. Each is backed by a KubeVirt virtual machine, `target-cluster-cp-s9j8h` and `target-cluster-workers-rz9xt-m5x6z`, both `Running` and ready. From the moment the file is applied, both machines are ready in a median of **33.7 seconds**, and the whole cluster is torn down in **45.7 seconds** (Chapters 7 and 17).
 
-**The factory fits in a laptop.** The management cluster, the cluster it built, a second cluster for the service mesh, and the AI agents all ran on one host (the prologue lists it). The manufacturing pattern is the same one a data centre would use. The capacity is not.
+**The factory fits in a workstation.** The management cluster, the cluster it built, a second cluster for the service mesh, and the AI agents all ran on one host (the prologue lists it). The manufacturing pattern is the same one a data centre would use. The capacity is not.
 
 ## The gauge that disagrees
 

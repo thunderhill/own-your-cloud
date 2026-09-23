@@ -425,7 +425,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <h3 id="00-prereqs">00-prereqs</h3>
 <p><code>install-clusterctl.sh</code> installs <code>clusterctl</code>, the Cluster API command-line tool. <em>Target:</em> <code>make prereqs</code>.</p>
 <h3 id="01-metallb">01-metallb</h3>
-<p>Installs MetalLB, which gives Services on the laptop's Docker network real IP addresses, and configures the address pool for <code>cluster2</code> (now <code>.211–.225</code>, widened by <code>07-istio-advanced</code>). <strong>Do not run it against <code>cluster1</code></strong>: it tries to substitute a placeholder that does not exist in its configuration file, so it would advertise <code>cluster2</code>'s range on the shared network (Appendix B). <em>Target:</em> <code>make metallb</code>.</p>
+<p>Installs MetalLB, which gives Services on the workstation's Docker network real IP addresses, and configures the address pool for <code>cluster2</code> (now <code>.211–.225</code>, widened by <code>07-istio-advanced</code>). <strong>Do not run it against <code>cluster1</code></strong>: it tries to substitute a placeholder that does not exist in its configuration file, so it would advertise <code>cluster2</code>'s range on the shared network (Appendix B). <em>Target:</em> <code>make metallb</code>.</p>
 <h3 id="02-capi-init">02-capi-init</h3>
 <p><code>init-management-cluster.sh</code> turns <code>cluster2</code> into a cluster factory. It installs Cluster API v1.14.2, the KubeVirt infrastructure provider (CAPK) v0.11.2, and the k3s bootstrap and control-plane providers v0.3.0. It then replaces a dead proxy image those providers ship (Chapter 19), and runs <code>scripts/configure-kubevirt-perf.sh</code>, which applies the CPU setting that cut eight seconds from every VM start (Chapter 8). That auto-run can silently do nothing — not, as first diagnosed, because it races KubeVirt's start-up, but because the script's own readiness waits can outlast whatever time limit its caller imposes, and it is killed before reaching that last step (Chapter 19). Check afterwards that the setting landed. <em>Targets:</em> <code>make capi-init</code>, <code>make kubevirt-perf</code>.</p>
 <h3 id="03-target-cluster">03-target-cluster</h3>
@@ -1307,7 +1307,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>Golden image</strong> — a pre-built machine image with everything a cluster node needs baked in, so nothing is downloaded at boot.</li>
 <li><strong>Istio</strong> — the open-source service mesh this platform uses.</li>
 <li><strong>k3s</strong> — a small, single-binary distribution of Kubernetes.</li>
-<li><strong>Kind</strong> — "Kubernetes in Docker": complete Kubernetes clusters running as containers on one machine; used here as the laptop's data centre.</li>
+<li><strong>Kind</strong> — "Kubernetes in Docker": complete Kubernetes clusters running as containers on one machine; used here as the workstation's data centre.</li>
 <li><strong>KubeVirt</strong> — open-source software that runs virtual machines as Kubernetes objects, beside containers.</li>
 <li><strong>Kubernetes</strong> — the open-source system that runs and manages containers across many machines.</li>
 <li><strong>Local-LLM-first</strong> — the rule that AI models run on hardware the organization controls, with hosted models used only where explicitly allowed.</li>

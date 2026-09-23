@@ -123,7 +123,7 @@ What sub-minute bring-up actually changes, measured: **81.96 s** from the destro
 > Source: `measurements/ch-recovery-drill.sh` and its raw data; DORA; Palantir on ephemeral compute.
 
 **18. From the Lab to the Data Centre**
-The honest mapping: what a laptop platform transfers to a production data centre, and what it does not. High availability and failure domains; storage and backup; networking beyond one Docker bridge; capacity planning built on Chapter 20's measured reservation-versus-use gap; secrets, identity and GitOps — the last presented as the direct answer to Chapter 19's "state that lives only in a running cluster"; observability retention; and a support strategy for the deliberate decision to run outside a vendor's tested range. Every claim is labelled **design guidance**, not measurement. Nothing in this chapter was built.
+The honest mapping: what a workstation platform transfers to a production data centre, and what it does not. High availability and failure domains; storage and backup; networking beyond one Docker bridge; capacity planning built on Chapter 20's measured reservation-versus-use gap; secrets, identity and GitOps — the last presented as the direct answer to Chapter 19's "state that lives only in a running cluster"; observability retention; and a support strategy for the deliberate decision to run outside a vendor's tested range. Every claim is labelled **design guidance**, not measurement. Nothing in this chapter was built.
 > Source: the book's own chapters, re-read as requirements. No new measurements.
 
 **19. The Day We Upgraded Everything**

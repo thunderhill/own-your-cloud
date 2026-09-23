@@ -1,6 +1,6 @@
 # Chapter 18 — From the Lab to the Data Centre
 
-> *That is not a data centre, and the book never pretends it is. What transfers from a laptop to a data centre is not scale. It is the pattern, the measurements, and — more often than the vendor brochures would suggest — the failures.*
+> *That is not a data centre, and the book never pretends it is. What transfers from a workstation to a data centre is not scale. It is the pattern, the measurements, and — more often than the vendor brochures would suggest — the failures.*
 >
 > — the prologue of this book
 
@@ -10,13 +10,13 @@ The pilot had done what a pilot is for. Anita Rao put one slide up, and it had t
 
 "Everything on the left, we measured," she said. "Everything on the right, we would have to build. I am not asking the board to approve the right-hand column today. I am asking it to stop confusing the two."
 
-The chief financial officer read it twice. "The left column is a laptop."
+The chief financial officer read it twice. "The left column is a workstation."
 
-"One laptop. Twenty-nine gigabytes of memory, one consumer graphics card, one power supply, one of everything. It builds a Kubernetes cluster in thirty-four seconds and hands over a spare in under half a second, and both of those numbers are real."
+"One workstation. Twenty-nine gigabytes of memory, one consumer graphics card, one power supply, one of everything. It builds a Kubernetes cluster in thirty-four seconds and hands over a spare in under half a second, and both of those numbers are real."
 
 "And in a data centre?"
 
-"The same thirty-four seconds, probably. That part is the software, and the software does not care where it runs." She let that sit. "What changes is everything the laptop lets us skip. One of everything is fine until the one fails."
+"The same thirty-four seconds, probably. That part is the software, and the software does not care where it runs." She let that sit. "What changes is everything the workstation lets us skip. One of everything is fine until the one fails."
 
 "Give me the list."
 
@@ -36,15 +36,15 @@ The CFO turned to Vikram. "How much of the right-hand column is new engineering?
 
 The reason for the chapter is the question that follows every demonstration in this book: *yes, but would it work for real?* The useful answer is not "yes." It is a list.
 
-## What the laptop was allowed to skip
+## What the workstation was allowed to skip
 
 Start with what makes the lab a lab. Each of these is a real property of the platform described in this book, recorded in the chapter named.
 
 - **One of everything.** One machine. The management cluster runs as a single Kind node; the target cluster has one control-plane machine and one worker. There is no second copy of anything, anywhere.
 - **One failure domain.** A power cut, a kernel panic, or a full disk takes the entire platform — management cluster, workload cluster, models, agents, registry and console — at once.
-- **Storage that is a directory.** Virtual machine disks live on the laptop's filesystem. There is no replication, no snapshot policy, and no backup. The platform has never restored anything.
+- **Storage that is a directory.** Virtual machine disks live on the workstation's filesystem. There is no replication, no snapshot policy, and no backup. The platform has never restored anything.
 - **A network with no network in it.** Everything shares one Docker bridge. Addresses are handed out by MetalLB in layer-2 mode from a hardcoded range, `172.18.255.200–225` (Appendix B). There is no router, no VLAN, no firewall, no external DNS.
-- **Trust that was generated once and committed.** The warm path's certificate authorities are fixed, and their private keys are in version control, labelled demo-only (Chapter 3). The mesh's root of trust was generated on the laptop.
+- **Trust that was generated once and committed.** The warm path's certificate authorities are fixed, and their private keys are in version control, labelled demo-only (Chapter 3). The mesh's root of trust was generated on the workstation.
 - **No identity.** The web console has no login. Neither does the agent console embedded in it. The one authenticated surface is the agent platform's own API, which does require a bearer token.
 - **Capacity that is one deep.** One warm standby cluster, one model resident on the GPU at a time (Chapter 9).
 
@@ -81,7 +81,7 @@ Four more differences, each of which the lab simply does not have:
 - **Segmentation.** Management traffic, workload traffic, storage replication and out-of-band console access belong on separate VLANs. The lab has one flat network, which is why nothing in this book has ever had to think about it.
 - **DNS.** The platform resolves nothing externally; the mesh's cross-cluster names work because Istio was told about them. Production clusters need real names in the organization's DNS, with a plan for who creates records and how fast they change.
 - **Certificates.** The mesh's root of trust was generated locally, and the warm path's certificate authorities are committed to the repository (Chapter 3). In a data centre both belong in the organization's own public-key infrastructure, with a defined lifetime and a rotation procedure that has been performed at least once. Automated issuance — cert-manager is already present on the management cluster — covers the leaf certificates but does not answer the question of who owns the root.
-- **Firewalling.** Chapter 14 found the agent egress rule allows ports rather than destinations, so anything the agents can address on port 443 is reachable. On one laptop that is a finding. On a network with production systems on it, it is the finding.
+- **Firewalling.** Chapter 14 found the agent egress rule allows ports rather than destinations, so anything the agents can address on port 443 is reachable. On one workstation that is a finding. On a network with production systems on it, it is the finding.
 
 ## Capacity planning, from the one measurement that transfers
 
@@ -120,7 +120,7 @@ The design guidance is therefore blunt: **put the four unscripted things in Git 
 
 ## Observability that remembers
 
-The lab's observability is real but has no memory. Prometheus holds the mesh's metrics with the sample add-on's retention and no durable storage; Kiali is anonymous; the recorded agent demonstrations are files on a laptop. Chapter 12 found the model traffic — the traffic the board asks about most — carried no model name and no token count, and was displayed nowhere.
+The lab's observability is real but has no memory. Prometheus holds the mesh's metrics with the sample add-on's retention and no durable storage; Kiali is anonymous; the recorded agent demonstrations are files on a workstation. Chapter 12 found the model traffic — the traffic the board asks about most — carried no model name and no token count, and was displayed nowhere.
 
 For a data centre, three requirements follow, in this order of usefulness:
 
@@ -158,7 +158,7 @@ The two-column slide Anita put on the wall, filled in from the book's own chapte
 | The capacity lesson: reservations govern, and the reservation-to-use gap is the margin (Chapter 20) | The absolute figures — 22.42 GiB reserved, 7.45 GiB used — which are one host's numbers, not a sizing model |
 | **The discipline**: measure by name, assert on values, keep the before picture, record the dead ends (Chapters 7, 10, 11, 15, 18) | The assumption that anything here has been operated — no on-call, no SLA, no users, no auditor |
 
-Read the right-hand column as a work plan and it is long but ordinary: well-understood components, wired in by people who have done it before. Read the left-hand column as what a year of a single engineer and an AI assistant produced, and the interesting claim of this book survives the move to a data centre — not *we built a cloud on a laptop*, but *we found out what is true, cheaply, before spending the money.*
+Read the right-hand column as a work plan and it is long but ordinary: well-understood components, wired in by people who have done it before. Read the left-hand column as what a year of a single engineer and an AI assistant produced, and the interesting claim of this book survives the move to a data centre — not *we built a cloud on a workstation*, but *we found out what is true, cheaply, before spending the money.*
 
 That is the last thing that transfers, and the only one that cannot be bought.
 

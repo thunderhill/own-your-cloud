@@ -28,19 +28,30 @@ PARTS = {
 text = subprocess.run(["pdftotext", "-layout", str(PDF), "-"],
                       capture_output=True, text=True, check=True).stdout
 pages = [re.sub(r"\s+", " ", p).strip() for p in text.split("\f")]
+n_pages = text.count("\f")   # pdftotext ends every page with a form feed
+
+# Page layout: 1 front cover, 2 title page, 3 contents, chapters..., last = back cover.
+# The covers and the title page carry no page number; every other page shows its
+# position in the file, so the number on the page matches the viewer's page counter.
+UNNUMBERED_FRONT = 2
+FIRST_CHAPTER_SEARCH = 4
 
 
-def find_page(needle, start=1):
-    """First page (1-based, at or after `start`) whose text contains `needle`."""
-    probe = re.sub(r"\s+", " ", needle).strip()
+def find_page(needle, start=1, loose=False):
+    """First page (1-based, at or after `start`) whose text contains `needle`.
+
+    loose=True ignores all whitespace: Chrome's wide letter-spacing makes pdftotext read
+    the divider kicker "PART II" as "PA RT I I"."""
+    squash = (lambda t: re.sub(r"\s+", "", t)) if loose else (lambda t: re.sub(r"\s+", " ", t).strip())
+    probe = squash(needle)
     for n in range(start, len(pages) + 1):
-        if probe in pages[n - 1]:
+        if probe in squash(pages[n - 1]):
             return n
     return None
 
 
 entries = []   # (level, title, page)
-cursor = 3     # skip title page + contents
+cursor = FIRST_CHAPTER_SEARCH   # skip front cover, title page and contents
 
 for path in sorted((ROOT / "chapters").glob("*.md")):
     first = path.read_text().split("\n", 1)[0]
@@ -49,8 +60,10 @@ for path in sorted((ROOT / "chapters").glob("*.md")):
     key = path.stem[:2]
     if key in PARTS:
         part = PARTS[key]
-        # The part divider renders its name in caps, before the chapter.
-        p = find_page(part.split(" — ")[1].upper(), cursor) or find_page(part.split(" — ")[1], cursor)
+        # The divider page reads "PART II The Factory ..." (the kicker is set in caps). Match the
+        # kicker and name together: the name alone also turns up in earlier body text.
+        kicker, name = part.split(" — ")
+        p = find_page(f"{kicker.upper()} {name}", cursor, loose=True) or find_page(name, cursor)
         if p:
             entries.append((0, part, p))
             cursor = p
@@ -79,18 +92,21 @@ for i, (lvl, _, _) in enumerate(entries):
     counts.append(k)
 
 
-def esc(s):
-    return s.replace("\\", r"\\").replace("(", r"\(").replace(")", r"\)")
+def pdf_text(s):
+    """A PDF text string: UTF-16BE with a byte-order mark, so characters such as the em dash survive.
+    (A plain (...) string is read as PDFDocEncoding, which turns UTF-8 bytes into mojibake.)"""
+    return "<FEFF" + s.encode("utf-16-be").hex().upper() + ">"
 
 
 ps = [
     "%!PS",
-    "% Page numbers, centred in the bottom margin. Page 1 (the title page) is skipped.",
+    f"% Page numbers, centred in the bottom margin. The front cover and title page (pages 1-{UNNUMBERED_FRONT})",
+    "% and the back cover (last page) are skipped.",
     "<< /EndPage {",
     "  2 dict begin",
     "  /Reason exch def /PageCount exch def",  # Reason is on top of the stack
     "  Reason 0 eq {",
-    "    PageCount 0 gt {",
+    f"    PageCount {UNNUMBERED_FRONT} ge PageCount {n_pages - 1} lt and {{",
     "      gsave",
     "      /Helvetica findfont 8 scalefont setfont",
     "      0.45 setgray",
@@ -108,7 +124,7 @@ ps = [
 ]
 for (lvl, title, page), kids in zip(entries, counts):
     count = f"/Count {kids} " if lvl == 0 and kids else ""
-    ps.append(f"[ {count}/Page {page} /View [/XYZ null null null] /Title ({esc(title)}) /OUT pdfmark")
+    ps.append(f"[ {count}/Page {page} /View [/XYZ null null null] /Title {pdf_text(title)} /OUT pdfmark")
 
 OUT.write_text("\n".join(ps) + "\n")
 parts = sum(1 for e in entries if e[0] == 0)

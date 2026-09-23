@@ -27,7 +27,7 @@ The numbered directories run in order. Four prerequisites are **not** created by
 
 ### 01-metallb
 
-Installs MetalLB, which gives Services on the laptop's Docker network real IP addresses, and configures the address pool for `cluster2` (now `.211–.225`, widened by `07-istio-advanced`). **Do not run it against `cluster1`**: it tries to substitute a placeholder that does not exist in its configuration file, so it would advertise `cluster2`'s range on the shared network (Appendix B). *Target:* `make metallb`.
+Installs MetalLB, which gives Services on the workstation's Docker network real IP addresses, and configures the address pool for `cluster2` (now `.211–.225`, widened by `07-istio-advanced`). **Do not run it against `cluster1`**: it tries to substitute a placeholder that does not exist in its configuration file, so it would advertise `cluster2`'s range on the shared network (Appendix B). *Target:* `make metallb`.
 
 ### 02-capi-init
 
@@ -372,7 +372,7 @@ Two statements in the labs index are now out of date. It describes `SympoziumIns
 - **Golden image** — a pre-built machine image with everything a cluster node needs baked in, so nothing is downloaded at boot.
 - **Istio** — the open-source service mesh this platform uses.
 - **k3s** — a small, single-binary distribution of Kubernetes.
-- **Kind** — "Kubernetes in Docker": complete Kubernetes clusters running as containers on one machine; used here as the laptop's data centre.
+- **Kind** — "Kubernetes in Docker": complete Kubernetes clusters running as containers on one machine; used here as the workstation's data centre.
 - **KubeVirt** — open-source software that runs virtual machines as Kubernetes objects, beside containers.
 - **Kubernetes** — the open-source system that runs and manages containers across many machines.
 - **Local-LLM-first** — the rule that AI models run on hardware the organization controls, with hosted models used only where explicitly allowed.

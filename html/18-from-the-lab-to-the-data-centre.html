@@ -397,7 +397,7 @@ td strong { color: var(--accent); font-weight: 600; }
     <p class="eyebrow"><span>Own Your Cloud</span><span class="sep">/</span><span>Part V — The Dividend</span><span class="sep">/</span><span>Draft 1</span></p>
     <p class="ch-number" aria-hidden="true">18</p>
     <h1><span class="visually-hidden" style="position:absolute;left:-9999px">Chapter 18: </span>From the Lab to the Data Centre</h1>
-    <blockquote class="epigraph"><p><em>That is not a data centre, and the book never pretends it is. What transfers from a laptop to a data centre is not scale. It is the pattern, the measurements, and — more often than the vendor brochures would suggest — the failures.</em></p>
+    <blockquote class="epigraph"><p><em>That is not a data centre, and the book never pretends it is. What transfers from a workstation to a data centre is not scale. It is the pattern, the measurements, and — more often than the vendor brochures would suggest — the failures.</em></p>
 <p>— the prologue of this book</p>
 </blockquote>
     <dl class="meta">
@@ -411,10 +411,10 @@ td strong { color: var(--accent); font-weight: 600; }
 <p class="dateline dateline-fiction">Meridian · a Wednesday in October · the fourth-floor boardroom</p>
 <p>The pilot had done what a pilot is for. Anita Rao put one slide up, and it had two columns rather than a number.</p>
 <p>"Everything on the left, we measured," she said. "Everything on the right, we would have to build. I am not asking the board to approve the right-hand column today. I am asking it to stop confusing the two."</p>
-<p>The chief financial officer read it twice. "The left column is a laptop."</p>
-<p>"One laptop. Twenty-nine gigabytes of memory, one consumer graphics card, one power supply, one of everything. It builds a Kubernetes cluster in thirty-four seconds and hands over a spare in under half a second, and both of those numbers are real."</p>
+<p>The chief financial officer read it twice. "The left column is a workstation."</p>
+<p>"One workstation. Twenty-nine gigabytes of memory, one consumer graphics card, one power supply, one of everything. It builds a Kubernetes cluster in thirty-four seconds and hands over a spare in under half a second, and both of those numbers are real."</p>
 <p>"And in a data centre?"</p>
-<p>"The same thirty-four seconds, probably. That part is the software, and the software does not care where it runs." She let that sit. "What changes is everything the laptop lets us skip. One of everything is fine until the one fails."</p>
+<p>"The same thirty-four seconds, probably. That part is the software, and the software does not care where it runs." She let that sit. "What changes is everything the workstation lets us skip. One of everything is fine until the one fails."</p>
 <p>"Give me the list."</p>
 <p>"That is the right-hand column. High availability. Storage that survives a disk. Backups we have restored from, not just taken. Addresses that work on a real network. Secrets that are not in Git." She paused. "Some of those we already know we are missing, because this year we went looking, and the looking is the part I would actually defend to you."</p>
 <p>The CFO turned to Vikram. "How much of the right-hand column is new engineering?"</p>
@@ -424,14 +424,14 @@ td strong { color: var(--accent); font-weight: 600; }
 <p><em>Design guidance · October 2026</em></p>
 <p><strong>A note on what this chapter is.</strong> Every other chapter in this book reports something that happened, with a date. This one does not. It is a design: an honest mapping of what the platform in the preceding sixteen chapters would need in order to run a production workload in a data centre. <strong>Nothing in it was built, measured, or tested.</strong> Where it draws on a real number, that number comes from an earlier chapter, and the chapter is named. Where it names a piece of software, that is a category illustrated by a well-known example, not a recommendation and not a verified fit.</p>
 <p>The reason for the chapter is the question that follows every demonstration in this book: <em>yes, but would it work for real?</em> The useful answer is not "yes." It is a list.</p>
-<h2 id="what-the-laptop-was-allowed-to-skip">What the laptop was allowed to skip</h2>
+<h2 id="what-the-workstation-was-allowed-to-skip">What the workstation was allowed to skip</h2>
 <p>Start with what makes the lab a lab. Each of these is a real property of the platform described in this book, recorded in the chapter named.</p>
 <ul>
 <li><strong>One of everything.</strong> One machine. The management cluster runs as a single Kind node; the target cluster has one control-plane machine and one worker. There is no second copy of anything, anywhere.</li>
 <li><strong>One failure domain.</strong> A power cut, a kernel panic, or a full disk takes the entire platform — management cluster, workload cluster, models, agents, registry and console — at once.</li>
-<li><strong>Storage that is a directory.</strong> Virtual machine disks live on the laptop's filesystem. There is no replication, no snapshot policy, and no backup. The platform has never restored anything.</li>
+<li><strong>Storage that is a directory.</strong> Virtual machine disks live on the workstation's filesystem. There is no replication, no snapshot policy, and no backup. The platform has never restored anything.</li>
 <li><strong>A network with no network in it.</strong> Everything shares one Docker bridge. Addresses are handed out by MetalLB in layer-2 mode from a hardcoded range, <code>172.18.255.200–225</code> (Appendix B). There is no router, no VLAN, no firewall, no external DNS.</li>
-<li><strong>Trust that was generated once and committed.</strong> The warm path's certificate authorities are fixed, and their private keys are in version control, labelled demo-only (Chapter 3). The mesh's root of trust was generated on the laptop.</li>
+<li><strong>Trust that was generated once and committed.</strong> The warm path's certificate authorities are fixed, and their private keys are in version control, labelled demo-only (Chapter 3). The mesh's root of trust was generated on the workstation.</li>
 <li><strong>No identity.</strong> The web console has no login. Neither does the agent console embedded in it. The one authenticated surface is the agent platform's own API, which does require a bearer token.</li>
 <li><strong>Capacity that is one deep.</strong> One warm standby cluster, one model resident on the GPU at a time (Chapter 9).</li>
 </ul>
@@ -454,7 +454,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>Segmentation.</strong> Management traffic, workload traffic, storage replication and out-of-band console access belong on separate VLANs. The lab has one flat network, which is why nothing in this book has ever had to think about it.</li>
 <li><strong>DNS.</strong> The platform resolves nothing externally; the mesh's cross-cluster names work because Istio was told about them. Production clusters need real names in the organization's DNS, with a plan for who creates records and how fast they change.</li>
 <li><strong>Certificates.</strong> The mesh's root of trust was generated locally, and the warm path's certificate authorities are committed to the repository (Chapter 3). In a data centre both belong in the organization's own public-key infrastructure, with a defined lifetime and a rotation procedure that has been performed at least once. Automated issuance — cert-manager is already present on the management cluster — covers the leaf certificates but does not answer the question of who owns the root.</li>
-<li><strong>Firewalling.</strong> Chapter 14 found the agent egress rule allows ports rather than destinations, so anything the agents can address on port 443 is reachable. On one laptop that is a finding. On a network with production systems on it, it is the finding.</li>
+<li><strong>Firewalling.</strong> Chapter 14 found the agent egress rule allows ports rather than destinations, so anything the agents can address on port 443 is reachable. On one workstation that is a finding. On a network with production systems on it, it is the finding.</li>
 </ul>
 <h2 id="capacity-planning-from-the-one-measurement-that-transfers">Capacity planning, from the one measurement that transfers</h2>
 <p>This is the section where the lab genuinely earns something, because Chapter 20 measured the thing most capacity plans get wrong.</p>
@@ -481,7 +481,7 @@ td strong { color: var(--accent); font-weight: 600; }
 </ul>
 <p>The design guidance is therefore blunt: <strong>put the four unscripted things in Git first, before adding anything new.</strong> The cluster definitions, the platform components and their versions, the tuning that is currently cluster state, and the base images. Chapter 19 already produced that list at no extra cost, by the expensive method of losing everything on purpose.</p>
 <h2 id="observability-that-remembers">Observability that remembers</h2>
-<p>The lab's observability is real but has no memory. Prometheus holds the mesh's metrics with the sample add-on's retention and no durable storage; Kiali is anonymous; the recorded agent demonstrations are files on a laptop. Chapter 12 found the model traffic — the traffic the board asks about most — carried no model name and no token count, and was displayed nowhere.</p>
+<p>The lab's observability is real but has no memory. Prometheus holds the mesh's metrics with the sample add-on's retention and no durable storage; Kiali is anonymous; the recorded agent demonstrations are files on a workstation. Chapter 12 found the model traffic — the traffic the board asks about most — carried no model name and no token count, and was displayed nowhere.</p>
 <p>For a data centre, three requirements follow, in this order of usefulness:</p>
 <ol>
 <li><strong>Retention long enough to answer a question about last quarter</strong>, which means durable storage behind the metrics system and a stated retention period, chosen against the audit obligations rather than the disk price.</li>
@@ -550,7 +550,7 @@ td strong { color: var(--accent); font-weight: 600; }
 </tr>
 </tbody>
 </table></div>
-<p>Read the right-hand column as a work plan and it is long but ordinary: well-understood components, wired in by people who have done it before. Read the left-hand column as what a year of a single engineer and an AI assistant produced, and the interesting claim of this book survives the move to a data centre — not <em>we built a cloud on a laptop</em>, but <em>we found out what is true, cheaply, before spending the money.</em></p>
+<p>Read the right-hand column as a work plan and it is long but ordinary: well-understood components, wired in by people who have done it before. Read the left-hand column as what a year of a single engineer and an AI assistant produced, and the interesting claim of this book survives the move to a data centre — not <em>we built a cloud on a workstation</em>, but <em>we found out what is true, cheaply, before spending the money.</em></p>
 <p>That is the last thing that transfers, and the only one that cannot be bought.</p>
 <hr class="scene-break" />
 <p class="dateline dateline-fiction">Meridian · the same afternoon</p>

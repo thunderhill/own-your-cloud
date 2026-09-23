@@ -172,7 +172,7 @@ The problem recorded that August evening no longer reproduces. The opt-out the c
 
 **Healthy traffic does not prefer home.** The Service's manifest says *"Local endpoints are preferred; remote ones are used when no healthy local endpoint exists."* After its baseline calls, the act prints *"traffic served (locality-aware routing prefers in-cluster endpoints)"* — without comparing any numbers. Measured with everything healthy, 60 calls split exactly **30 to cluster1 and 30 to cluster2**. The act's own local-or-remote classifier recognises only one of cluster2's three pod names. That day every remote call happened to land on a different one, so the act would have counted all of them as local.
 
-On one laptop, the price of that split is a fraction of a millisecond: 2.67 ms mean for calls served locally, 2.96 ms for calls served across. Between two real sites, it is a network hop for half of every service's traffic, on a day when nothing is wrong. That is a latency and data-transfer bill, set by a default nobody chose.
+On one workstation, the price of that split is a fraction of a millisecond: 2.67 ms mean for calls served locally, 2.96 ms for calls served across. Between two real sites, it is a network hop for half of every service's traffic, on a day when nothing is wrong. That is a latency and data-transfer bill, set by a default nobody chose.
 
 ## What one label bought
 

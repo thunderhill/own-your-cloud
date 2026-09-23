@@ -3,8 +3,10 @@
 
 Usage:  python3 tools/build_pdf.py [out.html]
 
-Everything is inlined — figures become base64 data URIs — so the result is a
-single self-contained file. tools/build_pdf.sh then renders it with headless
+Everything is inlined — figures, and the cover's fonts and logos, become base64
+data URIs — so the result is a single self-contained file. The front cover is its
+first page and the back cover its last (both from cover/cover.html, A4 like the
+interior, on a named CSS page with no margins). tools/build_pdf.sh then renders it with headless
 Chrome, the same renderer the companion repo already uses.
 """
 import base64
@@ -45,6 +47,28 @@ def inline_figures(html: str) -> str:
         return m.group(0).replace(src, f"data:image/svg+xml;base64,{data}")
 
     return re.sub(r'<img [^>]*src="([^"]+)"', repl, html)
+
+
+def data_uri(path: pathlib.Path, mime: str) -> str:
+    return f"data:{mime};base64," + base64.b64encode(path.read_bytes()).decode("ascii")
+
+
+def load_cover():
+    """Return (css, front_cover_html, back_cover_html) from cover/cover.html, self-contained."""
+    cover_dir = ROOT / "cover"
+    src = (cover_dir / "cover.html").read_text()
+    css = re.search(r"<style>(.*?)</style>", src, re.S).group(1)
+    body = re.search(r"<body>(.*?)</body>", src, re.S).group(1)
+
+    css = re.sub(r"url\(([\w./-]+\.woff2)\)",
+                 lambda m: f"url({data_uri(cover_dir / m.group(1), 'font/woff2')})", css)
+    body = re.sub(r'src="([\w./-]+\.svg)"',
+                  lambda m: f'src="{data_uri(cover_dir / m.group(1), "image/svg+xml")}"', body)
+
+    sheets = re.findall(r"<section class=\"sheet\".*?</section>", body, re.S)
+    if len(sheets) != 2:
+        sys.exit(f"ERROR: expected front and back cover sections in cover/cover.html, found {len(sheets)}")
+    return css, sheets[0], sheets[1]
 
 
 def render(path: pathlib.Path) -> str:
@@ -97,7 +121,13 @@ def main():
         )
         toc.append(f'<li class="toc-ch"><a href="#{anchor}">{heading}</a></li>')
 
-    html = TEMPLATE.replace("{{TOC}}", "\n".join(toc)).replace("{{BODY}}", "\n".join(pieces))
+    cover_css, front_cover, back_cover = load_cover()
+    html = (TEMPLATE
+            .replace("{{COVER_CSS}}", cover_css)
+            .replace("{{FRONT_COVER}}", front_cover)
+            .replace("{{BACK_COVER}}", back_cover)
+            .replace("{{TOC}}", "\n".join(toc))
+            .replace("{{BODY}}", "\n".join(pieces)))
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(html)
     print(f"wrote {OUT}  ({len(html):,} bytes, {len(chapters)} sections)")
@@ -183,10 +213,17 @@ code { font-family:var(--mono); font-size:8.8pt; background:var(--code-bg); padd
 pre code { background:none; padding:0; }
 
 .figure { break-inside:avoid; margin:6mm 0; }
-.figure img { width:100%; height:auto; border:1px solid var(--rule); border-radius:2mm; }
+.figure img { width:100%; height:auto; border:1px solid var(--rule); border-radius:2mm; box-sizing:border-box; }
+/* border-box matters: with the default box model the 1px border makes each image 2px wider than the
+   text column, and Chrome then shrinks the whole printed document to fit (about 0.3%). */
 .figure figcaption { font-family:var(--sans); font-size:8.5pt; color:var(--ink-3); margin-top:2mm; }
+
+/* ── front and back cover (cover/cover.html) ───────────── */
+{{COVER_CSS}}
 </style>
 </head><body>
+
+{{FRONT_COVER}}
 
 <section class="title-page">
   <div class="rule-short"></div>
@@ -206,6 +243,8 @@ pre code { background:none; padding:0; }
 </section>
 
 {{BODY}}
+
+{{BACK_COVER}}
 </body></html>
 """
 

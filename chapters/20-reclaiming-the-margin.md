@@ -104,7 +104,7 @@ The platform in this book cannot supply Meridian's numbers. It can supply someth
 
 On owned hardware, capacity is set by what is **reserved**, not what is used. On this host, a second target cluster would not fit — its machines could not reserve the memory — even though two-thirds of the memory already reserved sat idle. That is the deck's *"overprovisioning"*, on hardware you own. It is the owner's margin to reclaim or waste, and right-sizing reservations is where it lives.
 
-**The energy cost of AI.** The model most of the platform's agents use, `qwen2.5:7b`, was measured on the laptop's GPU. With the model loaded and idle, the GPU drew **6.4 W**. While generating text it drew **38–42 W**, at **34–37 tokens per second**. That comes to **1.19 joules per generated token — 0.33 kWh per million tokens**, for the GPU alone.
+**The energy cost of AI.** The model most of the platform's agents use, `qwen2.5:7b`, was measured on the workstation's GPU. With the model loaded and idle, the GPU drew **6.4 W**. While generating text it drew **38–42 W**, at **34–37 tokens per second**. That comes to **1.19 joules per generated token — 0.33 kWh per million tokens**, for the GPU alone.
 
 Multiply that by any electricity price between 10 and 50 cents a kilowatt-hour, and the power for a million generated tokens costs roughly **3 to 17 cents**. The lesson is not that local AI is nearly free. It is that for local AI, the electricity is a rounding error. The cost is the hardware — which, on this GPU, holds one model at a time (Chapter 9) — and the people who run and check it.
 
@@ -134,7 +134,7 @@ Put the slide's shape and the platform's measurements together, and the chapter'
 
 *Build log · 18 September 2026*
 
-A worksheet with no amounts in it is still a slide. So the test this chapter proposes — meter one workload both ways, in parallel — was run at the only scale available: one workload, on the laptop.
+A worksheet with no amounts in it is still a slide. So the test this chapter proposes — meter one workload both ways, in parallel — was run at the only scale available: one workload, on the workstation.
 
 **The workload.** An `nginx` deployment on the target cluster, served continuously and probed every twenty seconds for ten minutes. It answered **30 of 30 probes with `200`**. It is a small, steady, unglamorous workload, which is exactly the kind the a16z paper says is cheapest to own.
 
@@ -184,7 +184,7 @@ Put that on the same worksheet. At an assumed $400–$1,200 per engineer-day, sp
 
 **The crossover is at roughly two to three steady workloads.** Below it, the build effort swamps everything and the cloud is cheaper. Above it, the hardware arithmetic starts to look like the a16z paper's "one-third to one-half," and keeps improving.
 
-That is the first line in this book that is true about money, and it is worth being precise about how small it is. It is one workload, on one laptop, for ten minutes, against one provider's list price, with three of its four cost inputs assumed rather than measured. It does not capture high availability, replicated storage, backup, support contracts, on-call, an SLA, facilities, networking hardware, or any of the right-hand column of Chapter 18 — every one of which the rented price *includes* and the owned price does not.
+That is the first line in this book that is true about money, and it is worth being precise about how small it is. It is one workload, on one workstation, for ten minutes, against one provider's list price, with three of its four cost inputs assumed rather than measured. It does not capture high availability, replicated storage, backup, support contracts, on-call, an SLA, facilities, networking hardware, or any of the right-hand column of Chapter 18 — every one of which the rented price *includes* and the owned price does not.
 
 So the honest statement of the result is narrow, and it is still the most useful sentence the platform has produced about cost:
 
@@ -261,7 +261,7 @@ He read it back. "It's a very boring sentence."
 - **The deck's model (briefing):** $12.5M rented against $8.2M owned over five years; a $4.3M (34.4%) saving that is exactly the sum of four savings lines, with no line for anything owning adds. About 70% of the saving ($3.0M) is in two lines no invoice records. The 5–7 year payback agrees with the five-year saving only at the expensive end of the deck's own $2–5M investment range.
 - **Depreciation (public record):** Microsoft (FY2022) and Alphabet (2023) moved servers from four- to six-year lives; Amazon moved part of its fleet from six to five years from January 2025, citing AI.
 - **Owned waste (build log, 17 September 2026):** 22.42 GiB reserved against 7.45 GiB used on the management cluster; a control-plane VM using 1% of its CPU and 14% of its memory.
-- **AI energy (build log):** `qwen2.5:7b` on an RTX 4050 laptop GPU at 6.4 W idle and 38–42 W generating; 34–37 tokens/s; 1.19 J per token; 0.33 kWh per million generated tokens, GPU only.
+- **AI energy (build log):** `qwen2.5:7b` on an RTX 4050 GPU at 6.4 W idle and 38–42 W generating; 34–37 tokens/s; 1.19 J per token; 0.33 kWh per million generated tokens, GPU only.
 - **Effort (build log, 18 September 2026):** 88 commits from one committer, Mahipal, over seven months, 70 of them co-authored with an AI coding assistant, on 18 distinct days — a lab, not an operation. (The figure moved while this book was being written, because writing it added commits.)
 - **Metered, one workload both ways (build log, 18 September 2026):** an nginx deployment on the target cluster, 30 of 30 probes `200` over ten minutes. It holds **48.6% of the host's memory by reservation** while using 2.29% of its processor. Rented equivalent, at published list prices: **$0.250 per workload-hour**. Owned metal, on stated assumptions: **$0.02–$0.06**. Owned including the build effort: **$0.23–$0.68 at one workload**, falling below the rented price at **roughly two to three steady workloads**.
 - **Not claimed:** any saving for Meridian; any figure for high availability, backup, support, on-call or an SLA, none of which the owned side includes and all of which the rented price does.

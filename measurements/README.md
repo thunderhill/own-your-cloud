@@ -8,7 +8,7 @@ The parallel-metering experiment in Chapter 19. Produced by `ch19-meter.sh`.
 
 **Date:** 18 September 2026, 09:14:22–09:24:17 UTC.
 **Workload:** one `nginx:alpine` deployment on the target cluster, served continuously through a ClusterIP Service, probed once per sample.
-**Host:** the single laptop described in the prologue — AMD Ryzen AI 9 HX 370, 24 threads, 29.96 GiB, NVIDIA RTX 4050 laptop GPU, on AC power.
+**Host:** the single workstation described in the prologue — AMD Ryzen AI 9 HX 370, 24 threads, 29.96 GiB, NVIDIA RTX 4050 GPU, on AC power.
 **Sampling:** 30 samples at 20-second intervals.
 
 | Column | Meaning |
@@ -36,7 +36,7 @@ None of these is a measurement. Each is stated so a reader can substitute their 
 
 | Input | Value used | Basis |
 |---|---|---|
-| Host capital cost | $1,500–$3,000 | assumption; a laptop of this class. Substitute your own |
+| Host capital cost | $1,500–$3,000 | assumption; a workstation of this class. Substitute your own |
 | Amortization | 4 years (35,040 h) | the conservative end of the public record in Chapter 19: Microsoft and Alphabet moved servers 4→6 years, Amazon 6→5 |
 | Host power under this load | 25–65 W | assumption; RAPL unreadable (above) |
 | Electricity | $0.10–$0.50 / kWh | the same illustrative range Chapter 19 uses for the energy-per-token figure |

@@ -90,7 +90,7 @@ The first was a script, `06-sympozium/ollama-warm.sh`: send a one-token request 
 
 *Build log · 17 September 2026*
 
-The constraint's thirty seconds was a CPU number. The host now has an NVIDIA RTX 4050 laptop GPU with 6 GB of memory, and Ollama places each of the fleet's models entirely on it. So the cold start was measured again on 17 September, using the load time Ollama reports for each request — first with a model unloaded, then with it loaded:
+The constraint's thirty seconds was a CPU number. The host now has an NVIDIA RTX 4050 GPU with 6 GB of memory, and Ollama places each of the fleet's models entirely on it. So the cold start was measured again on 17 September, using the load time Ollama reports for each request — first with a model unloaded, then with it loaded:
 
 | Model | Cold load | Warm load |
 |---|---:|---:|

@@ -42,7 +42,7 @@ Nothing in the demo is wrong about February. Its narration describes VMs with tw
 
 What follows walks the same ground on the running platform instead.
 
-## Three clusters, one laptop
+## Three clusters, one workstation
 
 The platform runs on a single workstation, and it is built from three Kubernetes clusters.
 

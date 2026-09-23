@@ -48,7 +48,7 @@ And in September the pilot had finally metered one workload both ways: a single 
 
 Anita had read that result twice, and what she took from it was not the ratio. It was which line decided. The hardware was a rounding error next to the people, and the people were the line the consultant's slide had left out.
 
-One workload, on one laptop, against one price list, with three of its four inputs assumed. It was the smallest true thing in the folder, and it was the first line about money that was hers rather than someone else's.
+One workload, on one workstation, against one price list, with three of its four inputs assumed. It was the smallest true thing in the folder, and it was the first line about money that was hers rather than someone else's.
 
 She drew a box around *Save $Millions* and wrote inside it: *one workload says yes, past the third. Ours, on our invoice: not yet measured.*
 

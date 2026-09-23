@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>Own Your Cloud — front and back cover</title>
+<!--
+  Front and back cover, taken from the Claude Design file "Own Your Cloud - Cover v2"
+  (drawn at 720 x 1080 px, re-proportioned to A4). tools/build_pdf.sh prints this file to a
+  two-page PDF: page 1 is the front cover, page 2 the back cover.
+-->
+<style>
+@font-face { font-family:'Inter'; font-style:normal; font-weight:400 700; font-display:block;
+  src:url(fonts/inter-latin.woff2) format('woff2'); unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:400 500; font-display:block;
+  src:url(fonts/jetbrains-mono-latin.woff2) format('woff2'); unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+/* The cover sheets use a named page, so the same rules work standalone and when
+   tools/build_pdf.py inlines them into the A4 book. */
+@page cover { size: A4; margin: 0; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { margin: 0; background: #fff; }
+/* The design is 720 px wide; zoom 1.10236 brings it to exactly A4 (210 x 297 mm = 793.7 x 1122.5 CSS px).
+   The type defaults restate what the design's own canvas gave these cards, so they
+   render the same wherever they are placed. */
+.sheet { page: cover; width: 720px; height: 1018.3px; zoom: 1.10236; overflow: hidden;
+         break-after: page; break-inside: avoid;
+         font: 400 16px/normal 'Inter', sans-serif; color: #000; text-align: left; letter-spacing: normal; }
+.sheet:last-child { break-after: auto; }
+</style>
+</head><body>
+
+<section class="sheet" id="front-cover">
+    <div style="position:relative;width:720px;height:100%;background:oklch(0.975 0.006 85);color:oklch(0.22 0.03 264);overflow:hidden;display:flex;flex-direction:column;justify-content:space-between">
+      <div style="position:absolute;inset:0;background-image:radial-gradient(oklch(0.22 0.03 264 / 0.10) 1px,transparent 1px);background-size:24px 24px"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:620px;overflow:hidden">
+        <svg width="720" height="620" viewBox="0 0 720 620" style="position:absolute;top:0;left:0;display:block" aria-label="Service mesh around an AI core">
+<defs><radialGradient id="aiglow"><stop offset="0" stop-color="oklch(0.488 0.243 264.376)" stop-opacity="0.28"></stop><stop offset="1" stop-color="oklch(0.488 0.243 264.376)" stop-opacity="0"></stop></radialGradient></defs>
+<circle cx="360" cy="300" r="150" fill="url(#aiglow)"></circle>
+<line x1="390.0" y1="56.2" x2="535.2" y2="101.1" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.28"></line><line x1="390.0" y1="56.2" x2="402.4" y2="164.7" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.35"></line><line x1="390.0" y1="56.2" x2="519.3" y2="263.5" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.22" stroke-dasharray="3 4"></line><line x1="535.2" y1="101.1" x2="633.5" y2="199.3" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.28"></line><line x1="535.2" y1="101.1" x2="402.4" y2="164.7" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.35"></line><line x1="633.5" y1="199.3" x2="658.5" y2="324.5" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.28"></line><line x1="633.5" y1="199.3" x2="519.3" y2="263.5" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.35"></line><line x1="658.5" y1="324.5" x2="603.5" y2="443.1" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.28"></line><line x1="658.5" y1="324.5" x2="519.3" y2="263.5" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.35"></line><line x1="658.5" y1="324.5" x2="476.9" y2="398.8" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.22" stroke-dasharray="3 4"></line><line x1="603.5" y1="443.1" x2="483.3" y2="523.3" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.28"></line><line x1="603.5" y1="443.1" x2="476.9" y2="398.8" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.35"></line><line x1="483.3" y1="523.3" x2="330.0" y2="543.8" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.28"></line><line x1="483.3" y1="523.3" x2="476.9" y2="398.8" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.35"></line><line x1="330.0" y1="543.8" x2="184.8" y2="498.9" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.28"></line><line x1="330.0" y1="543.8" x2="317.6" y2="435.3" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.35"></line><line x1="330.0" y1="543.8" x2="200.7" y2="336.5" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.22" stroke-dasharray="3 4"></line><line x1="184.8" y1="498.9" x2="86.5" y2="400.7" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.28"></line><line x1="184.8" y1="498.9" x2="317.6" y2="435.3" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.35"></line><line x1="86.5" y1="400.7" x2="61.5" y2="275.5" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.28"></line><line x1="86.5" y1="400.7" x2="200.7" y2="336.5" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.35"></line><line x1="61.5" y1="275.5" x2="116.5" y2="156.9" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.28"></line><line x1="61.5" y1="275.5" x2="200.7" y2="336.5" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.35"></line><line x1="61.5" y1="275.5" x2="243.1" y2="201.2" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.22" stroke-dasharray="3 4"></line><line x1="116.5" y1="156.9" x2="236.7" y2="76.7" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.28"></line><line x1="116.5" y1="156.9" x2="243.1" y2="201.2" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.35"></line><line x1="236.7" y1="76.7" x2="390.0" y2="56.2" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.28"></line><line x1="236.7" y1="76.7" x2="243.1" y2="201.2" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.35"></line><line x1="402.4" y1="164.7" x2="519.3" y2="263.5" stroke="oklch(0.56 0.24 303.9)" stroke-width="1.6" opacity="0.75"></line><line x1="402.4" y1="164.7" x2="476.9" y2="398.8" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.25"></line><line x1="402.4" y1="164.7" x2="360.0" y2="300.0" stroke="oklch(0.488 0.243 264.376)" stroke-width="1.8" opacity="0.9"></line><line x1="519.3" y1="263.5" x2="476.9" y2="398.8" stroke="oklch(0.56 0.24 303.9)" stroke-width="1.6" opacity="0.75"></line><line x1="519.3" y1="263.5" x2="317.6" y2="435.3" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.25"></line><line x1="519.3" y1="263.5" x2="360.0" y2="300.0" stroke="oklch(0.488 0.243 264.376)" stroke-width="1.8" opacity="0.9"></line><line x1="476.9" y1="398.8" x2="317.6" y2="435.3" stroke="oklch(0.56 0.24 303.9)" stroke-width="1.6" opacity="0.75"></line><line x1="476.9" y1="398.8" x2="200.7" y2="336.5" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.25"></line><line x1="476.9" y1="398.8" x2="360.0" y2="300.0" stroke="oklch(0.488 0.243 264.376)" stroke-width="1.8" opacity="0.9"></line><line x1="317.6" y1="435.3" x2="200.7" y2="336.5" stroke="oklch(0.56 0.24 303.9)" stroke-width="1.6" opacity="0.75"></line><line x1="317.6" y1="435.3" x2="243.1" y2="201.2" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.25"></line><line x1="317.6" y1="435.3" x2="360.0" y2="300.0" stroke="oklch(0.488 0.243 264.376)" stroke-width="1.8" opacity="0.9"></line><line x1="200.7" y1="336.5" x2="243.1" y2="201.2" stroke="oklch(0.56 0.24 303.9)" stroke-width="1.6" opacity="0.75"></line><line x1="200.7" y1="336.5" x2="402.4" y2="164.7" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.25"></line><line x1="200.7" y1="336.5" x2="360.0" y2="300.0" stroke="oklch(0.488 0.243 264.376)" stroke-width="1.8" opacity="0.9"></line><line x1="243.1" y1="201.2" x2="402.4" y2="164.7" stroke="oklch(0.56 0.24 303.9)" stroke-width="1.6" opacity="0.75"></line><line x1="243.1" y1="201.2" x2="519.3" y2="263.5" stroke="oklch(0.56 0.24 303.9)" stroke-width="1" opacity="0.25"></line><line x1="243.1" y1="201.2" x2="360.0" y2="300.0" stroke="oklch(0.488 0.243 264.376)" stroke-width="1.8" opacity="0.9"></line><circle cx="460.9" cy="214.1" r="3.2" fill="oklch(0.56 0.24 303.9)"></circle><circle cx="383.3" cy="225.6" r="3.6" fill="oklch(0.488 0.243 264.376)"></circle><circle cx="498.1" cy="331.2" r="3.2" fill="oklch(0.56 0.24 303.9)"></circle><circle cx="447.6" cy="279.9" r="3.6" fill="oklch(0.488 0.243 264.376)"></circle><circle cx="397.2" cy="417.1" r="3.2" fill="oklch(0.56 0.24 303.9)"></circle><circle cx="424.3" cy="354.3" r="3.6" fill="oklch(0.488 0.243 264.376)"></circle><circle cx="259.1" cy="385.9" r="3.2" fill="oklch(0.56 0.24 303.9)"></circle><circle cx="336.7" cy="374.4" r="3.6" fill="oklch(0.488 0.243 264.376)"></circle><circle cx="221.9" cy="268.8" r="3.2" fill="oklch(0.56 0.24 303.9)"></circle><circle cx="272.4" cy="320.1" r="3.6" fill="oklch(0.488 0.243 264.376)"></circle><circle cx="322.8" cy="182.9" r="3.2" fill="oklch(0.56 0.24 303.9)"></circle><circle cx="295.7" cy="245.7" r="3.6" fill="oklch(0.488 0.243 264.376)"></circle><circle cx="468.8" cy="132.9" r="2.6" fill="oklch(0.56 0.24 303.9)"></circle><circle cx="540.2" cy="420.9" r="2.6" fill="oklch(0.56 0.24 303.9)"></circle><circle cx="251.2" cy="467.1" r="2.6" fill="oklch(0.56 0.24 303.9)"></circle><circle cx="179.8" cy="179.1" r="2.6" fill="oklch(0.56 0.24 303.9)"></circle>
+<circle cx="360" cy="300" r="86" fill="none" stroke="oklch(0.488 0.243 264.376)" stroke-width="1.2" stroke-dasharray="2 6" opacity="0.7"></circle>
+<circle cx="360" cy="300" r="68" fill="oklch(0.975 0.006 85)" stroke="oklch(0.488 0.243 264.376)" stroke-width="1.5"></circle>
+<circle cx="360" cy="300" r="54" fill="oklch(0.488 0.243 264.376)"></circle>
+<g stroke="#ffffff" stroke-width="1.4" opacity="0.55"><line x1="330" y1="282" x2="360" y2="318"></line><line x1="390" y1="282" x2="360" y2="318"></line><line x1="330" y1="282" x2="390" y2="282"></line></g>
+<g fill="#ffffff"><circle cx="330" cy="282" r="4"></circle><circle cx="390" cy="282" r="4"></circle><circle cx="360" cy="318" r="4"></circle></g>
+<g opacity="0.55"><rect x="380.0" y="46.2" width="20" height="20" rx="4.8" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="396.0" y="39.2" width="8.4" height="8.4" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="0.55"><rect x="525.2" y="91.1" width="20" height="20" rx="4.8" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="541.2" y="84.1" width="8.4" height="8.4" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="0.55"><rect x="623.5" y="189.3" width="20" height="20" rx="4.8" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="639.5" y="182.3" width="8.4" height="8.4" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="0.55"><rect x="648.5" y="314.5" width="20" height="20" rx="4.8" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="664.5" y="307.5" width="8.4" height="8.4" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="0.55"><rect x="593.5" y="433.1" width="20" height="20" rx="4.8" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="609.5" y="426.1" width="8.4" height="8.4" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="0.55"><rect x="473.3" y="513.3" width="20" height="20" rx="4.8" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="489.3" y="506.3" width="8.4" height="8.4" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="0.55"><rect x="320.0" y="533.8" width="20" height="20" rx="4.8" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="336.0" y="526.8" width="8.4" height="8.4" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="0.55"><rect x="174.8" y="488.9" width="20" height="20" rx="4.8" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="190.8" y="481.9" width="8.4" height="8.4" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="0.55"><rect x="76.5" y="390.7" width="20" height="20" rx="4.8" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="92.5" y="383.7" width="8.4" height="8.4" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="0.55"><rect x="51.5" y="265.5" width="20" height="20" rx="4.8" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="67.5" y="258.5" width="8.4" height="8.4" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="0.55"><rect x="106.5" y="146.9" width="20" height="20" rx="4.8" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="122.5" y="139.9" width="8.4" height="8.4" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="0.55"><rect x="226.7" y="66.7" width="20" height="20" rx="4.8" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="242.7" y="59.7" width="8.4" height="8.4" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="1"><rect x="387.4" y="149.7" width="30" height="30" rx="7.199999999999999" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="413.4" y="142.7" width="12.6" height="12.6" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="1"><rect x="504.3" y="248.5" width="30" height="30" rx="7.199999999999999" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="530.3" y="241.5" width="12.6" height="12.6" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="1"><rect x="461.9" y="383.8" width="30" height="30" rx="7.199999999999999" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="487.9" y="376.8" width="12.6" height="12.6" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="1"><rect x="302.6" y="420.3" width="30" height="30" rx="7.199999999999999" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="328.6" y="413.3" width="12.6" height="12.6" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="1"><rect x="185.7" y="321.5" width="30" height="30" rx="7.199999999999999" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="211.7" y="314.5" width="12.6" height="12.6" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g><g opacity="1"><rect x="228.1" y="186.2" width="30" height="30" rx="7.199999999999999" fill="#ffffff" stroke="oklch(0.22 0.03 264)" stroke-width="1.5"></rect><rect x="254.1" y="179.2" width="12.6" height="12.6" rx="2" fill="oklch(0.56 0.24 303.9)"></rect></g>
+</svg>
+        <div style="position:absolute;left:302px;top:388px;width:116px;display:flex;justify-content:center"><div style="background:oklch(0.488 0.243 264.376);color:#ffffff;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;padding:5px 10px;border-radius:9999px">AI core</div></div>
+        <div style="position:absolute;left:68px;top:560px;display:flex;align-items:center;gap:10px"><div style="width:10px;height:10px;border-radius:2px;background:oklch(0.56 0.24 303.9)"></div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:oklch(0.22 0.03 264)">Service mesh · mTLS</div></div>
+        <div style="position:absolute;right:68px;top:560px;display:flex;align-items:center;gap:10px"><div style="width:10px;height:10px;border-radius:50%;background:oklch(0.488 0.243 264.376)"></div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:oklch(0.22 0.03 264)">GPU inference, owned</div></div>
+      </div>
+      <div style="position:relative;padding:56px 68px 0 68px;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:oklch(0.22 0.03 264);background:oklch(0.975 0.006 85);padding:4px 0">A sovereign-Kubernetes story</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:oklch(0.22 0.03 264);background:oklch(0.975 0.006 85);padding:4px 0">Second draft · 2026</div>
+      </div>
+      <div style="position:relative;padding:0 68px 48px 68px;display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <h1 style="margin:0;font-size:92px;line-height:0.92;font-weight:700;letter-spacing:-0.045em;color:oklch(0.22 0.03 264);text-wrap:balance">Own Your <span style="color:oklch(0.488 0.243 264.376)">Cloud</span></h1>
+          <p style="margin:0;font-size:26px;line-height:1.28;font-weight:500;color:oklch(0.22 0.03 264);letter-spacing:-0.015em;text-wrap:pretty">From Cloud Tenant to Infrastructure Owner</p>
+          <p style="margin:0;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.5;letter-spacing:0.02em;color:oklch(0.42 0.03 264)">a sovereign-Kubernetes story told in chapters</p>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:24px;border-top:1.5px solid oklch(0.22 0.03 264);padding-top:24px">
+          <div style="font-size:30px;font-weight:600;letter-spacing:-0.02em;color:oklch(0.22 0.03 264)">Mahipal</div>
+          <div style="display:flex;align-items:center;gap:22px">
+            <img src="logos/kubernetes.svg" alt="Kubernetes" style="height:40px;width:auto;display:block">
+            <img src="logos/kubevirt.svg" alt="KubeVirt" style="height:40px;width:auto;display:block">
+            <img src="logos/cluster-api.svg" alt="Cluster API" style="height:44px;width:auto;display:block">
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+<section class="sheet" id="back-cover">
+    <div style="position:relative;width:720px;height:100%;background:oklch(0.975 0.006 85);color:oklch(0.22 0.03 264);overflow:hidden;display:flex;flex-direction:column">
+      <div style="position:absolute;inset:0;background-image:radial-gradient(oklch(0.22 0.03 264 / 0.10) 1px,transparent 1px);background-size:24px 24px"></div>
+
+      <div style="position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,oklch(0.488 0.243 264.376) 0%,oklch(0.488 0.243 264.376) 38%,oklch(0.22 0.03 264 / 0.14) 38%,oklch(0.22 0.03 264 / 0.14) 100%)"></div>
+
+      <div style="position:relative;padding:64px 68px 0 68px;display:flex;flex-direction:column;gap:28px;flex:1">
+
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:oklch(0.488 0.243 264.376)">The myth</div>
+          <p style="margin:0;font-size:21px;line-height:1.5;color:oklch(0.22 0.03 264);text-wrap:pretty;max-width:52ch">The cloud migration worked. Teams ship faster, the auditors are satisfied, and nobody made a bad decision. The bill simply grows — with every new service, every successful launch, every environment someone created on a Friday and never deleted.</p>
+          <p style="margin:0;font-size:17px;line-height:1.6;color:oklch(0.42 0.03 264);text-wrap:pretty;max-width:56ch">The myth is not that the cloud is expensive. It is narrower, and more costly to believe: that renting stays cheaper as you grow. <em style="color:oklch(0.22 0.03 264);font-style:normal">Own Your Cloud</em> is the story of one CTO finding the moment that stopped being true — and of a working sovereign-Kubernetes platform built from open-source parts, where every number in the book was measured, not quoted.</p>
+        </div>
+
+        <div style="border-left:2px solid oklch(0.488 0.243 264.376);padding:4px 0 4px 26px;display:flex;flex-direction:column;gap:10px">
+          <p style="margin:0;font-size:24px;line-height:1.35;font-weight:500;color:oklch(0.22 0.03 264);text-wrap:pretty">“At scale, for steady workloads, the rent can cost two to three times the cost of owning.”</p>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:oklch(0.42 0.03 264)">Advance praise</div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="background:#ffffff;border:1px solid oklch(0.22 0.03 264 / 0.12);border-radius:10px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+              <p style="margin:0;font-size:16px;line-height:1.55;color:oklch(0.22 0.03 264);text-wrap:pretty">[Endorsement — two or three sentences on why this book changes how a leadership team reads its own infrastructure bill.]</p>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;color:oklch(0.42 0.03 264)">NAME · TITLE, ORGANIZATION</div>
+            </div>
+            <div style="background:#ffffff;border:1px solid oklch(0.22 0.03 264 / 0.12);border-radius:10px;padding:20px 22px;display:flex;flex-direction:column;gap:10px">
+              <p style="margin:0;font-size:16px;line-height:1.55;color:oklch(0.22 0.03 264);text-wrap:pretty">[Endorsement — two or three sentences from an engineering voice on the build logs and the evidence standard.]</p>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;color:oklch(0.42 0.03 264)">NAME · TITLE, ORGANIZATION</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="position:relative;padding:0 68px 52px 68px;display:flex;align-items:flex-end;justify-content:space-between;gap:32px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:18px;font-weight:600;letter-spacing:-0.01em">Mahipal</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:oklch(0.42 0.03 264)">Infrastructure · Cloud economics</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+          <div style="width:150px;height:74px;background:#ffffff;border:1px solid oklch(0.22 0.03 264 / 0.35);border-radius:3px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;color:oklch(0.22 0.03 264)">ISBN PLACEHOLDER</div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;color:oklch(0.42 0.03 264)">Second draft · September 2026</div>
+        </div>
+      </div>
+
+    </div>
+</section>
+
+</body></html>

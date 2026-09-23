@@ -420,7 +420,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p class="dateline dateline-record">Build log · 21 August 2026</p>
 <p>Act 4 of <code>07-istio-advanced/</code> is the one its README calls Istio's headline feature for this release: an <strong>AI gateway</strong>.</p>
 <p>It uses the same Gateway API object as Chapter 11's front door, with one field changed. <code>gatewayClassName: istio-agentgateway</code> swaps the general-purpose proxy for <strong>agentgateway</strong>, <em>"a proxy purpose-built for AI/agent traffic."</em> The class is experimental and has to be switched on when Istio is installed, one more day-one decision. The gateway takes the address <code>172.18.255.203</code>, and one route sends everything it receives to the models.</p>
-<p>The models are not in the cluster. They run on the laptop's own GPU, under Ollama, and the cluster reaches them through a shim: a Service with a hand-written endpoint pointing at the host, <code>172.18.0.1</code>. This is Chapter 10's pattern, used here on purpose, because keeping models off the cluster <em>"keeps ~4GB of RAM per replica free."</em></p>
+<p>The models are not in the cluster. They run on the workstation's own GPU, under Ollama, and the cluster reaches them through a shim: a Service with a hand-written endpoint pointing at the host, <code>172.18.0.1</code>. This is Chapter 10's pattern, used here on purpose, because keeping models off the cluster <em>"keeps ~4GB of RAM per replica free."</em></p>
 <p>For a board, the reason to put a gateway in front of models is the reason to put one in front of anything: a single place to decide who may call which model, to count what they use, and to switch providers without touching every caller. On sovereign infrastructure that matters twice over, because the models, the GPU and the data never leave the building.</p>
 <p>The act ends by asserting the result in one line, which is this chapter's epigraph: <em>"Model traffic now carries mesh policy + telemetry, same as any service."</em> The console's AI Gateway panel says the same, and it fetches the model list <em>through</em> the gateway, <em>"so it proves the data path, not just the config."</em></p>
 <p>That is three claims: a data path, policy, and telemetry. They were tested separately.</p>
@@ -453,7 +453,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>Streaming — the way the agents actually receive answers, a token at a time — passed through intact. A request to count to twenty arrived as 51 chunks by both paths, with the first byte after 0.163 seconds direct and 0.171 seconds through the gateway.</p>
 <p>So the first claim holds, and it is good news. Putting a control point in front of the models costs nothing a user would notice.</p>
 <h2 id="a-door-with-no-lock">A door with no lock</h2>
-<p>On 17 September there was no authorization policy of any kind in the gateway's namespace. With no credential, from the laptop:</p>
+<p>On 17 September there was no authorization policy of any kind in the gateway's namespace. With no credential, from the workstation:</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -491,7 +491,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <pre><code class="language-yaml">baseURL: http://host-ollama.sympozium-system.svc.cluster.local:11434/v1
 </code></pre>
 <p>That is a second shim, on cluster2, going straight to the host. The AI gateway is on cluster1. None of the three agents sends a single request through it. The comment in the gateway's route file was carefully worded: the endpoint the agents speak <em>"is reachable through the mesh."</em> Reachable, yes. Reached, no.</p>
-<p>The act's own check even gets in the agents' way. By default it asks a different model, <code>qwen3.5:4b</code>. The GPU in this laptop holds one model at a time (Chapter 9). On 17 September the act's single completion took 8.2 seconds, reasoned through 556 characters of hidden thinking before replying <code>ok</code>, and evicted <code>qwen2.5:7b</code> — the model two of the agents use. Putting it back cost a cold load of 3.30 seconds, which the next agent request would have paid.</p>
+<p>The act's own check even gets in the agents' way. By default it asks a different model, <code>qwen3.5:4b</code>. The GPU in this workstation holds one model at a time (Chapter 9). On 17 September the act's single completion took 8.2 seconds, reasoned through 556 characters of hidden thinking before replying <code>ok</code>, and evicted <code>qwen2.5:7b</code> — the model two of the agents use. Putting it back cost a cold load of 3.30 seconds, which the next agent request would have paid.</p>
 <p>For a CxO, this is the chapter's central finding. The governance layer for AI exists, and it works. It stands <em>beside</em> the AI fleet, not in front of it.</p>
 <h2 id="an-honest-limitation-about-the-wrong-thing">An honest limitation about the wrong thing</h2>
 <p>Act 4 has a second tier, and it comes with the most candid passage in the repository:</p>

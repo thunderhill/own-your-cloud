@@ -28,7 +28,7 @@ Act 4 of `07-istio-advanced/` is the one its README calls Istio's headline featu
 
 It uses the same Gateway API object as Chapter 11's front door, with one field changed. `gatewayClassName: istio-agentgateway` swaps the general-purpose proxy for **agentgateway**, *"a proxy purpose-built for AI/agent traffic."* The class is experimental and has to be switched on when Istio is installed, one more day-one decision. The gateway takes the address `172.18.255.203`, and one route sends everything it receives to the models.
 
-The models are not in the cluster. They run on the laptop's own GPU, under Ollama, and the cluster reaches them through a shim: a Service with a hand-written endpoint pointing at the host, `172.18.0.1`. This is Chapter 10's pattern, used here on purpose, because keeping models off the cluster *"keeps ~4GB of RAM per replica free."*
+The models are not in the cluster. They run on the workstation's own GPU, under Ollama, and the cluster reaches them through a shim: a Service with a hand-written endpoint pointing at the host, `172.18.0.1`. This is Chapter 10's pattern, used here on purpose, because keeping models off the cluster *"keeps ~4GB of RAM per replica free."*
 
 For a board, the reason to put a gateway in front of models is the reason to put one in front of anything: a single place to decide who may call which model, to count what they use, and to switch providers without touching every caller. On sovereign infrastructure that matters twice over, because the models, the GPU and the data never leave the building.
 
@@ -57,7 +57,7 @@ So the first claim holds, and it is good news. Putting a control point in front 
 
 ## A door with no lock
 
-On 17 September there was no authorization policy of any kind in the gateway's namespace. With no credential, from the laptop:
+On 17 September there was no authorization policy of any kind in the gateway's namespace. With no credential, from the workstation:
 
 | Request through the gateway | Result |
 |---|---|
@@ -95,7 +95,7 @@ baseURL: http://host-ollama.sympozium-system.svc.cluster.local:11434/v1
 
 That is a second shim, on cluster2, going straight to the host. The AI gateway is on cluster1. None of the three agents sends a single request through it. The comment in the gateway's route file was carefully worded: the endpoint the agents speak *"is reachable through the mesh."* Reachable, yes. Reached, no.
 
-The act's own check even gets in the agents' way. By default it asks a different model, `qwen3.5:4b`. The GPU in this laptop holds one model at a time (Chapter 9). On 17 September the act's single completion took 8.2 seconds, reasoned through 556 characters of hidden thinking before replying `ok`, and evicted `qwen2.5:7b` — the model two of the agents use. Putting it back cost a cold load of 3.30 seconds, which the next agent request would have paid.
+The act's own check even gets in the agents' way. By default it asks a different model, `qwen3.5:4b`. The GPU in this workstation holds one model at a time (Chapter 9). On 17 September the act's single completion took 8.2 seconds, reasoned through 556 characters of hidden thinking before replying `ok`, and evicted `qwen2.5:7b` — the model two of the agents use. Putting it back cost a cold load of 3.30 seconds, which the next agent request would have paid.
 
 For a CxO, this is the chapter's central finding. The governance layer for AI exists, and it works. It stands *beside* the AI fleet, not in front of it.
 

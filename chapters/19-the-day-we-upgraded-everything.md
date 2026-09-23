@@ -20,7 +20,7 @@ She slid it across the table. "I couldn't answer that. Can you?"
 
 Anita waited.
 
-"There's a second thing," he said. "The tools on our laptops are already two Kubernetes versions ahead of the clusters, which is outside what Kubernetes supports. And the clusters can't be upgraded in place. To move them forward, we delete them and build them again from nothing."
+"There's a second thing," he said. "The tools on our workstations are already two Kubernetes versions ahead of the clusters, which is outside what Kubernetes supports. And the clusters can't be upgraded in place. To move them forward, we delete them and build them again from nothing."
 
 "So the upgrade is the rebuild."
 

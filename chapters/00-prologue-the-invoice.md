@@ -61,7 +61,7 @@ Everything else is not fiction, and the book marks that too.
 
 **Public record** and **Briefing** sections quote named sources: published reports, or the strategy deck. When a source gives no evidence for a number, the book says that too.
 
-The platform runs on a single laptop — an AMD Ryzen AI 9 HX 370 with 29 GiB of memory and an NVIDIA RTX 4050 laptop GPU with 6 GB of video memory. That is not a data centre, and the book never pretends it is. What transfers from a laptop to a data centre is not scale. It is the pattern, the measurements, and — more often than the vendor brochures would suggest — the failures.
+The platform runs on a single workstation — an AMD Ryzen AI 9 HX 370 with 29 GiB of memory and an NVIDIA RTX 4050 GPU with 6 GB of video memory. That is not a data centre, and the book never pretends it is. What transfers from a workstation to a data centre is not scale. It is the pattern, the measurements, and — more often than the vendor brochures would suggest — the failures.
 
 Every chapter ends the same way:
 
