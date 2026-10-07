@@ -199,7 +199,9 @@ Measured again the next day, naming each node rather than counting them, three c
 
 **33.7 seconds**, against 34.5 before the upgrade. Within the noise of three runs, the upgrade changed nothing. Six minor versions of k3s and two of Kubernetes, and a cluster that builds in the same time — which is a perfectly good result, as long as nobody claims it is a better one.
 
-Tearing the cluster down was measured separately, once: the delete command returned after **10.15 seconds** while Cluster API worked through its finalizers, and every VM and machine object was gone at **18.9 seconds**. That was a single run, and it did not survive being measured again: five runs in Chapter 17 put it at **45.73 seconds**, with the machines themselves stopping at 35.6 s. The figure below is left as it was recorded on the day.
+The upgrade did turn out to change something, a week later and in a way no stopwatch on the day could have shown. k3s 1.37 reordered how a worker joins, and that turned one of Chapter 8's recorded dead ends into a four-second saving. An upgrade does not only risk breaking what works. It can also change which of your past conclusions are still true.
+
+Tearing the cluster down was measured separately, once: the delete command returned after **10.15 seconds** while Cluster API worked through its finalizers, and every VM and machine object was gone at **18.9 seconds**. That was a single run, and it did not survive being measured again: five runs in Chapter 17 put it at **45.73 seconds**, with the machines themselves stopping at 35.6 s (and 40.0 s in a re-run on 8 October). The figure below is left as it was recorded on the day.
 
 ## The balance sheet of memory
 

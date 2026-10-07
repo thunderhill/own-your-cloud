@@ -143,6 +143,8 @@ And every signal says the worker is fine. Its Machine is `Running`. Its node is 
 
 This static worker configuration was introduced in June, to let the worker boot at the same time as the control plane (Chapter 8), and the same line is in the default path's manifest today. This chapter verified only the cluster that was running on 17 September; whether every cluster since June has had an idle worker was not checked, and the fix — removing the setting, or running something that initializes nodes — has not been tried.
 
+*It has since been tried. On 23 September the line was removed and the worker became schedulable. The first pods to land on it showed that traffic between the two virtual machines had never worked either: the taint had been hiding a broken network. Both are fixed; Chapter 8's last section tells the story.*
+
 The only check on the platform that ever gave the worker real work was the victory lap. Its heading said the pods *should be spread across nodes*. It printed that they were not, and declared success anyway.
 
 * * *

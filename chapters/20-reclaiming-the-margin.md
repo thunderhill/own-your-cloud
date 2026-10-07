@@ -93,7 +93,7 @@ The three largest owners of servers in the world disagree about how long a serve
 
 The platform in this book cannot supply Meridian's numbers. It can supply something the slide lacks: inputs that were measured. Four of them matter for a TCO.
 
-**Speed.** A two-machine Kubernetes cluster is built from its declaration to both machines ready in a median of 33.7 seconds, and torn down in 45.7 (Chapters 7 and 17). For steady workloads, "we rent because renting is faster" is no longer a line that has to be paid for.
+**Speed.** A two-machine Kubernetes cluster is built from its declaration to both machines ready in a median of 18.1 seconds, and torn down in 40.0 (Chapters 8 and 17). Destroy-and-replace, to a served request, takes about a minute. For steady workloads, "we rent because renting is faster" is no longer a line that has to be paid for.
 
 **Reservation versus use.** Waste is not only a cloud problem. On the management cluster that afternoon:
 
@@ -121,7 +121,7 @@ Put the slide's shape and the platform's measurements together, and the chapter'
 | Line | Renting | Owning | What this book measured |
 |---|---|---|---|
 | Capacity | On the invoice | Hardware, amortized over its refresh cycle (4–6 years, per the public record) | 22.42 GiB reserved against 7.45 GiB used |
-| Speed to capacity | Minutes | The factory's build time | 33.7 s to a two-machine cluster; 45.7 s to remove one |
+| Speed to capacity | Minutes | The factory's build time | 18.1 s to a two-machine cluster; 40.0 s to remove one |
 | Software | Managed-service fees and licences | Open source, plus optional support | The whole stack is open source (Chapters 3–4) |
 | Leaving | Switching fees (banned in the EU from 2027) and rebuilding proprietary services | Migration project, and paying for both during it | No migration tooling in the repository (Chapter 4) |
 | Power and facilities | Inside the rent | Power, cooling, space | 0.33 kWh per million generated tokens, GPU only |

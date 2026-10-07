@@ -149,6 +149,8 @@ In every run, at the moment the control plane first reported Ready, the node lis
 
 The upgraded platform builds a two-node cluster in **33.7 seconds**, median of three. Before the upgrade the figure was 34.5. The upgrade did not make the cluster ten seconds faster. Within the noise of three runs, it changed nothing.
 
+Two weeks later the same build measured 18.1 seconds. Chapter 8's last section explains how, including one change that only became possible on the upgraded k3s. The 33.7 here is the figure as it stood on 17 September.
+
 The tight 0.4-second spread that made 23.9 look so trustworthy was not a sign of a stable pipeline. Measured by name, the spread is 4.7 seconds. The instrument had simply been timing the steadier half of the cluster.
 
 Two more things turned up in the same hour. The worker's install path never prints the *"k3s started"* line the instrument searches for — the control plane prints it at 12.8 seconds, the worker never does — so that row could never have been filled. And the KubeVirt API that was unavailable on 9 September, and that forced the instrument's no-login design, reports `Available=True` on the rebuilt cluster. The constraint that shaped the instrument did not survive the rebuild. The instrument's virtues did: nothing on the guests, nothing changed by measuring.
@@ -197,6 +199,7 @@ Anita looked at the display for a moment. "When a number improves and nobody can
 - **Found wrong (17 September):** a node count satisfied by a ghost Node baked into the golden image; a "both nodes" total that treated a missing worker timestamp as zero; a worker milestone the worker never logs.
 - **Corrected:** the upgraded platform builds both nodes in 33.7 seconds (median of three; control plane alone, 24.7) — not 23.9, and no measurable change from before the upgrade.
 - **Still owed:** both timing scripts still count nodes rather than naming them; the 9 September raw files no longer exist to re-check.
+- **Since (30 September):** 18.1 s for both nodes, median of five, measured by name (Chapter 8).
 
 ## Ask your team
 
