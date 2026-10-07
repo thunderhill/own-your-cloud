@@ -26,7 +26,7 @@ The prospect had asked the AI console a simple question, and for thirty seconds 
 
 This platform has two things that are slow to start and fast once running, and the whole of this chapter is about the difference.
 
-The first is a **cluster**. Chapter 7 measured a cold build — from `kubectl apply` to both nodes `Ready` — at 33.7 seconds after the September upgrade, and Chapter 8 tells how it came down from fifty. Every one of those seconds is intrinsic to building a cluster from nothing: controllers creating virtual machines, the machines booting, k3s starting, a worker joining. Chapter 8's lesson was that a smarter golden image cannot remove them. Only one thing can: doing the work *before anyone asks*.
+The first is a **cluster**. Chapter 7 measured a cold build — from `kubectl apply` to both nodes `Ready` — at 33.7 seconds after the September upgrade, and Chapter 8 tells how it came down from fifty, and then, by 30 September, to 18.1. Every one of those seconds is intrinsic to building a cluster from nothing: controllers creating virtual machines, the machines booting, k3s starting, a worker joining. Chapter 8's lesson was that a smarter golden image cannot remove them. Only one thing can: doing the work *before anyone asks*.
 
 The second is a **model**. An agent's first request loads its language model into memory. The strategy document wrote the cost into its fifth architecture constraint, as measured when the platform's model ran on the CPU: *"Cold-start for llama3.2 on CPU is ~28–30s; unwarmed agents time out the first real request."*
 
@@ -111,11 +111,11 @@ Put the two kinds of warmth side by side and they turn out to have the same shap
 
 | | A cluster | A model |
 |---|---|---|
-| Cold | 33.7 s, both nodes | 2.3–2.6 s on the GPU (28–30 s on CPU) |
+| Cold | 18.1 s, both nodes (30 Sept; 33.7 s on 17 Sept) | 2.3–2.6 s on the GPU (28–30 s on CPU) |
 | Warm | 467 ms median (18 Sept, 3 runs; was 194 ms in June) | 0.14–0.17 s |
 | What warmth holds | 8 cores and 14 GiB of memory, idle | most of a 6 GB GPU |
 | How deep | one standby | one model at a time |
-| What keeps it warm today | a background loop that is off by default | a host setting outside the repository |
+| What keeps it warm today | a background loop, on by default since 30 Sept | a host setting outside the repository |
 
 For a CxO, warmth is inventory. It trades capacity you pay for up front against time you lose later, and it has the same three failure modes as any inventory.
 
@@ -167,12 +167,15 @@ Then the cycle Anita asked for — claim, delete, rebuild, claim — ran three t
 
 Two and a half times the June figure, and still far faster than building from nothing: the claim now beats the 33.7-second cold build by a factor of about 72 — not the factor of two hundred the June number implied, but still the same conclusion Anita drew from the wrong number: handing over something already running beats building it, by nearly two orders of magnitude. The design held. The number on the page had simply gone stale, in exactly the way this chapter's own middle section warned that warmth does.
 
+It went stale again within two weeks, from the other side. By 30 September the cold build was 18.1 seconds (Chapter 8), and the same 467-millisecond claim beats it by a factor of about 39, not 72. The standby still costs eight cores and 14 GiB, idle, all day. Warmth pays less than it did a fortnight earlier, for the same price. That does not make it a bad trade, but it is a different trade from the one priced on 18 September, and the ratio deserves a date like any other number.
+
 ## The ledger
 
 - **Built (June):** a one-deep cluster standby, claimed in 194–195 ms instead of built from scratch, rebuilt in about 60 seconds in the background.
 - **Cost of that warmth:** one full cluster idle — eight cores and 14 GiB of memory.
 - **Today (17 September):** no standby running; the pool is opt-in and off by default; its manifest points at an image built on 3 March; the claim time has not been re-measured since June.
 - **Fixed and re-measured (18 September):** the pool's node-readiness check now counts by name, not by count (the same ghost-node bug Chapter 7 found, confirmed live in `pool.go`); its standby manifest switched to the warm image, with CA/token seeding added to the build path. Three claim-delete-rebuild-claim cycles: 1.059 s, 0.467 s, 0.465 s — **median 467 ms**, not 194. Still about 72x faster than a cold build. The pool remains opt-in — this fixes what happens when it's on, not the default.
+- **Since (30 September):** the pool is on by default (`run-ui.sh` now sets `POOL_ENABLED=true`), and the cold build it competes with is 18.1 s, so a claim is about 39× faster rather than 72× for the same idle cost. Not re-measured: the claim time itself, and whether the pool's rebuild-after-delete waits on the previous VMs' memory, as Chapter 8's stopwatch once did.
 - **Model warmth, measured on the GPU (17 September):** 2.3–2.6 s cold, 0.14–0.17 s warm — against the 28–30 s CPU figure in the rule.
 - **Found:** the GPU holds one model at a time, and a lab run evicted the model two of the three agents use.
 - **Held by:** a host setting outside the repository, not the heartbeat the rule names, which stopped after two runs.

@@ -1,0 +1,6 @@
+run	status	mttr_T9_T0	delete_returns_T1_T0	infra_gone_T2_T0	seed_T3_T2	build_both_T6_T4	build_cp_T5_T4	workload_T9_T7	cp_node	worker_node	ghosts	workload_node	pulled	kubesystem_created	load_before	load_after	memav_before
+1	OK	60.21	.83	40.31	.77	17.98	14.11	1.04	target-cluster-cp-j5s4x	target-cluster-workers-g2dwz-jf59q	 ubuntu-bake-vm-warm	target-cluster-cp-j5s4x	0	2026-09-29T21:06:16Z	3.00	3.99	14523
+2	OK	60.46	.91	40.02	.73	18.24	14.40	1.36	target-cluster-cp-n7lgp	target-cluster-workers-zdwcv-zkhtz	 ubuntu-bake-vm-warm	target-cluster-cp-n7lgp	0	2026-09-29T21:06:16Z	3.46	4.07	14619
+3	OK	59.97	.66	40.11	.72	17.95	14.18	1.09	target-cluster-cp-hqtm5	target-cluster-workers-zbtjz-dhsvz	 ubuntu-bake-vm-warm	target-cluster-cp-hqtm5	0	2026-09-29T21:06:16Z	3.26	4.36	14520
+4	OK	59.06	.95	39.99	.72	16.91	13.50	1.35	target-cluster-cp-t25n6	target-cluster-workers-mpk9c-p94n2	 ubuntu-bake-vm-warm	target-cluster-cp-t25n6	0	2026-09-29T21:06:16Z	3.68	3.56	14559
+5	OK	59.43	.69	39.92	.73	17.93	14.11	.74	target-cluster-cp-bjwkf	target-cluster-workers-779sj-2trxs	 ubuntu-bake-vm-warm	target-cluster-cp-bjwkf	0	2026-09-29T21:06:16Z	2.98	4.01	14611

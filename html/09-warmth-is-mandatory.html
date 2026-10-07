@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 2,800 words · about 12 minutes to read</dd>
+      <dd>About 3,000 words · about 13 minutes to read</dd>
     </dl>
   </header>
 
@@ -419,7 +419,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p class="dateline dateline-record">Build log · June–September 2026</p>
 <h2 id="two-kinds-of-cold">Two kinds of cold</h2>
 <p>This platform has two things that are slow to start and fast once running, and the whole of this chapter is about the difference.</p>
-<p>The first is a <strong>cluster</strong>. Chapter 7 measured a cold build — from <code>kubectl apply</code> to both nodes <code>Ready</code> — at 33.7 seconds after the September upgrade, and Chapter 8 tells how it came down from fifty. Every one of those seconds is intrinsic to building a cluster from nothing: controllers creating virtual machines, the machines booting, k3s starting, a worker joining. Chapter 8's lesson was that a smarter golden image cannot remove them. Only one thing can: doing the work <em>before anyone asks</em>.</p>
+<p>The first is a <strong>cluster</strong>. Chapter 7 measured a cold build — from <code>kubectl apply</code> to both nodes <code>Ready</code> — at 33.7 seconds after the September upgrade, and Chapter 8 tells how it came down from fifty, and then, by 30 September, to 18.1. Every one of those seconds is intrinsic to building a cluster from nothing: controllers creating virtual machines, the machines booting, k3s starting, a worker joining. Chapter 8's lesson was that a smarter golden image cannot remove them. Only one thing can: doing the work <em>before anyone asks</em>.</p>
 <p>The second is a <strong>model</strong>. An agent's first request loads its language model into memory. The strategy document wrote the cost into its fifth architecture constraint, as measured when the platform's model ran on the CPU: <em>"Cold-start for llama3.2 on CPU is ~28–30s; unwarmed agents time out the first real request."</em></p>
 <p>Different machinery, same trade: capacity held in reserve against time lost to a cold start.</p>
 <h2 id="a-standby-not-a-pool">A standby, not a pool</h2>
@@ -491,7 +491,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <tbody>
 <tr>
 <td>Cold</td>
-<td>33.7 s, both nodes</td>
+<td>18.1 s, both nodes (30 Sept; 33.7 s on 17 Sept)</td>
 <td>2.3–2.6 s on the GPU (28–30 s on CPU)</td>
 </tr>
 <tr>
@@ -511,7 +511,7 @@ td strong { color: var(--accent); font-weight: 600; }
 </tr>
 <tr>
 <td>What keeps it warm today</td>
-<td>a background loop that is off by default</td>
+<td>a background loop, on by default since 30 Sept</td>
 <td>a host setting outside the repository</td>
 </tr>
 </tbody>
@@ -560,12 +560,14 @@ td strong { color: var(--accent); font-weight: 600; }
 </table></div>
 <p><strong>Median: 467 milliseconds.</strong> Not 194. The first run is reported rather than discarded — an unexplained outlier, kept on the same principle this book applies to every other number in it. Runs 2 and 3 agree closely, and the time is not free: of the roughly 465 milliseconds, about 265 is <code>clusterctl get kubeconfig</code> alone; relabeling the cluster and syncing the in-cluster kubeconfig Secret split most of the rest.</p>
 <p>Two and a half times the June figure, and still far faster than building from nothing: the claim now beats the 33.7-second cold build by a factor of about 72 — not the factor of two hundred the June number implied, but still the same conclusion Anita drew from the wrong number: handing over something already running beats building it, by nearly two orders of magnitude. The design held. The number on the page had simply gone stale, in exactly the way this chapter's own middle section warned that warmth does.</p>
+<p>It went stale again within two weeks, from the other side. By 30 September the cold build was 18.1 seconds (Chapter 8), and the same 467-millisecond claim beats it by a factor of about 39, not 72. The standby still costs eight cores and 14 GiB, idle, all day. Warmth pays less than it did a fortnight earlier, for the same price. That does not make it a bad trade, but it is a different trade from the one priced on 18 September, and the ratio deserves a date like any other number.</p>
 <div class="endmatter"><h2 id="the-ledger">The ledger</h2>
 <ul>
 <li><strong>Built (June):</strong> a one-deep cluster standby, claimed in 194–195 ms instead of built from scratch, rebuilt in about 60 seconds in the background.</li>
 <li><strong>Cost of that warmth:</strong> one full cluster idle — eight cores and 14 GiB of memory.</li>
 <li><strong>Today (17 September):</strong> no standby running; the pool is opt-in and off by default; its manifest points at an image built on 3 March; the claim time has not been re-measured since June.</li>
 <li><strong>Fixed and re-measured (18 September):</strong> the pool's node-readiness check now counts by name, not by count (the same ghost-node bug Chapter 7 found, confirmed live in <code>pool.go</code>); its standby manifest switched to the warm image, with CA/token seeding added to the build path. Three claim-delete-rebuild-claim cycles: 1.059 s, 0.467 s, 0.465 s — <strong>median 467 ms</strong>, not 194. Still about 72x faster than a cold build. The pool remains opt-in — this fixes what happens when it's on, not the default.</li>
+<li><strong>Since (30 September):</strong> the pool is on by default (<code>run-ui.sh</code> now sets <code>POOL_ENABLED=true</code>), and the cold build it competes with is 18.1 s, so a claim is about 39× faster rather than 72× for the same idle cost. Not re-measured: the claim time itself, and whether the pool's rebuild-after-delete waits on the previous VMs' memory, as Chapter 8's stopwatch once did.</li>
 <li><strong>Model warmth, measured on the GPU (17 September):</strong> 2.3–2.6 s cold, 0.14–0.17 s warm — against the 28–30 s CPU figure in the rule.</li>
 <li><strong>Found:</strong> the GPU holds one model at a time, and a lab run evicted the model two of the three agents use.</li>
 <li><strong>Held by:</strong> a host setting outside the repository, not the heartbeat the rule names, which stopped after two runs.</li>

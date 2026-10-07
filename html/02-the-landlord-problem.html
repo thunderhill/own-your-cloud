@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository. <span class="legend-public">Public record</span> and <span class="legend-public">Briefing</span> sections quote named sources — published reports, or the strategy deck behind this book.</dd>
       <dt>Length</dt>
-      <dd>About 2,000 words · about 9 minutes to read</dd>
+      <dd>About 2,200 words · about 9 minutes to read</dd>
     </dl>
   </header>
 
@@ -455,6 +455,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>A virtualization-layer resource setting</strong> — raising the processor allowance that KubeVirt gives the small helper containers beside each virtual machine. With a tiny default allowance, the operating system throttled them while each VM started. That took the build from 42.7 to 34.5 seconds.</li>
 </ul>
 <p>Neither is dramatic. Both are exactly the kind of change the deck's apartment analogy is about: knocking down a wall. On rented infrastructure, the first would have been a feature request. The second would not have been possible at all.</p>
+<p>Three weeks later the same build took 18.1 seconds, and the two largest steps went deeper still. One was a <strong>patch to the source code of the controller</strong> that creates the virtual machines: it had stopped receiving the events it was meant to act on, so a control plane sometimes waited thirty seconds for nothing. The other was <strong>one feature flag in Cluster API itself</strong>, a rate limit that is on by default and allows each object one pass per second, which no one here had chosen. Turning it off removed 5.8 seconds. A tenant of a managed service can file a ticket about either. It cannot rebuild the provider's controller from a patched source tree, or decide which of the control plane's defaults suits its own workload. That decision is what owning the brain means in practice.</p>
 <h2 id="the-owners-ledger">The owner's ledger</h2>
 <p>The deck is honest about what ownership demands, and this chapter should be too. Its own list of <em>"Infrastructure Requirements"</em> for a self-managed platform is: hardware; data-centre facilities; a platform engineering team of <em>"Kubernetes experts, DevOps, SRE specialists"</em>; automation and tooling; and operational processes for incidents, changes and security. It estimates <em>"12–18 months to full production readiness"</em> and <em>"$2–5M for mid-size enterprise deployment"</em> — again without a source.</p>
 <p>This book adds three items from experience:</p>
@@ -476,7 +477,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>Every landlord (public record):</strong> Broadcom completed its $61 billion VMware acquisition in November 2023 and ended perpetual licences; AT&amp;T alleged a proposed 1,050% increase in a 2024 lawsuit, later settled.</li>
 <li><strong>The exit fee (public record):</strong> EU Data Act in force 11 January 2024, applicable from 12 September 2025 (cost-only switching charges), with charges withdrawn entirely from 12 January 2027; Google Cloud and AWS dropped exit data-transfer fees in 2024, ahead of the obligation.</li>
 <li><strong>The lock-in that stays (briefing):</strong> the dependency spiral of proprietary services.</li>
-<li><strong>Owning the brain (build log):</strong> two one-line changes, in layers a tenant rarely reaches, cut cluster build time from 50.0 s to 34.5 s.</li>
+<li><strong>Owning the brain (build log):</strong> two one-line changes, in layers a tenant rarely reaches, cut cluster build time from 50.0 s to 34.5 s (9 September); a patched controller and one control-plane feature flag later took it to 18.1 s (30 September).</li>
 <li><strong>The owner's cost (build log):</strong> a week-long upgrade; a dashboard wrong for months; a moving version tag that crashed a service thousands of times.</li>
 <li><strong>Not supported:</strong> the deck's 3–5x exit multiplier, 18–24 months, and $2–5 million figures have no source.</li>
 </ul>

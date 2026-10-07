@@ -51,6 +51,8 @@ That last step is worth noticing for what it does *not* reset. It wipes the oper
 
 The sovereignty consequence is the one Vikram gave the regulator. The internet is touched during the bake — k3s from its install endpoint, the air-gapped images from the project's release page — and never again. The cluster manifests declare `airGapped: true`, and every cluster after that boots from what the image already holds. The dependency on the outside world moves from every boot of every node to one event, on one day, that can be reviewed.
 
+On 23 September that one event failed. GitHub was badly degraded from this host, with every connection taking about fifteen seconds and some transfers as slow as 11 bytes a second. The bake VM's k3s download ran for nineteen minutes, past the script's fifteen-minute wait, and the bake gave up. The fix moved the dependency one step further from the internet. `scripts/fetch-k3s-artifacts.sh` downloads the k3s release once into a cache on the host, verifies its checksums, and serves it to the bake VM over the local network. The VM checks the checksums again, and the bake falls back to GitHub only if the mirror fails. A clean rebake now takes about 205 seconds, measured twice. The same rebake also added three boot trims and an early k3s start to the `:warm` image, worth about four seconds on every cluster build (Chapter 8). It also found a trap: if the previous bake's volume is still present, a "rebake" quietly builds on top of the old image instead of starting from the clean base, and the script now warns about it.
+
 ## A disk that ships like a container
 
 A baked disk still has to reach each new VM. The first approach cloned the golden DataVolume for every virtual machine — a full copy of a 20 GiB volume per node. `build-containerdisk.sh` replaced that with a KubeVirt *containerDisk*: the VM's disk packaged as an ordinary container image.
@@ -153,7 +155,7 @@ Anita read the row for `:latest` twice. "March."
 
 - **Claimed:** cluster spin-up from about ten minutes to about two with the golden image — stated in four documents, with no measurement recorded.
 - **Measured (16–17 September):** base-image clone about 50 s; bake VM 160 s; a 20 GiB disk packaged as a 1.35 GB containerDisk; a cold pull of a 1.29 GB containerDisk in 4.2 s from the local registry, 0.1 s once cached.
-- **Moved:** the platform's internet dependency, from every node's boot to one bake.
+- **Moved:** the platform's internet dependency, from every node's boot to one bake — and, from 23 September, from the bake to one checksum-verified download into a host cache. A clean rebake takes about 205 s.
 - **Found:** every image reference names an address that belongs to a Kubernetes node, not the registry; pulls work through a per-node translation file that the UI's deploy path never refreshes.
 - **Frozen inside the images:** a Kubernetes version, a ghost Node, fixed certificates, and — in the tag the standby uses — a build date of 3 March.
 - **Still owed:** a recorded bake date and contents for each image; checks that verify what an image contains, not just that it exists; a registry reference that is the registry's own address.
@@ -169,6 +171,7 @@ Anita read the row for `:latest` twice. "March."
 - `bake-golden-image.sh` and `bake-common.sh` — the bake; the in-VM recipe is the sequence of `[bake] Step` log lines.
 - `build-containerdisk.sh` — from baked volume to container image.
 - `scripts/import-base-images.sh` — the base Ubuntu images the bake starts from.
+- `scripts/fetch-k3s-artifacts.sh` and `start_k3s_mirror` in `bake-common.sh` — the host-side k3s cache the bake installs from; `K3S_MIRROR=off` restores the direct download.
 - `scripts/fix-registry-hosts.sh` and `make registry-fix` — the alias translation, rewritten on demand.
 - `ui/backend/handlers/registry.go` — `REGISTRY_URL` versus `REGISTRY_ALIAS`.
 - `docker network inspect kind` — who actually holds `172.18.0.2` today.

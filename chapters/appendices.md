@@ -71,13 +71,15 @@ The web console: a React frontend and a Go backend (port 8080), with SRE, AI and
 
 The Makefile defines 65 targets. These are the ones this book used.
 
-| Target | What it does | Note, 17 September 2026 |
+| Target | What it does | Note, 17 September 2026 unless dated |
 |---|---|---|
 | `make all` | `prereqs` → `metallb` → `capi-init` → `target-cluster` | Assumes the four unscripted prerequisites above |
-| `make target-cluster` | Builds the default warm cluster | 33.7 s to both nodes ready (Appendix D) |
-| `make clean` | Deletes the target cluster | 45.7 s until every object is gone; the machines stop at 35.6 s (Chapter 17) |
+| `make target-cluster` | Builds the default warm cluster | 18.1 s to both nodes ready, 30 September (Appendix D); 33.7 s on 17 September |
+| `make clean` | Deletes the target cluster | 40.0 s until every object and machine is gone, 8 October; 45.7 s on 19 September (Chapter 17) |
 | `make verify` | Checks the target cluster and refreshes agent credentials | |
 | `make kubevirt-perf` | Applies the KubeVirt CPU setting | Cluster state, not manifest state: re-run after rebuilding `cluster2` |
+| `make capk-patch` | Swaps in the patched CAPK controller (added 23 September) | Cluster state too; `capi-init` runs it, but only warns if it fails (Chapter 8) |
+| `make time-to-ready-by-name RUNS=5` | Times a build by node name | Waits for the previous run's VMs before starting the clock since 30 September (Appendix D) |
 | `make phase-timings` | Per-phase breakdown of a cluster build | Counts nodes, not names — see Appendix D |
 | `make registry-fix` | Maps the registry alias for containerd | See Appendix C.5 |
 | `make istio` | Istio 1.28 on the target cluster | The legacy path; unsupported on Kubernetes 1.37 |
@@ -87,7 +89,7 @@ The Makefile defines 65 targets. These are the ones this book used.
 | `make ui` | Starts the web console | |
 | `make istio-adv-demo` / `istio-adv-verify` | Runs the five acts / the 22 checks | 22 passed on 17 September; the Act 3 checks test configuration, not failover (Chapter 11) |
 
-`make help` lists most targets, not all. It omits `kubevirt-perf`, `phase-timings` and every `istio-adv-*` target, and it still describes the default cluster as a *"~40s target."*
+`make help` lists most targets, not all. On 17 September it omitted `kubevirt-perf`, `phase-timings` and every `istio-adv-*` target, and described the default cluster as a *"~40s target."* A fix on 18 September added them and changed that description to *"measured 33.7s median"*, which is where it still stood on 30 September, after the build reached 18.1 s.
 
 ## Appendix B — Addresses that must not move
 
@@ -158,12 +160,15 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | Built-in SkillPacks "silently dropped" at install — really the chart applying them before its own admission webhook was serving | `helm install` | `fix-missing-builtin-skillpacks.sh` |
 | Agent runs created in quick succession raced into a terminal `Failed`, which the controller never retries | Serving re-pin | Delete the failed run and let the controller recreate it |
 | A failover check counted any non-empty body as success, so a total outage printed `success=20 failed=0` | Act 3 `run.sh` (Chapter 11) | Not fixed; the console's failover action counts HTTP 200 |
+| A timing script started its clock while the previous run's VMs still held 14 GiB, so a new control plane waited up to 12 s to be scheduled inside the timed window; one faster build measured as slower | `time-to-ready-by-name.sh` (Chapter 8; flagged in `measurements/README.md` on 19 September) | Fixed 30 September: waits for the old VMs, VMIs and launcher pods first |
+| A rebake reported success but built on top of the previous bake instead of the clean base image | `bake-common.sh`, with the old volume still present (Chapter 6) | Script warns; delete the volume for a clean rebake |
+| A network drop-in named `10-*` was silently overridden by netplan's own `10-netplan.conf` | Golden image, wait-online (Chapter 8) | Name it `99-*` |
 
 ### C.3 The status says healthy; it is not
 
 | Cause | Where | Fix or status |
 |---|---|---|
-| The worker node was `Ready` but tainted as uninitialized, so it accepted no workloads | Target cluster (Chapter 5) | Not fixed |
+| The worker node was `Ready` but tainted as uninitialized, so it accepted no workloads; behind the `Ready`, its agent failed after fifteen minutes and restarted, indefinitely | Target cluster (Chapter 5) | Fixed 23 September: `cloud-provider=external` removed. The fix exposed C.5's VM-to-VM row |
 | A ghost node baked into the golden image satisfied "2 nodes Ready" before the worker joined | Both timing scripts, and (found 18 September) the UI backend's own `targetNodesReady` — used by both the on-demand deploy path and the warm pool (Chapter 7, Chapter 9) | Measure/count by name (Appendix D); fixed in `pool.go` 18 September, standalone scripts still not fixed |
 | A missing worker timestamp was treated as zero, so "both nodes" meant the control plane only | `phase-timings.sh` (Chapter 7) | Not fixed |
 | The deterministic permission check tested an identity running pods no longer used | Agent RBAC after 0.10.75 (Chapter 15) | Bindings moved to a group; check the live pod's account |
@@ -184,6 +189,7 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | `172.18.0.2:5000` is a registry alias only containerd can resolve; plain HTTP clients get connection refused | Web console Registry tab | Backend dials a real address, displays the alias |
 | A host-network probe looked for Ollama on `127.0.0.1`; the redirect that fixed it was lost on reboot | Sympozium node probe | Redirect re-asserted every 60 s by a DaemonSet |
 | A VM's pod address is reachable from its node but not from other pods, costing a 10 s timeout | Worker joining the control plane (Chapter 8) | `advertise-address` set on the control plane |
+| Traffic between the two VMs failed in both directions: each guest treats the other as on its local wire and ARPs for it. Routing one side only still fails, because the reply ARPs too | Target-cluster VMs (Chapter 8) | Fixed 23 September: routes on both VMs (`pod-subnet-via-gateway.sh`); the older manifests do not carry it |
 | Remote-cluster credentials embedded `127.0.0.1:<port>`, so the peer sat at `timeout` while all else looked healthy | `istioctl create-remote-secret` on Kind | Pass `--server https://<node-ip>:6443`; Act 3 asserts `synced` |
 | `host.docker.internal` does not resolve inside Kind pods | Model endpoint | Use `172.18.0.1` through an in-cluster shim Service |
 | Both Kind clusters number pods from `10.244.0.0/24`, so a pod address means different machines in each | Cross-cluster calls (Chapter 10) | Hand-plumbed proxy (before); east-west gateways (after) |
@@ -210,6 +216,9 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | Cause | Where | Fix or status |
 |---|---|---|
 | `kubectl wait --for=condition=Accepted` reads top-level conditions; a route's live under `status.parents` | HTTPRoute | `wait_route_accepted` in `07-istio-advanced/lib/common.sh` |
+| A controller dropped every event because it watched older API types, and acted only on a 10–20 s requeue; while waiting it dialled an API with no machine behind it, for up to 30 s | CAPK v0.11.2 under Cluster API v1.14 (Chapter 8) | Patched 23 September (`make capk-patch`); cluster state |
+| A worker's first config request landed fractionally early and waited a random 5–10 s to retry | k3s 1.37 agent (Chapter 8) | Gate on the supervisor's `/v1-k3s/readyz` |
+| The guest waited up to 1.9 s for IPv6 link-local on an IPv4-only network | Golden image, `systemd-networkd-wait-online` (Chapter 8) | `LinkLocalAddressing=no`, baked 23 September |
 | `helm upgrade --wait` polls an intentionally suspended example MCPServer | Sympozium upgrades | Drop `--wait`; verify by hand |
 | Gateway API CRDs exceed the annotation size limit of client-side apply | Gateway API install | Apply with `--server-side` |
 
@@ -242,9 +251,10 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 
 | Measurement | Value | When, and how |
 |---|---|---|
-| Cluster bring-up, both nodes ready | **33.7 s** median (30.4 / 35.1 / 33.7) | 17 September, by node name, warm manifest, Kubernetes 1.37 |
-| Control plane alone | **24.7 s** median | Same runs |
-| Teardown | Delete command returns at **10.13 s**; machines stop at **35.6 s**; last object gone at **45.73 s** | 19 September, N=5 (spread 1.24 s). Supersedes an 18.9 s figure from a single run on 17 September |
+| Cluster bring-up, both nodes ready | **18.1 s** median (18.1 / 17.7 / 18.3 / 18.1 / 18.1) | 30 September, N=5, by node name, clean teardown between runs, warm manifest, Kubernetes 1.37 (platform repository, `docs/sub-60s-cluster-strategy.md` §11). Was 33.7 s on 17 September |
+| Control plane alone | **14.3 s** median | Same runs; was 24.7 s |
+| Teardown | Delete command returns at **0.83 s**; every object and machine gone at **40.02 s** | 8 October, N=5 (spread 0.39 s), Chapter 17's drill re-run. On 19 September (N=5, spread 1.24 s): returns at 10.13 s, machines stop at 35.6 s, last object at 45.73 s, which superseded an 18.9 s single run from 17 September |
+| Destroy to first served request | **59.97 s** median (59.06–60.46) | 8 October, N=5, pre-registered boundaries; 81.96 s on 19 September |
 | Standby claim | **467 ms** median (1.059 / 0.467 / 0.465) | 18 September, by name-based readiness check, warm-image standby; was 194 ms in June |
 | Model load, cold vs warm | 2.3–2.6 s cold; 0.14–0.17 s warm | 17 September, GPU, qwen2.5:7b and llama3.2 (Chapter 9) |
 | Local model energy | 1.19 J per generated token; 0.33 kWh per million tokens (GPU only) | 17 September, qwen2.5:7b (Chapter 20) |
@@ -258,8 +268,13 @@ And the history behind the headline number:
 | + `advertise-address` | 42.7 s | 42.7 / 42.8 / 41.2 | 1.6 s |
 | + `supportContainerResources` | 34.5 s | 34.5 / 34.2 / 34.7 | 0.5 s |
 | After the Kubernetes 1.37 upgrade | 33.7 s | 30.4 / 35.1 / 33.7 | 4.7 s |
+| + CAPK patch, worker taint removed, worker gate, VM routes (23 September) | 28.8 s | 30.0 / 28.8 / 28.7 | 1.3 s |
+| + guest boot trims (23 September) | 25.0 s | 7 runs, 24.0–25.8 | 1.8 s |
+| Re-run on 30 September with the corrected instrument | 24.4 s | 25.6 / 24.2 / 24.4 / 24.8 / 24.2 | 1.4 s |
+| + early k3s start | 23.9 s | 24.2 / 23.8 / 23.4 / 23.9 / 24.1 | 0.8 s |
+| + Cluster API rate limiting off | **18.1 s** | 18.1 / 17.7 / 18.3 / 18.1 / 18.1 | 0.6 s |
 
-Notice the last column. The spread that had collapsed to half a second is back to 4.7 seconds after the rebuild. With three runs, a change smaller than about five seconds cannot be seen.
+Notice the last column. The spread that had collapsed to half a second was back to 4.7 seconds after the rebuild, and with three runs a change smaller than about five seconds could not be seen. The CAPK patch, which removed most of the run-to-run variation (its own A/B: 31.5 s spread upstream, 1.6 s patched), brought the spread back under two seconds. The 30 September steps used five runs each, still below the seven this appendix's own rules ask for on a noisy host. Their spreads, 0.6–1.4 s, are why they are reported anyway, and the flag stays on them.
 
 ### D.2 The instrument
 
@@ -322,6 +337,19 @@ Chapter 17's cycle — destroy, rebuild, deploy, serve — measured on 19 Septem
 | Build, both nodes Ready | 34.39 s | 4.24 s |
 | Build, control plane alone | 25.60 s | 0.78 s |
 | Workload to first HTTP 200 | 1.34 s | 0.58 s |
+
+Re-run on 8 October 2026 on the 18-second platform, with the same script and boundaries, and the expectations committed first (`measurements/README.md`). Raw data: `measurements/ch17-recovery-drill-20261008-011322.tsv`.
+
+| Figure | Median | Spread |
+|---|---:|---:|
+| Destroy to first served request | **59.97 s** | 1.40 s |
+| Delete command returns | 0.83 s | 0.29 s |
+| Teardown, everything gone | 40.02 s | 0.39 s |
+| Build, both nodes Ready | 17.95 s | 1.33 s |
+| Build, control plane alone | 14.11 s | 0.90 s |
+| Workload to first HTTP 200 | 1.09 s | 0.62 s |
+
+One pre-registered expectation failed: teardown was predicted unchanged at about 45 s and came in at 40.02 s. The cause was not investigated.
 
 Pre-flight gates abort rather than adjust: the `:warm` image must already be cached (recording its image ID, not just its tag), `supportContainerResources` must be present at `cpu: "1"`, and no warm-pool controller may be running. The workload is `rancher/mirrored-library-busybox`, baked into the golden image — every run recorded zero `Pulling` events, so nothing was fetched from the internet inside the clock.
 
@@ -403,7 +431,7 @@ Two conventions. Where a file is long, an excerpt is shown and the elision is ma
 
 ### G.1 The warm cluster manifest — seven objects
 
-Chapter 5 describes a cluster as a written declaration; this is that declaration. Seven objects, applied together, produce two virtual machines running a Kubernetes cluster. Chapters 7, 8 and 9 all measure this file.
+Chapter 5 describes a cluster as a written declaration; this is that declaration. Seven objects, applied together, produce two virtual machines running a Kubernetes cluster. Chapters 7, 8 and 9 all measure this file. It is quoted as it stood on 17 September. On 23 September the worker's bootstrap gained a readiness gate and VM routes and lost the line discussed below (Chapter 8). The current file is in the repository.
 
 ```yaml
 # 03-target-cluster/target-cluster-warm.yaml (excerpt — header comment)
@@ -542,7 +570,7 @@ stringData:
       - "systemctl daemon-reload && systemctl enable k3s-agent && systemctl start k3s-agent"
 ```
 
-Note the `kubelet-arg: cloud-provider=external` in that worker configuration. It is the line behind Chapter 5's finding: the worker comes up `Ready` and carries a taint no controller ever clears, so it accepts no workloads.
+Note the `kubelet-arg: cloud-provider=external` in that worker configuration. It is the line behind Chapter 5's finding: the worker comes up `Ready` and carries a taint no controller ever clears, so it accepts no workloads. It was removed on 23 September.
 
 The annotation that lets the worker start at all, rather than waiting:
 
@@ -800,6 +828,24 @@ done
 ```
 
 The `|| true` that the comment mentions is the pattern Appendix C.2 catalogues: a wait that fails, a fallback that swallows the failure, and a script that reports success.
+
+### G.9 A default nobody chose — Cluster API's rate limiter
+
+The largest single step from 33.7 to 18.1 seconds (Chapter 8) is one environment variable, read by `clusterctl init`. Quoted with its comment, because the comment says what the default protects and why this platform could give it up:
+
+```bash
+# 02-capi-init/init-management-cluster.sh (excerpt)
+# CAPI v1.13+ enables ReconcilerRateLimiting by default (beta): at most one
+# reconcile per object per second. Building a cluster re-reconciles the same
+# Cluster/Machine several times in quick succession (ownerRefs, infra ready,
+# bootstrap ready), so each hop waited out the limit — capi-controller-manager
+# acted ~2s after every new object. It protects management clusters with many
+# workload clusters; this one runs a single target cluster.
+# docs/sub-60s-cluster-strategy.md §11.
+export EXP_RECONCILER_RATE_LIMITING=false
+```
+
+Like the KubeVirt setting in G.3, it takes effect in the running management cluster, not in a manifest. A `cluster2` that was set up before this line existed needs its controller's `--feature-gates` patched by hand, or `make capi-init` re-run.
 
 ## Appendix H — Sources
 

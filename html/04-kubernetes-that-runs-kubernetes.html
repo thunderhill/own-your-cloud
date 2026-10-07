@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository. <span class="legend-public">Public record</span> and <span class="legend-public">Briefing</span> sections quote named sources — published reports, or the strategy deck behind this book.</dd>
       <dt>Length</dt>
-      <dd>About 2,600 words · about 11 minutes to read</dd>
+      <dd>About 2,700 words · about 12 minutes to read</dd>
     </dl>
   </header>
 
@@ -493,7 +493,7 @@ td strong { color: var(--accent); font-weight: 600; }
 </tr>
 </tbody>
 </table></div>
-<p><strong>The factory built what the order said.</strong> Cluster API recorded two Machines. Each is backed by a KubeVirt virtual machine, <code>target-cluster-cp-s9j8h</code> and <code>target-cluster-workers-rz9xt-m5x6z</code>, both <code>Running</code> and ready. From the moment the file is applied, both machines are ready in a median of <strong>33.7 seconds</strong>, and the whole cluster is torn down in <strong>45.7 seconds</strong> (Chapters 7 and 17).</p>
+<p><strong>The factory built what the order said.</strong> Cluster API recorded two Machines. Each is backed by a KubeVirt virtual machine, <code>target-cluster-cp-s9j8h</code> and <code>target-cluster-workers-rz9xt-m5x6z</code>, both <code>Running</code> and ready. From the moment the file is applied, both machines are ready in a median of <strong>18.1 seconds</strong>, and the whole cluster is torn down in <strong>40.0 seconds</strong> (Chapters 8 and 17; on 17 September, 33.7 and 45.7).</p>
 <p><strong>The factory fits in a workstation.</strong> The management cluster, the cluster it built, a second cluster for the service mesh, and the AI agents all ran on one host (the prologue lists it). The manufacturing pattern is the same one a data centre would use. The capacity is not.</p>
 <h2 id="the-gauge-that-disagrees">The gauge that disagrees</h2>
 <p>One more reading from the same day belongs in a chapter for a board, because it is the first appearance of this book's most persistent theme.</p>
@@ -522,7 +522,7 @@ ControlPlaneComponentsHealthy=False  Following machines are reporting control pl
 <li><strong>The idea (briefing):</strong> Cluster API extends Kubernetes' declaration-and-reconciliation model to whole clusters, run from a management cluster, with providers for different infrastructure.</li>
 <li><strong>The spectrum (briefing):</strong> Tanzu, CAPZ and KKP as markers from convenience to control, and a fourth option — self-managed on open standards. The labels are the deck's opinions.</li>
 <li><strong>Virtual machines (build log):</strong> KubeVirt runs VMs as Kubernetes objects; this platform's workload clusters run on VMs. There is no VMware migration tooling in the repository.</li>
-<li><strong>The factory, 17 September 2026 (build log):</strong> Cluster API v1.14.2, CAPK v0.11.2, k3s providers v0.3.0, KubeVirt v1.9.0, CDI v1.66.0. A 258-line declaration of seven objects produces two VM-backed machines, ready in 33.7 s median and torn down in 45.7 s.</li>
+<li><strong>The factory, 17 September 2026 (build log):</strong> Cluster API v1.14.2, CAPK v0.11.2, k3s providers v0.3.0, KubeVirt v1.9.0, CDI v1.66.0. A 258-line declaration of seven objects produces two VM-backed machines, ready in 33.7 s median and torn down in 45.7 s; by early October, 18.1 s and 40.0 s (Chapters 8 and 17).</li>
 <li><strong>Found:</strong> Cluster API reported the working cluster as <code>Available=False</code>; the repository's architecture diagram still shows March.</li>
 </ul>
 <h2 id="ask-your-team">Ask your team</h2>

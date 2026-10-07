@@ -81,6 +81,8 @@ Chapter 8 tells how the platform in this book brought the time to build a cluste
 
 Neither is dramatic. Both are exactly the kind of change the deck's apartment analogy is about: knocking down a wall. On rented infrastructure, the first would have been a feature request. The second would not have been possible at all.
 
+Three weeks later the same build took 18.1 seconds, and the two largest steps went deeper still. One was a **patch to the source code of the controller** that creates the virtual machines: it had stopped receiving the events it was meant to act on, so a control plane sometimes waited thirty seconds for nothing. The other was **one feature flag in Cluster API itself**, a rate limit that is on by default and allows each object one pass per second, which no one here had chosen. Turning it off removed 5.8 seconds. A tenant of a managed service can file a ticket about either. It cannot rebuild the provider's controller from a patched source tree, or decide which of the control plane's defaults suits its own workload. That decision is what owning the brain means in practice.
+
 ## The owner's ledger
 
 The deck is honest about what ownership demands, and this chapter should be too. Its own list of *"Infrastructure Requirements"* for a self-managed platform is: hardware; data-centre facilities; a platform engineering team of *"Kubernetes experts, DevOps, SRE specialists"*; automation and tooling; and operational processes for incidents, changes and security. It estimates *"12–18 months to full production readiness"* and *"$2–5M for mid-size enterprise deployment"* — again without a source.
@@ -111,7 +113,7 @@ Anita read the fourth column first. Most of it was blank.
 - **Every landlord (public record):** Broadcom completed its $61 billion VMware acquisition in November 2023 and ended perpetual licences; AT&T alleged a proposed 1,050% increase in a 2024 lawsuit, later settled.
 - **The exit fee (public record):** EU Data Act in force 11 January 2024, applicable from 12 September 2025 (cost-only switching charges), with charges withdrawn entirely from 12 January 2027; Google Cloud and AWS dropped exit data-transfer fees in 2024, ahead of the obligation.
 - **The lock-in that stays (briefing):** the dependency spiral of proprietary services.
-- **Owning the brain (build log):** two one-line changes, in layers a tenant rarely reaches, cut cluster build time from 50.0 s to 34.5 s.
+- **Owning the brain (build log):** two one-line changes, in layers a tenant rarely reaches, cut cluster build time from 50.0 s to 34.5 s (9 September); a patched controller and one control-plane feature flag later took it to 18.1 s (30 September).
 - **The owner's cost (build log):** a week-long upgrade; a dashboard wrong for months; a moving version tag that crashed a service thousands of times.
 - **Not supported:** the deck's 3–5x exit multiplier, 18–24 months, and $2–5 million figures have no source.
 
