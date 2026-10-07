@@ -151,3 +151,26 @@ yes
 ### One correction to Chapter 5
 
 Chapter 5 records the worker as having *"been given nothing to do."* A pod that tolerates `node.cloudprovider.kubernetes.io/uninitialized` and pins to the worker by hostname **runs there normally** (verified 19 September, `drill-workload-worker.yaml`). The worker is not broken hardware; it is excluded by a scheduling gate. Nothing ordinary will land on it, which is the operative fact, but the machine works.
+
+## Chapter 17 drill, re-run after the 18-second build (pre-registered)
+
+**This section was written and committed BEFORE the first measured run of the re-run.**
+
+Between 23 and 30 September the platform repository cut the build from 33.7 s to a reported 18.1 s (median of 5, `scripts/time-to-ready-by-name.sh`, 30 September; `docs/sub-60s-cluster-strategy.md` §7–§11). Every Chapter 17 figure was measured on the older platform. This re-run measures the same cycle on the new one.
+
+**Nothing about the drill changes.** Same script (`ch-recovery-drill.sh`, unmodified), same boundaries T0–T9 as the table above, same workload (`drill-workload.yaml`), same pre-flight gates, N=5 after one discarded rehearsal, same headline (MTTR = T9 − T0).
+
+**Platform state, recorded 8 October 2026 before any run:**
+
+- `capi-controller-manager` runs with `--feature-gates=…ReconcilerRateLimiting=false…`
+- CAPK image `172.18.0.2:5000/capk-manager:v0.11.2-kubeui2` (the patched build from `02-capi-init/patch-capk.sh`)
+- `:warm` digest `sha256:0342dd8898bb…`, identical to `:warm-b1` (the image with `k3s-early.service` and the guest boot trims)
+- KubeVirt v1.9.0, `supportContainerResources` cpu `1`; cluster2 server v1.37.0
+- Manifest: `03-target-cluster/target-cluster-warm.yaml` at platform commit `f0f74a2`. Worker taint removed, worker gated on `/v1-k3s/readyz`, VM-to-VM routes on both VMs.
+
+**Stated in advance, so the result can contradict them:**
+
+1. **Build (T6 − T4) near 18 s.** The repository reports 18.1 s from a different script. A median outside 16–21 s would mean the two instruments disagree, and the book would report that disagreement instead of picking one.
+2. **The workload may now land on the worker.** The taint that kept every pod on the control plane is gone. Record the node either way. If the pod lands on the worker, T9 also shows that the control plane can reach a pod on the worker, which was impossible before the VM-to-VM fix.
+3. **Teardown (T2 − T0) is expected to be roughly unchanged, around 45 s.** None of the September work targeted deletion. If teardown is still about 45 s, it is now more than twice the build and the largest share of the MTTR.
+4. **No prediction is made for the headline MTTR.** Arithmetic from expectations 1 and 3 would suggest about 66 s. It is not a target, and the result is reported whatever it is.
