@@ -412,9 +412,9 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>The pilot had done what a pilot is for. Anita Rao put one slide up, and it had two columns rather than a number.</p>
 <p>"Everything on the left, we measured," she said. "Everything on the right, we would have to build. I am not asking the board to approve the right-hand column today. I am asking it to stop confusing the two."</p>
 <p>The chief financial officer read it twice. "The left column is a workstation."</p>
-<p>"One workstation. Twenty-nine gigabytes of memory, one consumer graphics card, one power supply, one of everything. It builds a Kubernetes cluster in thirty-four seconds and hands over a spare in under half a second, and both of those numbers are real."</p>
+<p>"One workstation. Twenty-nine gigabytes of memory, one consumer graphics card, one power supply, one of everything. It builds a Kubernetes cluster in eighteen seconds and hands over a spare in under half a second, and both of those numbers are real."</p>
 <p>"And in a data centre?"</p>
-<p>"The same thirty-four seconds, probably. That part is the software, and the software does not care where it runs." She let that sit. "What changes is everything the workstation lets us skip. One of everything is fine until the one fails."</p>
+<p>"The same eighteen seconds, probably. That part is the software, and the software does not care where it runs." She let that sit. "What changes is everything the workstation lets us skip. One of everything is fine until the one fails."</p>
 <p>"Give me the list."</p>
 <p>"That is the right-hand column. High availability. Storage that survives a disk. Backups we have restored from, not just taken. Addresses that work on a real network. Secrets that are not in Git." She paused. "Some of those we already know we are missing, because this year we went looking, and the looking is the part I would actually defend to you."</p>
 <p>The CFO turned to Vikram. "How much of the right-hand column is new engineering?"</p>
@@ -435,7 +435,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>No identity.</strong> The web console has no login. Neither does the agent console embedded in it. The one authenticated surface is the agent platform's own API, which does require a bearer token.</li>
 <li><strong>Capacity that is one deep.</strong> One warm standby cluster, one model resident on the GPU at a time (Chapter 9).</li>
 </ul>
-<p>None of this is a criticism of the platform. A lab that paid for all of it would have taught less, more slowly. But every item is a thing the data centre would have to supply, and a reader who skips this list will mistake thirty-four seconds for readiness.</p>
+<p>None of this is a criticism of the platform. A lab that paid for all of it would have taught less, more slowly. But every item is a thing the data centre would have to supply, and a reader who skips this list will mistake eighteen seconds for readiness.</p>
 <h2 id="high-availability-and-what-it-is-actually-for">High availability, and what it is actually for</h2>
 <p>The platform's control planes are single. Cluster API's own model is the first thing that changes: <code>KThreesControlPlane</code> takes a <code>replicas</code> field, and production practice is three, across three failure domains, so that the loss of one machine leaves a quorum. The same declaration that makes one machine makes three; the cost is not complexity in the manifest, it is having three real places to put them.</p>
 <p>Three points are worth a board's attention, because they are where the money and the mistakes are.</p>
@@ -465,7 +465,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li>Size hosts from the <strong>sum of reservations</strong> of everything you intend to place on them, not from observed utilization.</li>
 <li>Then treat the gap between reservation and use as the thing to manage down, because that gap is the owned-hardware form of the cloud waste in the prologue. Right-sizing requests is the work; it is unglamorous and it is where the margin is.</li>
 <li>Reserve headroom deliberately: enough to lose a failure domain and still place everything that was running on it. That is an availability cost that appears on the capacity plan, and it is routinely forgotten.</li>
-<li>Price warmth explicitly. Chapter 9's standby holds eight cores and 14 GiB idle, permanently, to make a claim take under half a second instead of thirty-four. That may be an excellent trade. It is never a free one, and it belongs on the plan as a line.</li>
+<li>Price warmth explicitly. Chapter 9's standby holds eight cores and 14 GiB idle, permanently, to make a claim take under half a second instead of eighteen. That may be an excellent trade. It is never a free one, and it belongs on the plan as a line.</li>
 </ol>
 <h2 id="secrets-identity-and-the-two-things-the-lab-has-no-answer-for">Secrets, identity, and the two things the lab has no answer for</h2>
 <p><strong>Secrets.</strong> The platform commits certificate authority private keys and a fixed join token, marked demo-only (Chapter 3), and the agent platform's tokens live in cluster Secrets, which are encoded rather than encrypted. Neither transfers. The two common patterns are SOPS, which encrypts values inside the Git repository so the repository stays the source of truth, and External Secrets, which keeps material in a dedicated store — HashiCorp Vault, or a hardware security module — and syncs references into the cluster. The choice matters less than the property both provide and the platform currently lacks: <em>no plaintext secret in version control, and a rotation procedure that someone has actually run.</em></p>
@@ -513,7 +513,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>Single control planes and a single failure domain — everything in this book runs one of each</td>
 </tr>
 <tr>
-<td>Build and teardown speed: 34.4 s and 45.7 s, which are properties of the software, not the hardware (Chapters 7 and 17)</td>
+<td>Build and teardown speed: 18.0 s and 40.0 s, which are properties of the software, not the hardware (Chapters 8 and 17)</td>
 <td>The storage under it: local files, never replicated, never restored from</td>
 </tr>
 <tr>
@@ -562,7 +562,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>"When someone has broken it in front of you," she said, "and the screen went red."</p>
 <div class="endmatter"><h2 id="the-ledger">The ledger</h2>
 <ul>
-<li><strong>Measured, and carried into this chapter:</strong> build 33.7 s (Chapter 7, reproduced at 34.4 s in Chapter 17) and teardown 45.7 s (Chapter 17, superseding an 18.9 s single run); a warm claim in 467 ms (Chapter 9); 22.42 GiB reserved against 7.45 GiB used, and a control-plane machine using 1% of its processor allowance (Chapter 20); energy per generated token on the GPU (Chapter 20).</li>
+<li><strong>Measured, and carried into this chapter:</strong> build 18.1 s (30 September, Chapter 8; reproduced at 17.95 s in Chapter 17's October re-run, and 33.7 s before the September work) and teardown 40.0 s (Chapter 17, 8 October; 45.7 s on 19 September, superseding an 18.9 s single run); a warm claim in 467 ms (Chapter 9); 22.42 GiB reserved against 7.45 GiB used, and a control-plane machine using 1% of its processor allowance (Chapter 20); energy per generated token on the GPU (Chapter 20).</li>
 <li><strong>Designed, not built:</strong> every requirement in this chapter — high availability, replicated storage, tested restores, BGP and segmentation, external DNS and PKI, secrets management, OIDC identity, GitOps reconciliation, observability retention, and a support policy. <strong>None of it exists on the platform.</strong></li>
 <li><strong>Already known to be missing, from the book's own findings:</strong> replicated storage, any restore test, real authentication on the consoles, destination-scoped egress, secrets outside version control, and four pieces of platform state that live only in a running cluster (Chapters 3, 12, 14, 18).</li>
 <li><strong>The cheapest item on the list:</strong> writing the exception down next to the version number. The platform already does it.</li>

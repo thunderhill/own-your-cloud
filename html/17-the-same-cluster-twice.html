@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 3,100 words · about 13 minutes to read</dd>
+      <dd>About 3,600 words · about 16 minutes to read</dd>
     </dl>
   </header>
 
@@ -504,19 +504,71 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>Neither definition is 18.9 seconds. And the ordering is the interesting part: <strong>the objects outlive the machines by about ten seconds.</strong> Cluster API is still reconciling finalizers on things that have already stopped existing in any way that matters. If you want the honest headline, it is the second row — the machines are gone at 35.6 seconds — and the platform spends another ten seconds tidying up records of them.</p>
 <p>This is the third figure in this book to be corrected, and the pattern is worth naming, because it is not about arithmetic. A control-plane-only time was published as a both-nodes time because the stopwatch counted a ghost. A 194-millisecond claim stood for three months because nobody re-ran it. Now a teardown measured once turns out to be less than half the real figure. Every one of them was a number that nobody had reason to doubt, in a book whose entire method is doubting numbers.</p>
 <p>So: <strong>destroy to serving, 82 seconds.</strong> Bring-up is under a minute. The cycle is not. The slow half is the half nobody had put on a slide.</p>
+<h3 id="measured-again-8-october">Measured again, 8 October</h3>
+<p>Between 23 and 30 September the build itself was cut nearly in half (Chapter 8). A cycle measured on the old platform says nothing about the new one, so the drill was run again: same script, same boundaries, the expectations committed before the first run, five runs after a discarded rehearsal.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">Median</th>
+<th>All five runs</th>
+<th style="text-align: right;">Spread</th>
+<th style="text-align: right;">19 September</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Destroy to first served request</strong></td>
+<td style="text-align: right;"><strong>59.97 s</strong></td>
+<td>59.06 / 59.43 / 59.97 / 60.21 / 60.46</td>
+<td style="text-align: right;">1.40 s</td>
+<td style="text-align: right;">81.96 s</td>
+</tr>
+<tr>
+<td>Delete command returns</td>
+<td style="text-align: right;">0.83 s</td>
+<td>0.66 / 0.69 / 0.83 / 0.91 / 0.95</td>
+<td style="text-align: right;">0.29 s</td>
+<td style="text-align: right;">10.13 s</td>
+</tr>
+<tr>
+<td>Teardown — everything gone</td>
+<td style="text-align: right;">40.02 s</td>
+<td>39.92 / 39.99 / 40.02 / 40.11 / 40.31</td>
+<td style="text-align: right;">0.39 s</td>
+<td style="text-align: right;">45.73 s</td>
+</tr>
+<tr>
+<td>Build — both nodes <code>Ready</code></td>
+<td style="text-align: right;">17.95 s</td>
+<td>16.91 / 17.93 / 17.95 / 17.98 / 18.24</td>
+<td style="text-align: right;">1.33 s</td>
+<td style="text-align: right;">34.39 s</td>
+</tr>
+<tr>
+<td>Workload to first HTTP 200</td>
+<td style="text-align: right;">1.09 s</td>
+<td>0.74 / 1.04 / 1.09 / 1.35 / 1.36</td>
+<td style="text-align: right;">0.62 s</td>
+<td style="text-align: right;">1.34 s</td>
+</tr>
+</tbody>
+</table></div>
+<p>The build matched the platform repository's 18.1 seconds to within a fifth of a second, on a different instrument. The pre-registration had predicted that teardown would be unchanged, since nobody had worked on it, and that prediction was wrong: it fell by almost six seconds, and the delete command now returns in under one second instead of ten. The September changes to the controllers that act on deletion are the obvious suspects, but this was not investigated, and the book does not claim a cause it did not test.</p>
+<p>The cycle now sits <em>on</em> the minute: a median just under 60 seconds, with two of five runs just over. And the slow half is still the half nobody had put on a slide, now by a wider margin. Teardown is forty of those sixty seconds, more than twice the build. The next second worth saving is in destroying a cluster, not in building one.</p>
 <h2 id="what-the-number-buys">What the number buys</h2>
 <p>Four things follow from this, and this platform can show all four.</p>
-<p><strong>Recovery stops being a procedure and becomes a command.</strong> The industry's reference point is DORA's, which puts elite performers at restoring service in <strong>under one hour</strong>. Against that, 82 seconds of infrastructure is not a line item; it is a rounding error. Which is precisely the point, and the uncomfortable half of it: if replacing the infrastructure costs eighty seconds, then <strong>everything left in your recovery time is data</strong>, and that is the part this platform has never once tested. Chapter 18 is blunt about it — <em>"a restore that returns a running cluster with an empty database has restored nothing a business cares about."</em> The forty-one-page runbook does not disappear. It gets shorter and much more specific: it stops being about etcd quorum and starts being about the data.</p>
+<p><strong>Recovery stops being a procedure and becomes a command.</strong> The industry's reference point is DORA's, which puts elite performers at restoring service in <strong>under one hour</strong>. Against that, 82 seconds of infrastructure (60 since October) is not a line item; it is a rounding error. Which is precisely the point, and the uncomfortable half of it: if replacing the infrastructure costs eighty seconds, then <strong>everything left in your recovery time is data</strong>, and that is the part this platform has never once tested. Chapter 18 is blunt about it — <em>"a restore that returns a running cluster with an empty database has restored nothing a business cares about."</em> The forty-one-page runbook does not disappear. It gets shorter and much more specific: it stops being about etcd quorum and starts being about the data.</p>
 <p><strong>Debugging gets a control group.</strong> This book already works this way without having named it. Chapter 8 records four hypotheses tested and discarded against rebuilt clusters. Chapter 11 records a failure that stopped reproducing after an upgrade, which is only a sentence you can write if you can rebuild the thing and look again. When a rebuild is cheap, the question <em>"is this my change or is this accumulated state?"</em> has an experiment instead of an argument. Palantir make the same case for their own infrastructure: <em>"Immutable nodes derived from instance templates simplify the debugging of any node issues encountered in production."</em></p>
 <p><strong>Upgrades stop being events.</strong> Chapter 19 is this chapter's case study and it did not set out to be one. Kind has no in-place upgrade, so moving Kubernetes forward meant deleting both clusters and building them again — and the chapter's own line is <em>"the upgrade is the rebuild."</em> What was experienced as a limitation of a development tool turns out to be the operating model. The caveat is the one Chapter 19 also records: it deleted first and rebuilt after. A true blue/green — new beside old, traffic shifted, old deleted — needs two clusters alive at once, which is exactly what this platform cannot do, for reasons the next section is about.</p>
 <p><strong>Drills become a calendar entry.</strong> Chapter 9 already prescribed one: <em>"every week, someone claims it, deletes it, and times the rebuild — naming both nodes."</em> It was never run. This chapter is that drill, finally executed, and it found a published number was wrong by 2.4×. A rehearsal that costs a day gets scheduled once a year and quietly skipped. A rehearsal that costs eighty seconds has no excuse.</p>
 <h2 id="the-trade-nobody-put-on-the-slide">The trade nobody put on the slide</h2>
-<p>Now the other four — cluster-per-pull-request, many small clusters instead of a few large ones, cluster-per-tenant, and rotating clusters on a schedule to deny an attacker persistence. All four are good ideas. All four need the same thing: <strong>several clusters, at once, with separate identities.</strong> This platform can produce neither, and the reason is not an oversight. It is the same decision that bought the thirty-four seconds.</p>
+<p>Now the other four — cluster-per-pull-request, many small clusters instead of a few large ones, cluster-per-tenant, and rotating clusters on a schedule to deny an attacker persistence. All four are good ideas. All four need the same thing: <strong>several clusters, at once, with separate identities.</strong> This platform can produce neither, and the reason is not an oversight. It is the same decision that bought the thirty-four seconds, and still holds up the eighteen.</p>
 <p>The fast path works by baking a fixed certificate authority set, a fixed join token and a fixed API address into the golden image, and pre-seeding matching secrets so the control plane adopts them. That removes the certificate work from the boot path — no <code>--cluster-reset</code>, no cert purge. The manifest says what it costs, in a comment sitting directly above the thing it enables:</p>
 <blockquote>
 <p><em>Safe only because exactly ONE target-cluster runs at a time.</em></p>
 </blockquote>
-<p>The design document is blunter still: <em>"If you ever allow concurrent clusters, switch to per-build random identity."</em> And per-build identity is what the slower path does — the <code>:preinit</code> build, whose floor is around a hundred seconds. <strong>The speed and the multiplicity are the same decision, taken in opposite directions.</strong> You may have a thirty-four-second cluster, or you may have many clusters. Not both, on this design.</p>
+<p>The design document is blunter still: <em>"If you ever allow concurrent clusters, switch to per-build random identity."</em> And per-build identity is what the slower path does — the <code>:preinit</code> build, whose floor is around a hundred seconds. <strong>The speed and the multiplicity are the same decision, taken in opposite directions.</strong> You may have an eighteen-second cluster, or you may have many clusters. Not both, on this design.</p>
 <p>Chapter 5 noticed the consequence by accident: a kubeconfig found in <code>/tmp</code>, written for a cluster that had since been rebuilt six times, still worked. This chapter tested it on purpose. Run 1's administrator credential was kept. Five destroy-rebuild cycles later, it was presented to a cluster thirty-two seconds old — a different cluster, different node names, built from a different <code>kubectl apply</code>:</p>
 <pre><code>$ kubectl --kubeconfig /tmp/drill-kubeconfig-run1 get nodes
 target-cluster-cp-lmrt2              Ready   control-plane   32s   v1.37.0+k3s1
@@ -537,12 +589,13 @@ yes
 <p><strong>For the infrastructure, backup genuinely does become archival.</strong> If the cluster is reconstructible from a repository and an image, there is little point snapshotting its control plane. Chapter 18 makes the stronger version of this argument: if the repository is the source of truth, rebuilding from it <em>"is the only version of a disaster-recovery plan that is tested every day."</em> Keep the artefacts cold, for the auditor and for the forensic case, and stop maintaining a restore path for a thing you can regenerate.</p>
 <p><strong>For everything else, the opposite.</strong> The run records, the logs, the audit trail, the application data — the cluster was never their archive, and in a replaceable world it very obviously is not. They need somewhere to go <em>before</em> the replacement, and a restore that someone has actually performed. Chapter 18's rule survives intact and gets sharper: <em>until the restore has happened, the backup is a hypothesis.</em> What changes is where the rule points. It stops pointing at etcd and starts pointing at the export.</p>
 <p>That is the whole discipline in one sentence: <strong>when the cluster stops being durable, the export becomes the archive.</strong></p>
-<h2 id="what-eighty-two-seconds-does-not-mean">What eighty-two seconds does not mean</h2>
+<h2 id="what-a-one-minute-cycle-does-not-mean">What a one-minute cycle does not mean</h2>
 <p>One caution before the ledger, because the number is quotable and a quotable number travels further than its caveats.</p>
 <p>This is not a production recovery time. There is no detection in it, no decision, no data restore, no high availability, no storage to re-attach, no DNS to reprogram, no other tenants to consider, and no human deciding whether replacement is the right call. It is a lower bound on mechanical rebuild.</p>
-<p>Nor is it provisioning from scratch. Every run recorded one line that settles this: the rebuilt cluster's <code>kube-system</code> namespace reports a creation timestamp of <strong>16 September</strong> — the day the image was baked — while its nodes were created that morning. The golden image carries a pre-initialised datastore. This is <strong>restore-from-image</strong>, and the image took five to eight minutes to bake. Without it already cached on the node, the honest number is minutes.</p>
+<p>Nor is it provisioning from scratch. Every run recorded one line that settles this: the rebuilt cluster's <code>kube-system</code> namespace reports a creation timestamp of <strong>16 September</strong> — the day the image was baked — while its nodes were created that morning. In the October re-run it reported 29 September, the date of the rebaked image. The image changed. The property did not. The golden image carries a pre-initialised datastore. This is <strong>restore-from-image</strong>, and the image took five to eight minutes to bake. Without it already cached on the node, the honest number is minutes.</p>
 <p>And <em>both nodes Ready</em> is still not two nodes of capacity. In all five runs the workload landed on the control plane, because the worker carries the taint Chapter 5 documented and nothing on this platform removes it. One correction to that chapter, though, from a test run for this one: a pod that explicitly tolerates the taint and pins to the worker <strong>runs there perfectly well.</strong> The worker is not broken. It is excluded. That is a scheduling decision that nobody made on purpose, which is a different and more fixable problem than the one Chapter 5 described.</p>
-<p>The next chapter is the right place to take all of this apart, and it is deliberately unsentimental about exactly this kind of claim: <em>a reader who skips that list will mistake thirty-four seconds for readiness.</em></p>
+<p>It was more fixable, and also only half the story. Running was never the problem. On 23 September the taint was removed, and the first ordinary pods to land on the worker showed that traffic <em>between</em> the two virtual machines had never worked (Chapter 8). A pod on the worker could run, but pods on the control plane could not reach it. Both are fixed now. In the October re-run the worker carried no taint; a pod pinned to it served through the API server's proxy, and a control-plane pod reached it directly. The drill's own workload still landed on the control plane in all five runs, but now by ordinary scheduling rather than exclusion.</p>
+<p>The next chapter is the right place to take all of this apart, and it is deliberately unsentimental about exactly this kind of claim: <em>a reader who skips that list will mistake eighteen seconds for readiness.</em></p>
 <hr class="scene-break" />
 <p class="dateline dateline-fiction">Meridian · the following week</p>
 <p>Vikram brought the binder back, with a bookmark in it.</p>
@@ -556,10 +609,11 @@ yes
 <li><strong>Measured (19 September, N=5, boundaries pre-registered before the first run):</strong> destroy to first served request <strong>81.96 s</strong> median (80.40 / 81.20 / 81.96 / 82.59 / 84.03, spread 3.63 s). Build to both nodes <strong>34.39 s</strong>, reproducing Chapter 7's 33.7 s. Workload to first HTTP 200, <strong>1.34 s</strong>. Zero image pulls in every run.</li>
 <li><strong>Corrected:</strong> teardown, published at 18.9 s from a single run, is <strong>45.73 s</strong> (N=5, spread 1.24 s). Split once: the machines stop at 35.60 s, the last API object goes at 45.33 s. The objects outlive the machines by about ten seconds.</li>
 <li><strong>Proved:</strong> an administrator credential from run 1 opened a different cluster, thirty-two seconds old, five rebuild cycles later, with full cluster-admin.</li>
-<li><strong>Also corrected:</strong> Chapter 5's worker is excluded by a taint, not broken — a pod that tolerates it runs there normally.</li>
-<li><strong>Carried from other chapters:</strong> 33.7 s build and 18.9 s teardown (Chapter 7, the latter now superseded); 467 ms warm claim (Chapter 9); 14.9 GiB reserved per cluster (Chapter 20); one afternoon for a full platform rebuild (Chapter 19).</li>
+<li><strong>Measured again (8 October, N=5, same pre-registered boundaries):</strong> destroy to first served request <strong>59.97 s</strong> (59.06–60.46); build 17.95 s; teardown 40.02 s, not the unchanged ~45 s that was predicted; the delete command returns in 0.83 s instead of 10.13 s. Cause of the faster teardown not investigated.</li>
+<li><strong>Also corrected:</strong> Chapter 5's worker is excluded by a taint, not broken — a pod that tolerates it runs there normally. Half right: until 23 September, traffic between the two VMs was broken as well (Chapter 8). The taint is gone, and cross-node traffic was verified on 8 October.</li>
+<li><strong>Carried from other chapters:</strong> 33.7 s build and 18.9 s teardown (Chapter 7, the latter now superseded); 18.1 s build from 30 September (Chapter 8); 467 ms warm claim (Chapter 9); 14.9 GiB reserved per cluster (Chapter 20); one afternoon for a full platform rebuild (Chapter 19).</li>
 <li><strong>Demonstrated consequences:</strong> recovery as a command, debugging with a control group, upgrades as rebuilds, drills as routine.</li>
-<li><strong>Unavailable on this platform, and why:</strong> cluster-per-PR, many small clusters, cluster-per-tenant, rotation-as-defence — all four need concurrent clusters with separate identities, and the fixed identity that makes the 34-second build possible forbids exactly that. Per-build identity costs roughly a hundred seconds.</li>
+<li><strong>Unavailable on this platform, and why:</strong> cluster-per-PR, many small clusters, cluster-per-tenant, rotation-as-defence — all four need concurrent clusters with separate identities, and the fixed identity that makes the 18-second build possible (34 seconds when this chapter was first written) forbids exactly that. Per-build identity costs roughly a hundred seconds.</li>
 <li><strong>Not claimed:</strong> any production recovery time; any data restore; that this generalises beyond one cluster on one host.</li>
 </ul>
 <h2 id="ask-your-team">Ask your team</h2>
@@ -571,7 +625,7 @@ yes
 <h2 id="open-the-repo">Open the repo</h2>
 <ul>
 <li><code>measurements/ch-recovery-drill.sh</code> — the drill, with its pre-flight gates; <code>measurements/README.md</code> carries the pre-registered boundary table, written before the first measured run.</li>
-<li><code>measurements/ch17-recovery-drill-20260919-163611.tsv</code> — all five runs, raw.</li>
+<li><code>measurements/ch17-recovery-drill-20260919-163611.tsv</code> — all five runs, raw; <code>ch17-recovery-drill-20261008-011322.tsv</code> — the October re-run.</li>
 <li><code>measurements/drill-workload.yaml</code> and <code>drill-workload-worker.yaml</code> — the served workload, and the worker-pinned variant that tolerates the taint.</li>
 <li><code>03-target-cluster/target-cluster-warm.yaml</code> — the header comment: <em>"Safe only because exactly ONE target-cluster runs at a time."</em> Quoted in Appendix G.1.</li>
 <li><code>docs/warm-pool-strategy.md</code> — <em>"If you ever allow concurrent clusters, switch to per-build random identity."</em></li>

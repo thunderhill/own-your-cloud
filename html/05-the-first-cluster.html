@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 2,100 words · about 9 minutes to read</dd>
+      <dd>About 2,200 words · about 10 minutes to read</dd>
     </dl>
   </header>
 
@@ -519,6 +519,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <p>That setting tells the worker's kubelet that an external <em>cloud controller</em> will initialize the node, and to keep the node tainted until it does. But the control plane is configured with its cloud controller disabled. Nothing on the platform ever initializes the worker, so the taint never comes off.</p>
 <p>And every signal says the worker is fine. Its Machine is <code>Running</code>. Its node is <code>Ready</code>. Its provider ID matches the Machine's, so Cluster API links them. The verification script lists it as <code>Ready</code>. The stopwatch in Chapter 7 waits for it. By every automated measure on the platform, the target cluster has two working nodes. It has one — and a second virtual machine holding four cores and 6 GiB of memory that has been given nothing to do.</p>
 <p>This static worker configuration was introduced in June, to let the worker boot at the same time as the control plane (Chapter 8), and the same line is in the default path's manifest today. This chapter verified only the cluster that was running on 17 September; whether every cluster since June has had an idle worker was not checked, and the fix — removing the setting, or running something that initializes nodes — has not been tried.</p>
+<p><em>It has since been tried. On 23 September the line was removed and the worker became schedulable. The first pods to land on it showed that traffic between the two virtual machines had never worked either: the taint had been hiding a broken network. Both are fixed; Chapter 8's last section tells the story.</em></p>
 <p>The only check on the platform that ever gave the worker real work was the victory lap. Its heading said the pods <em>should be spread across nodes</em>. It printed that they were not, and declared success anyway.</p>
 <hr class="scene-break" />
 <p class="dateline dateline-fiction">Meridian · the following Monday</p>

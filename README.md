@@ -9,7 +9,7 @@ A book for two readers: the executive who signs the cloud bill, and the engineer
 ## How the book keeps score
 
 - **Meridian** scenes are composite fiction.
-- **Build log** sections come from the companion platform repository, [`sovereign_cloud`](https://github.com/thunderhill4/sovereign_cloud), and every number in them was measured on it — most of them again on 17 September 2026.
+- **Build log** sections come from the companion platform repository, [`sovereign_cloud`](https://github.com/thunderhill4/sovereign_cloud), and every number in them was measured on it — most of them again on 17 September 2026, and the cluster build and recovery drill again on 30 September and 8 October.
 - **Public record** and **Briefing** sections quote named sources: published reports, or the strategy deck behind the book. Where a source gives no evidence for a number, the text says so.
 
 Every chapter closes with **The ledger** (what was built, measured or found), **Ask your team** (three questions for a CxO), and **Open the repo** (the files and commands that reproduce the chapter).
@@ -68,7 +68,7 @@ pip install markdown
 
 Each chapter page is self-contained HTML with light and dark themes; fonts load from Google Fonts.
 
-`build_pdf.sh` assembles every chapter into one print-styled document (figures inlined as data URIs, so it is a single self-contained file), renders it with headless Chrome, then uses Ghostscript to add page numbers and nested bookmarks — Chrome implements neither. The result is **`own-your-cloud.pdf`**: 207 A4 pages, front cover to back cover, with a clickable contents page, 28 bookmarks, and vector figures. The covers come from [`cover/cover.html`](cover/cover.html) (drawn in Claude Design at 720 px wide and zoomed to fill an A4 page), so they are the first and last pages of the same Chrome print; the front cover, title page and back cover carry no page number. It needs `google-chrome` or `chromium`; `gs` and `poppler-utils` are optional and only affect page numbers and bookmarks.
+`build_pdf.sh` assembles every chapter into one print-styled document (figures inlined as data URIs, so it is a single self-contained file), renders it with headless Chrome, then uses Ghostscript to add page numbers and nested bookmarks — Chrome implements neither. The result is **`own-your-cloud.pdf`**: 217 A4 pages, front cover to back cover, with a clickable contents page, 28 bookmarks, and vector figures. The covers come from [`cover/cover.html`](cover/cover.html) (drawn in Claude Design at 720 px wide and zoomed to fill an A4 page), so they are the first and last pages of the same Chrome print; the front cover, title page and back cover carry no page number. It needs `google-chrome` or `chromium`; `gs` and `poppler-utils` are optional and only affect page numbers and bookmarks.
 
 ## License
 
