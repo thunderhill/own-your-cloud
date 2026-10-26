@@ -72,8 +72,8 @@ Four documented dead ends — `:preinit`, `:warm`, gating the worker on control-
 > Source: `docs/sub-60s-cluster-strategy.md` §3, §6–§11; `scripts/configure-kubevirt-perf.sh`; `02-capi-init/patch-capk.sh`.
 
 **9. Warmth Is Mandatory**
-The warm pool: a standby cluster **claimed in 467 ms** (18 September; was 194 ms in June, unmeasured since — re-measured after fixing the pool's own ghost-node readiness bug) instead of built in 18.1 s (30 September; ~34 s when first re-measured), and the stable-pod-IP constraint that makes it tractable. Then the same rule applied to models — llama3.2's **28–30 s CPU cold start** is why *"Warmth is mandatory"* is an architecture constraint shared by VMs and LLMs alike.
-> Source: `docs/warm-pool-strategy.md`, `ui/backend/handlers/pool.go`, `Sovereign_Cloud_Agentic_Strategy.md` constraint #5.
+The warm pool: a standby cluster **claimed in 467 ms** (18 September; was 194 ms in June, unmeasured since — re-measured after fixing the pool's own ghost-node readiness bug) instead of built in 18.1 s (30 September; ~34 s when first re-measured), and the stable-pod-IP constraint that makes it tractable. Then the same rule applied to models — llama3.2's **28–30 s CPU cold start** is why *"Warmth is mandatory"* is an architecture constraint shared by VMs and LLMs alike. And since 13 October, the opposite default: **on-demand mode**, in which no cluster exists while nobody uses it. A front door at `.223` builds one on the first `kubectl`, which gets its answer in **15.3 s** (N=3), and the cluster is deleted after an hour without use. It is only possible because of the fixed identity Chapter 17 priced.
+> Source: `docs/warm-pool-strategy.md`, `ui/backend/handlers/pool.go`, `ui/backend/handlers/activator.go`, `Sovereign_Cloud_Agentic_Strategy.md` constraint #5.
 
 ---
 

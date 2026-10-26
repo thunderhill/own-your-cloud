@@ -46,7 +46,7 @@ Start with what makes the lab a lab. Each of these is a real property of the pla
 - **A network with no network in it.** Everything shares one Docker bridge. Addresses are handed out by MetalLB in layer-2 mode from a hardcoded range, `172.18.255.200–225` (Appendix B). There is no router, no VLAN, no firewall, no external DNS.
 - **Trust that was generated once and committed.** The warm path's certificate authorities are fixed, and their private keys are in version control, labelled demo-only (Chapter 3). The mesh's root of trust was generated on the workstation.
 - **No identity.** The web console has no login. Neither does the agent console embedded in it. The one authenticated surface is the agent platform's own API, which does require a bearer token.
-- **Capacity that is one deep.** One warm standby cluster, one model resident on the GPU at a time (Chapter 9).
+- **Capacity that is one deep.** One warm standby cluster (or, by default since October, none until someone asks), one model resident on the GPU at a time (Chapter 9).
 
 None of this is a criticism of the platform. A lab that paid for all of it would have taught less, more slowly. But every item is a thing the data centre would have to supply, and a reader who skips this list will mistake eighteen seconds for readiness.
 
@@ -96,7 +96,7 @@ For a data centre that produces this sizing method:
 1. Size hosts from the **sum of reservations** of everything you intend to place on them, not from observed utilization.
 2. Then treat the gap between reservation and use as the thing to manage down, because that gap is the owned-hardware form of the cloud waste in the prologue. Right-sizing requests is the work; it is unglamorous and it is where the margin is.
 3. Reserve headroom deliberately: enough to lose a failure domain and still place everything that was running on it. That is an availability cost that appears on the capacity plan, and it is routinely forgotten.
-4. Price warmth explicitly. Chapter 9's standby holds eight cores and 14 GiB idle, permanently, to make a claim take under half a second instead of eighteen. That may be an excellent trade. It is never a free one, and it belongs on the plan as a line.
+4. Price warmth explicitly. Chapter 9's standby holds eight cores and 14 GiB idle, permanently, to make a claim take under half a second instead of eighteen. That may be an excellent trade. It is never a free one, and it belongs on the plan as a line. The lab now prices the other end as well. In on-demand mode nothing is held while nobody works, and the first command after a quiet hour waits about fifteen seconds for a cluster to be built. Which end is right depends on how often someone is waiting, and that is a question about the users, not the platform.
 
 ## Secrets, identity, and the two things the lab has no answer for
 
@@ -180,7 +180,7 @@ She thought about the year: a worker marked `Ready` that could not run anything;
 
 ## The ledger
 
-- **Measured, and carried into this chapter:** build 18.1 s (30 September, Chapter 8; reproduced at 17.95 s in Chapter 17's October re-run, and 33.7 s before the September work) and teardown 40.0 s (Chapter 17, 8 October; 45.7 s on 19 September, superseding an 18.9 s single run); a warm claim in 467 ms (Chapter 9); 22.42 GiB reserved against 7.45 GiB used, and a control-plane machine using 1% of its processor allowance (Chapter 20); energy per generated token on the GPU (Chapter 20).
+- **Measured, and carried into this chapter:** build 18.1 s (30 September, Chapter 8; reproduced at 17.95 s in Chapter 17's October re-run, and 33.7 s before the September work) and teardown 40.0 s (Chapter 17, 8 October; 45.7 s on 19 September, superseding an 18.9 s single run); a warm claim in 467 ms, and an on-demand wake to first answer in 15.3 s (N=3, mid-October; Chapter 9); 22.42 GiB reserved against 7.45 GiB used, and a control-plane machine using 1% of its processor allowance (Chapter 20); energy per generated token on the GPU (Chapter 20).
 - **Designed, not built:** every requirement in this chapter — high availability, replicated storage, tested restores, BGP and segmentation, external DNS and PKI, secrets management, OIDC identity, GitOps reconciliation, observability retention, and a support policy. **None of it exists on the platform.**
 - **Already known to be missing, from the book's own findings:** replicated storage, any restore test, real authentication on the consoles, destination-scoped egress, secrets outside version control, and four pieces of platform state that live only in a running cluster (Chapters 3, 12, 14, 18).
 - **The cheapest item on the list:** writing the exception down next to the version number. The platform already does it.

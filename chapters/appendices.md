@@ -61,7 +61,7 @@ The measurement instruments `phase-timings.sh` and `time-to-ready.sh` (Appendix 
 
 ### ui/
 
-The web console: a React frontend and a Go backend (port 8080), with SRE, AI and Visual modes (Chapters 12 and 13). `run-ui.sh` starts both for development. The production manifest in `ui/k8s/` was not deployed on 17 September: the `kubeui` namespace did not exist. *Targets:* `make ui`, `make ui-build`.
+The web console: a React frontend and a Go backend (port 8080), with SRE, AI and Visual modes (Chapters 12 and 13). `run-ui.sh` starts both for development. The production manifest in `ui/k8s/` was not deployed on 17 September: the `kubeui` namespace did not exist. *Targets:* `make ui`, `make ui-build`. Since 13 October the backend also runs the target cluster in **on-demand mode** by default (Chapter 9): `handlers/activator.go` is the front door that builds the cluster on first access, `handlers/activity.go` decides when an unused cluster is deleted, and `ui/k8s/target-frontdoor.yaml` gives the front door its address. `POOL_MODE=standby` restores the always-built standby; `POOL_IDLE_TTL` sets the idle limit (default `1h`).
 
 ### docs/, and the top level
 
@@ -76,7 +76,7 @@ The Makefile defines 65 targets. These are the ones this book used.
 | `make all` | `prereqs` → `metallb` → `capi-init` → `target-cluster` | Assumes the four unscripted prerequisites above |
 | `make target-cluster` | Builds the default warm cluster | 18.1 s to both nodes ready, 30 September (Appendix D); 33.7 s on 17 September |
 | `make clean` | Deletes the target cluster | 40.0 s until every object and machine is gone, 8 October; 45.7 s on 19 September (Chapter 17) |
-| `make verify` | Checks the target cluster and refreshes agent credentials | |
+| `make verify` | Checks the target cluster and refreshes agent credentials | Rewrites the repository's kubeconfig to the direct address `.215`, which bypasses the on-demand front door: that kubeconfig neither wakes the cluster nor keeps it alive (Chapter 9, October) |
 | `make kubevirt-perf` | Applies the KubeVirt CPU setting | Cluster state, not manifest state: re-run after rebuilding `cluster2` |
 | `make capk-patch` | Swaps in the patched CAPK controller (added 23 September) | Cluster state too; `capi-init` runs it, but only warns if it fails (Chapter 8) |
 | `make time-to-ready-by-name RUNS=5` | Times a build by node name | Waits for the previous run's VMs before starting the clock since 30 September (Appendix D) |
@@ -118,8 +118,9 @@ Both Kind clusters live on one Docker network, `172.18.0.0/16`, and both run Met
 | `.220` | Host Ollama load balancer (optional) | cluster2 | No | 4 |
 | `.221` | Act 3 east-west gateway | cluster2 | Yes | 3 |
 | `.222` | `mesh-sre-agent` | cluster2 | Yes | 3 |
+| `.223` | Target-cluster front door, on-demand mode — added 13 October, after this table's survey | cluster2 | Not surveyed | Not counted |
 
-"Files naming it" counts shell, YAML, Go, TypeScript, env and Makefile files outside `book/`. Seven of the seventeen reserved addresses were not in use on 17 September, and every one of them is still written into between three and ten files.
+"Files naming it" counts shell, YAML, Go, TypeScript, env and Makefile files outside `book/`. Seven of the seventeen addresses reserved on 17 September were not in use that day, and every one of them is still written into between three and ten files.
 
 The node addresses on the same network matter too. `172.18.0.1` is the host, where the models run. `.2`, `.3` and `.4` were `cluster1-control-plane`, `cluster2-control-plane` and the image registry — in that order *on that day*. Docker hands those addresses out in the order containers join the network, which is why `172.18.0.2:5000`, the registry address baked into image references, is an alias that only containerd resolves (Appendix C.5).
 
@@ -169,7 +170,7 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | Cause | Where | Fix or status |
 |---|---|---|
 | The worker node was `Ready` but tainted as uninitialized, so it accepted no workloads; behind the `Ready`, its agent failed after fifteen minutes and restarted, indefinitely | Target cluster (Chapter 5) | Fixed 23 September: `cloud-provider=external` removed. The fix exposed C.5's VM-to-VM row |
-| A ghost node baked into the golden image satisfied "2 nodes Ready" before the worker joined | Both timing scripts, and (found 18 September) the UI backend's own `targetNodesReady` — used by both the on-demand deploy path and the warm pool (Chapter 7, Chapter 9) | Measure/count by name (Appendix D); fixed in `pool.go` 18 September, standalone scripts still not fixed |
+| A ghost node baked into the golden image satisfied "2 nodes Ready" before the worker joined | Both timing scripts, and (found 18 September) the UI backend's own `targetNodesReady` — used by both the Deploy button's build path and the warm pool (Chapter 7, Chapter 9) | Measure/count by name (Appendix D); fixed in `pool.go` 18 September, standalone scripts still not fixed |
 | A missing worker timestamp was treated as zero, so "both nodes" meant the control plane only | `phase-timings.sh` (Chapter 7) | Not fixed |
 | The deterministic permission check tested an identity running pods no longer used | Agent RBAC after 0.10.75 (Chapter 15) | Bindings moved to a group; check the live pod's account |
 | A topology view labelled `live` drew 14 nodes that did not exist, 13 of them healthy | Visual mode (Chapter 12) | Not fixed |
@@ -193,6 +194,7 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | Remote-cluster credentials embedded `127.0.0.1:<port>`, so the peer sat at `timeout` while all else looked healthy | `istioctl create-remote-secret` on Kind | Pass `--server https://<node-ip>:6443`; Act 3 asserts `synced` |
 | `host.docker.internal` does not resolve inside Kind pods | Model endpoint | Use `172.18.0.1` through an in-cluster shim Service |
 | Both Kind clusters number pods from `10.244.0.0/24`, so a pod address means different machines in each | Cross-cluster calls (Chapter 10) | Hand-plumbed proxy (before); east-west gateways (after) |
+| In on-demand mode, a sleeping cluster does not answer at `.215` but wakes through `.223`; and a kubeconfig aimed at `.215` keeps working without ever counting as use, so the cluster is deleted under its user after an hour | Target cluster, from 13 October (Chapter 9) | By design. Use the published kubeconfig, which points at `.223`; `make verify` rewrites it to `.215` |
 
 ### C.6 The model gave a confident, wrong answer
 
@@ -256,6 +258,8 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | Teardown | Delete command returns at **0.83 s**; every object and machine gone at **40.02 s** | 8 October, N=5 (spread 0.39 s), Chapter 17's drill re-run. On 19 September (N=5, spread 1.24 s): returns at 10.13 s, machines stop at 35.6 s, last object at 45.73 s, which superseded an 18.9 s single run from 17 September |
 | Destroy to first served request | **59.97 s** median (59.06–60.46) | 8 October, N=5, pre-registered boundaries; 81.96 s on 19 September |
 | Standby claim | **467 ms** median (1.059 / 0.467 / 0.465) | 18 September, by name-based readiness check, warm-image standby; was 194 ms in June |
+| On-demand wake, no cluster to first `kubectl` answer | **15.3 s** median (15.3 / 15.3 / 15.7) | Mid-October, N=3, through the front door at `.223` (platform repository, `CLAUDE.md`, "On-demand mode"). A different boundary from the 18.1 s: the API answers on the control plane alone. Both nodes `Ready` at about 20.5 s |
+| On-demand idle delete | about 14 s | Same source, no run count or boundary recorded; not reconciled with the 40.02 s teardown above |
 | Model load, cold vs warm | 2.3–2.6 s cold; 0.14–0.17 s warm | 17 September, GPU, qwen2.5:7b and llama3.2 (Chapter 9) |
 | Local model energy | 1.19 J per generated token; 0.33 kWh per million tokens (GPU only) | 17 September, qwen2.5:7b (Chapter 20) |
 | Cross-cluster failover | 30 of 30 HTTP 200, all from `cluster2` | 17 September, Istio 1.31 (Chapter 11) |
@@ -396,6 +400,7 @@ Two statements in the labs index are now out of date. It describes `SympoziumIns
 - **Depreciation** — spreading the cost of hardware over its useful life; the landlords themselves disagree on whether a server lasts five years or six.
 - **East-west gateway** — the door one cluster's mesh uses to reach another's, carrying encrypted, identity-bearing traffic between them.
 - **Egress** — traffic leaving a system; also the fee some providers charge for data leaving them.
+- **Front door** — in on-demand mode, the address users and agents are given instead of the cluster's own. It passes traffic through when the cluster is up, builds the cluster when it is not, and counts what passes through as use.
 - **Gateway API** — the Kubernetes standard for declaring how traffic enters and moves between services, with ownership split between platform and application teams.
 - **Golden image** — a pre-built machine image with everything a cluster node needs baked in, so nothing is downloaded at boot.
 - **Istio** — the open-source service mesh this platform uses.
@@ -409,6 +414,7 @@ Two statements in the labs index are now out of date. It describes `SympoziumIns
 - **mTLS** (mutual TLS) — encryption in which *both* sides prove their identity, not just the server.
 - **NetworkPolicy** — a Kubernetes rule stating which workloads may talk to which, enforced by the network layer.
 - **Ollama** — the open-source server that runs AI models on the platform's own GPU.
+- **On-demand mode** — the platform's default since 13 October: no cluster exists while nobody uses it, the first access builds one, and an hour without use deletes it. The opposite trade to a warm standby.
 - **Repatriation** — moving workloads from a rented cloud back onto infrastructure the organization owns.
 - **ServiceEntry** — an Istio record that tells the mesh about a service outside it; the "before" picture of cross-cluster discovery.
 - **SkillPack** — a bundle of tools an agent may use, with the permissions those tools need.

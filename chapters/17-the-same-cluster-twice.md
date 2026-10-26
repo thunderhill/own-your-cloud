@@ -126,6 +126,8 @@ Read that against the four ideas. **Cluster-per-tenant** is not merely unbuilt h
 
 And even if the identity were fixed, the arithmetic would not budge. Chapter 20 measured one target cluster reserving **14.9 GiB** — roughly half this host. A second one does not fit. Many small clusters is not blocked by build time. It is blocked by memory, and by an address plan where every service address is pinned by hand in a table.
 
+Within a week of this drill, the platform began to depend on that property on purpose. Chapter 9's on-demand mode deletes an idle cluster and builds a new one when someone next runs `kubectl`, using the kubeconfig the user already has. That works only because the new cluster accepts the old credential. The finding this section records as a cost is the feature that mode is built on. Moving to per-cluster identity would now cost two things: the hundred-second build, and the wake.
+
 So the honest scorecard for the paradigm: four consequences demonstrated, four unavailable — and the four unavailable ones are unavailable *because of* the decision that produced the four demonstrated ones.
 
 ## What replacement destroys
@@ -181,7 +183,7 @@ Anita thought about that for a while.
 - **Proved:** an administrator credential from run 1 opened a different cluster, thirty-two seconds old, five rebuild cycles later, with full cluster-admin.
 - **Measured again (8 October, N=5, same pre-registered boundaries):** destroy to first served request **59.97 s** (59.06–60.46); build 17.95 s; teardown 40.02 s, not the unchanged ~45 s that was predicted; the delete command returns in 0.83 s instead of 10.13 s. Cause of the faster teardown not investigated.
 - **Also corrected:** Chapter 5's worker is excluded by a taint, not broken — a pod that tolerates it runs there normally. Half right: until 23 September, traffic between the two VMs was broken as well (Chapter 8). The taint is gone, and cross-node traffic was verified on 8 October.
-- **Carried from other chapters:** 33.7 s build and 18.9 s teardown (Chapter 7, the latter now superseded); 18.1 s build from 30 September (Chapter 8); 467 ms warm claim (Chapter 9); 14.9 GiB reserved per cluster (Chapter 20); one afternoon for a full platform rebuild (Chapter 19).
+- **Carried from other chapters:** 33.7 s build and 18.9 s teardown (Chapter 7, the latter now superseded); 18.1 s build from 30 September (Chapter 8); 467 ms warm claim, and from October a 15.3 s on-demand wake to first `kubectl` answer (Chapter 9); 14.9 GiB reserved per cluster (Chapter 20); one afternoon for a full platform rebuild (Chapter 19).
 - **Demonstrated consequences:** recovery as a command, debugging with a control group, upgrades as rebuilds, drills as routine.
 - **Unavailable on this platform, and why:** cluster-per-PR, many small clusters, cluster-per-tenant, rotation-as-defence — all four need concurrent clusters with separate identities, and the fixed identity that makes the 18-second build possible (34 seconds when this chapter was first written) forbids exactly that. Per-build identity costs roughly a hundred seconds.
 - **Not claimed:** any production recovery time; any data restore; that this generalises beyond one cluster on one host.
