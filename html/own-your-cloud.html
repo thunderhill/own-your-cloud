@@ -300,12 +300,12 @@ body { margin: 0; background: #fff; }
 <p>That growth figure carries the chapter's most practical distinction. A bill can rise because prices rise, or because consumption rises. They call for opposite responses. Rising prices are a supplier problem, answered by negotiation or by leaving. Rising consumption is a management problem, and changing suppliers doesn't fix it. The Success Tax is real only for the share of growth that cost more than the business value it bought.</p>
 <h2 id="waste-doesnt-care-who-owns-the-hardware">Waste doesn't care who owns the hardware</h2>
 <p>The published waste figure from the prologue — 29% of cloud spend, by respondents' own estimate — is often used as an argument for leaving. It is really an argument for managing.</p>
-<p>Owned hardware can be wasted too. Chapter 9 of this book measured a <em>warm standby</em>: a spare cluster kept running so that a user could claim one in under half a second instead of waiting for one to be built. It is a good design. It also holds eight processor cores and 14 GiB of memory idle, around the clock, waiting. On the platform this book describes, that standby is switched off by default, for exactly that reason.</p>
+<p>Owned hardware can be wasted too. Chapter 9 of this book measured a <em>warm standby</em>: a spare cluster kept running so that a user could claim one in under half a second instead of waiting for one to be built. It is a good design. It also holds eight processor cores and 14 GiB of memory idle, around the clock, waiting. Since October, the platform this book describes no longer keeps one by default, for exactly that reason. No cluster exists while nobody is using it. The first command builds one, and an hour without use deletes it again.</p>
 <p>Idle capacity costs money wherever it runs. The difference is who sends the bill, and whether anyone reads it.</p>
 <h2 id="the-promise-that-is-worth-testing">The promise that is worth testing</h2>
 <p class="dateline dateline-record">Build log · June–September 2026</p>
 <p>If owning is going to compete with renting, it has to match the cloud's signature promise: capacity in seconds, not months. That is testable, and the rest of this book tests it.</p>
-<p>On the platform in this book, a complete Kubernetes cluster — a control plane and a worker, each running as its own virtual machine — is built from a written declaration to both machines ready in a median of <strong>18.1 seconds</strong>, measured on 30 September 2026 (Chapter 8; it was 33.7 seconds two weeks earlier). Tearing one down takes <strong>40.0 seconds</strong>, measured on 8 October (Chapter 17; an earlier single-run figure of 18.9 s did not survive being measured five times). Destroying a cluster and having its replacement serve a request again takes just under a minute. Claiming a pre-built standby took <strong>467 milliseconds</strong>, median of three runs measured 18 September 2026 — about 39 times faster than the cold build (Chapter 9).</p>
+<p>On the platform in this book, a complete Kubernetes cluster — a control plane and a worker, each running as its own virtual machine — is built from a written declaration to both machines ready in a median of <strong>18.1 seconds</strong>, measured on 30 September 2026 (Chapter 8; it was 33.7 seconds two weeks earlier). Tearing one down takes <strong>40.0 seconds</strong>, measured on 8 October (Chapter 17; an earlier single-run figure of 18.9 s did not survive being measured five times). Destroying a cluster and having its replacement serve a request again takes just under a minute. Claiming a pre-built standby took <strong>467 milliseconds</strong>, median of three runs measured 18 September 2026 — about 39 times faster than the cold build (Chapter 9). Since mid-October the default is the opposite trade: no cluster held at all, and an ordinary <code>kubectl</code> command that finds none gets an answer from a newly built one in <strong>15.3 seconds</strong> (three runs, 15.3–15.7 s), at the price of nothing held idle once an hour has passed without use (Chapter 9).</p>
 <p>Speed, it turns out, is not something only a landlord can offer. But the same chapters also show what it cost to get there. The first measured build took 50 seconds. Four attempts to make it faster failed, and two of those verdicts were later revised. The changes that worked took months of instrumentation to find, and the largest of them was a default setting that nobody here had chosen (Chapter 8). And the dashboard reported the worker as ready for months while it was unable to run anything (Chapter 5).</p>
 <p>That is the honest shape of the ROI question. Owning can match renting on speed. What it costs in people and attention is the part the rest of this book counts.</p>
 <hr class="scene-break" />
@@ -335,6 +335,7 @@ body { margin: 0; background: #fff; }
 <li><code>docs/sub-60s-cluster-strategy.md</code> — how cluster build time was measured and brought down, including the dead ends.</li>
 <li><code>scripts/phase-timings.sh</code> (<code>make phase-timings</code>) and <code>scripts/time-to-ready-by-name.sh</code> (<code>make time-to-ready-by-name</code>) — the per-phase measurement, and the by-name timing behind the 18.1-second figure.</li>
 <li><code>docs/warm-pool-strategy.md</code> and <code>ui/backend/handlers/pool.go</code> — the standby, and what it costs to keep warm.</li>
+<li><code>ui/backend/handlers/activator.go</code> — the on-demand front door that builds a cluster on first access, and deletes it when nobody uses it.</li>
 <li>The strategy deck, slides 3–9 — its first two chapters. (Not a repository file; see Appendix H — Sources.)</li>
 </ul></section>
 <section class="chapter" id="chapter-2-the-landlord-problem"><header class="ch-head"><h1>Chapter 2 — The Landlord Problem</h1></header>
@@ -1629,7 +1630,7 @@ pod  -&gt; CP VM pod IP:6443   =  timeout
 </tr>
 <tr>
 <td>What keeps it warm today</td>
-<td>a background loop, on by default since 30 Sept</td>
+<td>a background loop, on by default since 30 Sept (since 13 Oct, nothing by default: see below)</td>
 <td>a host setting outside the repository</td>
 </tr>
 </tbody>
@@ -1651,8 +1652,8 @@ pod  -&gt; CP VM pod IP:6443   =  timeout
 <h2 id="turned-on-and-timed">Turned on, and timed</h2>
 <p class="dateline dateline-record">Build log · 18 September 2026</p>
 <p>The mandate was carried out the next day, and it found the same ghost that Chapter 7 found in the timing scripts, waiting in the same shape.</p>
-<p><code>targetNodesReady</code>, the function both the on-demand deploy path and the pool controller use to decide "are both nodes up," counted Ready nodes without checking their names. A standby built from the <code>:warm</code> image would have been declared ready on the control plane plus the leftover bake-VM ghost node, before the real worker ever joined — exactly the bug that made Chapter 7's stopwatch stop early, now confirmed live in <code>ui/backend/handlers/pool.go</code>, not just in the standalone scripts. Fixed the same way Chapter 7 recommends: count only nodes named <code>&lt;cluster&gt;-cp-*</code> or <code>&lt;cluster&gt;-workers-*</code>.</p>
-<p>With that fixed, <code>POOL_STANDBY_MANIFEST</code> moved from <code>target-cluster-parallel.yaml</code> (the March image, k3s v1.31.4) to the warm manifest — and the pool's build function gained the one step it was missing to use it safely: seeding the fixed CA and token secrets before applying, the same order the on-demand deploy path already used, so KThrees adopts the baked material instead of falling back to a slower path.</p>
+<p><code>targetNodesReady</code>, the function both the Deploy button's build path and the pool controller use to decide "are both nodes up," counted Ready nodes without checking their names. A standby built from the <code>:warm</code> image would have been declared ready on the control plane plus the leftover bake-VM ghost node, before the real worker ever joined — exactly the bug that made Chapter 7's stopwatch stop early, now confirmed live in <code>ui/backend/handlers/pool.go</code>, not just in the standalone scripts. Fixed the same way Chapter 7 recommends: count only nodes named <code>&lt;cluster&gt;-cp-*</code> or <code>&lt;cluster&gt;-workers-*</code>.</p>
+<p>With that fixed, <code>POOL_STANDBY_MANIFEST</code> moved from <code>target-cluster-parallel.yaml</code> (the March image, k3s v1.31.4) to the warm manifest — and the pool's build function gained the one step it was missing to use it safely: seeding the fixed CA and token secrets before applying, the same order the Deploy button's build path already used, so KThrees adopts the baked material instead of falling back to a slower path.</p>
 <p>Then the cycle Anita asked for — claim, delete, rebuild, claim — ran three times, timed from the <code>POST /api/v1/cluster/deploy</code> request to the stream's closing <code>done</code> event:</p>
 <div class="table-wrap"><table>
 <thead>
@@ -1679,6 +1680,99 @@ pod  -&gt; CP VM pod IP:6443   =  timeout
 <p><strong>Median: 467 milliseconds.</strong> Not 194. The first run is reported rather than discarded — an unexplained outlier, kept on the same principle this book applies to every other number in it. Runs 2 and 3 agree closely, and the time is not free: of the roughly 465 milliseconds, about 265 is <code>clusterctl get kubeconfig</code> alone; relabeling the cluster and syncing the in-cluster kubeconfig Secret split most of the rest.</p>
 <p>Two and a half times the June figure, and still far faster than building from nothing: the claim now beats the 33.7-second cold build by a factor of about 72 — not the factor of two hundred the June number implied, but still the same conclusion Anita drew from the wrong number: handing over something already running beats building it, by nearly two orders of magnitude. The design held. The number on the page had simply gone stale, in exactly the way this chapter's own middle section warned that warmth does.</p>
 <p>It went stale again within two weeks, from the other side. By 30 September the cold build was 18.1 seconds (Chapter 8), and the same 467-millisecond claim beats it by a factor of about 39, not 72. The standby still costs eight cores and 14 GiB, idle, all day. Warmth pays less than it did a fortnight earlier, for the same price. That does not make it a bad trade, but it is a different trade from the one priced on 18 September, and the ratio deserves a date like any other number.</p>
+<h2 id="since-then-asleep-until-asked">Since then: asleep until asked</h2>
+<p class="dateline dateline-record">Build log · 13–15 October 2026</p>
+<p>Carried one step further, that shrinking ratio raises a question this chapter had never asked. If a cluster can be built from nothing in eighteen seconds, why keep one at all while nobody is using it?</p>
+<p>On 13 October the platform's default changed to an answer. In <strong>on-demand mode</strong> no target cluster exists while nobody is using it. The first access builds one. After an hour without use, the platform deletes it again. The standby is still there for anyone who wants it, by exporting <code>POOL_MODE=standby</code>, but it is no longer what <code>run-ui.sh</code> starts.</p>
+<pre><code>   (none) ──first access──▶ building ──API answers──▶ IN USE
+      ▲                                                  │
+      └──── delete ◀── one hour with no access ◀─────────┘
+</code></pre>
+<p>The hard part was not the build or the delete. Both already existed. The hard part was knowing what counts as <em>use</em>.</p>
+<p>The cluster's API lives at <code>172.18.255.215</code>, and that address is never quiet. The cluster's own nodes talk to it constantly, and so do the Cluster API controllers that manage it. Traffic there says nothing about whether a person or an agent wants the cluster. So users and agents are now handed a kubeconfig that points somewhere else: a <strong>front door</strong> at <code>172.18.255.223</code>, which the console's backend serves. Everything that arrives at the front door is someone's work, by construction.</p>
+<p>What it does depends on whether the cluster is up.</p>
+<ul>
+<li><strong>The cluster is up.</strong> The front door copies bytes in both directions to the real API server, and never sees inside. Encryption and client-certificate authentication run end to end, as before. Every byte that the client sends resets the idle clock.</li>
+<li><strong>The cluster is not there.</strong> The front door answers the encrypted connection itself, with a certificate minted from the warm path's fixed server CA. It requires a client certificate signed by the cluster's client CA, so only someone already holding valid credentials can start a build. Then it starts the build and holds the request until the new API server is ready. Finally it answers <code>503 Service Unavailable</code> with <code>Retry-After: 1</code>. <code>kubectl</code>'s client library retries that by itself, reconnects, and this time is passed straight through to the new cluster.</li>
+</ul>
+<p>The user types an ordinary <code>kubectl get nodes</code> and waits. The design comment explains why the front door does not simply hold the raw connection open until the cluster arrives: <em>"client-go gives up on a TLS handshake after 10s and a cold build takes longer."</em></p>
+<p>Two other things count as use: clicking Deploy in the console, and opening a chat with <code>target-cluster-agent</code>. The chat starts the build when the conversation opens, not when the agent first calls a tool, so the model's thinking time overlaps the build.</p>
+<h3 id="the-numbers">The numbers</h3>
+<p>Measured from no cluster at all, through the front door, with plain <code>kubectl</code>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Boundary</th>
+<th style="text-align: right;">Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>First <code>kubectl get nodes</code> answered</td>
+<td style="text-align: right;"><strong>15.3 / 15.3 / 15.7 s</strong></td>
+</tr>
+<tr>
+<td>Both nodes <code>Ready</code></td>
+<td style="text-align: right;">about 20.5 s</td>
+</tr>
+<tr>
+<td>Idle delete, once the hour has passed</td>
+<td style="text-align: right;">about 14 s</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Fifteen seconds from nothing to a cluster that answers.</strong> That is the number a user of this platform now feels on the first command after a quiet hour, and it is the new headline. It needs the same care as every other headline in this book.</p>
+<p><strong>It does not beat the 18.1 seconds.</strong> It stops the clock at a different line. The 18.1 is <em>both nodes Ready</em>. The 15.3 is <em>the API answered</em>, which needs only the control plane, and Chapter 8's runs had the control plane ready at 14.3 seconds. The same wake reaches both nodes <code>Ready</code> at about 20.5 seconds, roughly two seconds <em>slower</em> than the 18.1-second build. The front door's hold, the client's retry and the console's once-a-second polling are all candidates. Nobody has split those two seconds, and the book does not claim a breakdown.</p>
+<p><strong>It is three runs.</strong> The book's own rule asks for five, against a spread it can see. The three agree to within 0.4 seconds, which is encouraging, not conclusive.</p>
+<p><strong>The 14 seconds is not Chapter 17's 40.</strong> The idle-delete figure is the platform notes' <em>"~14s"</em>, with no run count and no stated boundary. Chapter 17's drill stops its clock when every object and machine is gone, by boundaries written down in advance, and measured 40.0 seconds on 8 October. The two have not been run side by side, and the book does not reconcile them. What is recorded is a cost that falls on users: a request that arrives during a teardown waits for the teardown to finish. The demo script says that turns the fifteen-second wake into about thirty.</p>
+<p>The same change found one stale instrument, which by now should surprise nobody. The console's deploy log had polled for progress every 10 to 15 seconds, a setting chosen when a build took minutes. Against a build that is ready in under twenty seconds, the console had been reporting builds as finished <em>"tens of seconds late"</em>, in the words of the commit. Its polls are now one second. The stopwatch this time was the dashboard.</p>
+<p>It also fixed a quieter bug. The backend kept its copy of the cluster's credentials in <code>/tmp</code>, which does not survive a reboot. Without that file, a healthy cluster read as <em>not ready</em>, and the pool controller would tear it down to rebuild it.</p>
+<h3 id="the-price-again">The price, again</h3>
+<p>Put the two modes side by side and the trade this chapter has priced all along is visible in one table:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Standby (<code>POOL_MODE=standby</code>)</th>
+<th>On demand (default since 13 October)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>First access</td>
+<td>467 ms claim (18 September)</td>
+<td>15.3 s to first answer; about 20.5 s to both nodes</td>
+</tr>
+<tr>
+<td>Held while nobody is using it</td>
+<td>8 cores and 14 GiB, all day</td>
+<td>nothing, once the idle hour has passed</td>
+</tr>
+<tr>
+<td>Held after the last use</td>
+<td>a fresh standby, rebuilt in the background</td>
+<td>the cluster, for up to an hour (<code>POOL_IDLE_TTL</code>, default <code>1h</code>)</td>
+</tr>
+<tr>
+<td>Who keeps it honest</td>
+<td>the weekly claim-and-rebuild drill</td>
+<td>every first command of the day</td>
+</tr>
+</tbody>
+</table></div>
+<p>The last row matters most. This chapter's complaint about warmth was that a warm path decays when nobody exercises it: a March image, a June number, a heartbeat that stopped. A cold path that runs every time someone starts work cannot decay quietly. If the wake breaks, the first person to type <code>kubectl</code> that morning finds out.</p>
+<h3 id="what-it-depends-on">What it depends on</h3>
+<p>None of this is free, and the conditions belong next to the fifteen seconds rather than in a footnote.</p>
+<ul>
+<li><strong>It is built on the trade Chapter 17 warned about.</strong> The kubeconfig survives the delete, and the next cluster accepts it, because every cluster is built with the same fixed certificate authorities. That is the property that let a credential from five rebuilds earlier open a brand-new cluster with full rights. Chapter 17 recorded it as a cost. On-demand mode depends on it. Per-cluster identity would break wake-with-the-same-file, and would cost the hundred-second build on top.</li>
+<li><strong>The front door holds the server CA's private key.</strong> To answer while the cluster is absent, the backend mints a server certificate from <code>warm-ca/server-ca.key</code>. The process that serves the console can now present itself as the cluster's API server. On a lab with committed, demo-only CAs, that changes little. Anywhere else it would be a finding.</li>
+<li><strong>It needs the backend running.</strong> Stop <code>run-ui.sh</code> and the front door stops answering, so nothing wakes. The idle reaper stops too, so nothing is deleted either: a cluster left running when the backend stops stays running.</li>
+<li><strong>The idle clock lives in memory.</strong> It restarts with the backend, so a restart can postpone a delete but never bring one forward. Only clusters the backend itself labelled are reaped. One built by hand is left alone.</li>
+<li><strong>The direct address bypasses all of it.</strong> <code>kubectl</code> pointed straight at <code>.215</code> neither wakes the cluster nor keeps it alive. <code>make verify</code> rewrites the repository's kubeconfig to <code>.215</code>, so the standard verification step quietly opts its user out of the mode.</li>
+<li><strong>Clients other than <code>kubectl</code> see the 503.</strong> A client that does not retry on <code>Retry-After</code> gets one refusal on a cold wake, and has to try again itself.</li>
+<li><strong>One wake path was not demonstrated.</strong> When the demo script was written (15 October), <code>target-cluster-agent</code>'s serving pod was crash-looping, so the chat path starts a build but could not be shown end to end. The demo script says to skip it.</li>
+</ul>
+<p>Constraint 5 is called <em>"Warmth is mandatory."</em> For clusters, as of October, the platform no longer keeps one warm by default. That does not break the rule. It is what the rule's trade looks like once a cold build costs fifteen seconds instead of fifty. For models, nothing changed: a model still has to be loaded before the agent can answer, and the GPU still holds one at a time.</p>
 <h2 id="the-ledger">The ledger</h2>
 <ul>
 <li><strong>Built (June):</strong> a one-deep cluster standby, claimed in 194–195 ms instead of built from scratch, rebuilt in about 60 seconds in the background.</li>
@@ -1686,6 +1780,7 @@ pod  -&gt; CP VM pod IP:6443   =  timeout
 <li><strong>Today (17 September):</strong> no standby running; the pool is opt-in and off by default; its manifest points at an image built on 3 March; the claim time has not been re-measured since June.</li>
 <li><strong>Fixed and re-measured (18 September):</strong> the pool's node-readiness check now counts by name, not by count (the same ghost-node bug Chapter 7 found, confirmed live in <code>pool.go</code>); its standby manifest switched to the warm image, with CA/token seeding added to the build path. Three claim-delete-rebuild-claim cycles: 1.059 s, 0.467 s, 0.465 s — <strong>median 467 ms</strong>, not 194. Still about 72x faster than a cold build. The pool remains opt-in — this fixes what happens when it's on, not the default.</li>
 <li><strong>Since (30 September):</strong> the pool is on by default (<code>run-ui.sh</code> now sets <code>POOL_ENABLED=true</code>), and the cold build it competes with is 18.1 s, so a claim is about 39× faster rather than 72× for the same idle cost. Not re-measured: the claim time itself, and whether the pool's rebuild-after-delete waits on the previous VMs' memory, as Chapter 8's stopwatch once did.</li>
+<li><strong>Changed again (13–15 October):</strong> the default is now on-demand mode, with no cluster while nobody uses it. A front door at <code>172.18.255.223</code> builds one on first access and the backend deletes it after an hour unused. <strong>Cold wake to first <code>kubectl</code> answer: 15.3 / 15.3 / 15.7 s</strong> (N=3); both nodes <code>Ready</code> at about 20.5 s, about two seconds slower than the 18.1-second build; idle delete about 14 s (one unrecorded measurement), not reconciled with Chapter 17's 40 s. Idle cost: nothing, after up to an hour. Depends on the fixed CAs Chapter 17 priced, on the backend running, and on clients that retry a 503.</li>
 <li><strong>Model warmth, measured on the GPU (17 September):</strong> 2.3–2.6 s cold, 0.14–0.17 s warm — against the 28–30 s CPU figure in the rule.</li>
 <li><strong>Found:</strong> the GPU holds one model at a time, and a lab run evicted the model two of the three agents use.</li>
 <li><strong>Held by:</strong> a host setting outside the repository, not the heartbeat the rule names, which stopped after two runs.</li>
@@ -1704,6 +1799,8 @@ pod  -&gt; CP VM pod IP:6443   =  timeout
 <li><code>06-sympozium/ollama-warm.sh</code> and <code>06-sympozium/schedules/ollama-warm.yaml</code> — the first two ways the model was kept warm.</li>
 <li><code>curl -s localhost:11434/api/ps</code> on the host — which model is warm right now; the <code>load_duration</code> field of any <code>/api/generate</code> response shows whether a request paid for a cold start.</li>
 <li><code>POOL_ENABLED=true POOL_STANDBY_MANIFEST=03-target-cluster/target-cluster-warm.yaml</code> — the corrected pool config (18 September); <code>git log --oneline -- ui/backend/handlers/pool.go run-ui.sh</code> for the fix commits.</li>
+<li><code>ui/backend/handlers/activator.go</code> — the front door; its header comment explains the splice, the held request and the 503. <code>ui/backend/handlers/activity.go</code> — what counts as use, and the idle decision. <code>ui/k8s/target-frontdoor.yaml</code> — the <code>.223</code> Service pointing at the host.</li>
+<li><code>POOL_IDLE_TTL=3m ./run-ui.sh</code> — on-demand mode with a three-minute idle limit; <code>docs/demo/ondemand-speaker-script.md</code> walks through a sleep, a wake and an idle delete, and lists what breaks the demo. <code>POOL_MODE=standby</code> restores the always-built standby. <code>git show e08cc9c</code> for the commit.</li>
 </ul></section>
 <section class="part-page"><p class="part-kicker">Part III</p><h1 class="part-title">The Fabric</h1><p class="part-epigraph">The mesh. The confession, then the fix.</p></section>
 <section class="chapter" id="chapter-10-hardcoded-ips-and-other-confessions"><header class="ch-head"><h1>Chapter 10 — Hardcoded IPs and Other Confessions</h1></header>
@@ -1839,7 +1936,7 @@ failoverActive := (!httpbinAlive &amp;&amp; ok(probes[1])) || (!nginxAlive &amp;
 </table></div>
 <p>A single label on a Service replaces the address book, the fixed address and the hand-written proxy. Chapter 11 tells that story, including the day a waypoint silently broke it. (The "after" column has since moved to Istio 1.31; Chapter 19.)</p>
 <p>It would have been easy to delete <code>05-istio/</code> that same day. Instead the README records that it <em>"is left untouched. It stays as the 'before' picture."</em> A company keeps last year's accounts for the same reason: an improvement you cannot compare against is only a claim.</p>
-<p>There is one honest limit, and the README states it too. Act 3 connects <strong>cluster1 and cluster2</strong> — not the target cluster. The target cluster is <em>"k3s nested in KubeVirt VMs (pod IPs unreachable from cluster1 without a NodePort proxy) and the warm pool destroys and rebuilds it, which would break mesh membership each time."</em> On 17 September the target cluster had no service mesh at all: four namespaces, none of them Istio's. The virtual-machine clusters are the product this book is about. The only cross-cluster path they have ever had is the one in this chapter.</p>
+<p>There is one honest limit, and the README states it too. Act 3 connects <strong>cluster1 and cluster2</strong> — not the target cluster. The target cluster is <em>"k3s nested in KubeVirt VMs (pod IPs unreachable from cluster1 without a NodePort proxy) and the warm pool destroys and rebuilds it, which would break mesh membership each time."</em> Since October the default is harsher still: on-demand mode deletes the target cluster after an hour without use (Chapter 9). On 17 September the target cluster had no service mesh at all: four namespaces, none of them Istio's. The virtual-machine clusters are the product this book is about. The only cross-cluster path they have ever had is the one in this chapter.</p>
 <hr class="scene-break" />
 <p class="dateline dateline-fiction">Meridian · the following week</p>
 <p>Vikram's list had six lines. Anita read them in order and stopped at the fourth.</p>
@@ -3194,6 +3291,7 @@ yes
 <p>It authenticated, as full cluster administrator.</p>
 <p>Read that against the four ideas. <strong>Cluster-per-tenant</strong> is not merely unbuilt here; a credential issued to one tenant would open every other tenant's cluster, which is worse than the namespace-based isolation Chapter 14's scorecard already grades <em>not held</em>. <strong>Rotation as a defence</strong> returns a cryptographically identical cluster — the attacker's credential survives the rotation, so the rotation defends nothing. Palantir's 48-hour node lifetime works because <em>"compromising a single node is insufficient for an attacker to gain persistent access"</em> — but that is a claim about <strong>nodes inside a long-lived cluster</strong>, where the cluster's identity outlives the node and can revoke it. Rotating whole clusters that share one identity is a different operation that happens to look the same from the outside.</p>
 <p>And even if the identity were fixed, the arithmetic would not budge. Chapter 20 measured one target cluster reserving <strong>14.9 GiB</strong> — roughly half this host. A second one does not fit. Many small clusters is not blocked by build time. It is blocked by memory, and by an address plan where every service address is pinned by hand in a table.</p>
+<p>Within a week of this drill, the platform began to depend on that property on purpose. Chapter 9's on-demand mode deletes an idle cluster and builds a new one when someone next runs <code>kubectl</code>, using the kubeconfig the user already has. That works only because the new cluster accepts the old credential. The finding this section records as a cost is the feature that mode is built on. Moving to per-cluster identity would now cost two things: the hundred-second build, and the wake.</p>
 <p>So the honest scorecard for the paradigm: four consequences demonstrated, four unavailable — and the four unavailable ones are unavailable <em>because of</em> the decision that produced the four demonstrated ones.</p>
 <h2 id="what-replacement-destroys">What replacement destroys</h2>
 <p>There is one more cost, and this book has paid it three times without writing it down as a cost.</p>
@@ -3225,7 +3323,7 @@ yes
 <li><strong>Proved:</strong> an administrator credential from run 1 opened a different cluster, thirty-two seconds old, five rebuild cycles later, with full cluster-admin.</li>
 <li><strong>Measured again (8 October, N=5, same pre-registered boundaries):</strong> destroy to first served request <strong>59.97 s</strong> (59.06–60.46); build 17.95 s; teardown 40.02 s, not the unchanged ~45 s that was predicted; the delete command returns in 0.83 s instead of 10.13 s. Cause of the faster teardown not investigated.</li>
 <li><strong>Also corrected:</strong> Chapter 5's worker is excluded by a taint, not broken — a pod that tolerates it runs there normally. Half right: until 23 September, traffic between the two VMs was broken as well (Chapter 8). The taint is gone, and cross-node traffic was verified on 8 October.</li>
-<li><strong>Carried from other chapters:</strong> 33.7 s build and 18.9 s teardown (Chapter 7, the latter now superseded); 18.1 s build from 30 September (Chapter 8); 467 ms warm claim (Chapter 9); 14.9 GiB reserved per cluster (Chapter 20); one afternoon for a full platform rebuild (Chapter 19).</li>
+<li><strong>Carried from other chapters:</strong> 33.7 s build and 18.9 s teardown (Chapter 7, the latter now superseded); 18.1 s build from 30 September (Chapter 8); 467 ms warm claim, and from October a 15.3 s on-demand wake to first <code>kubectl</code> answer (Chapter 9); 14.9 GiB reserved per cluster (Chapter 20); one afternoon for a full platform rebuild (Chapter 19).</li>
 <li><strong>Demonstrated consequences:</strong> recovery as a command, debugging with a control group, upgrades as rebuilds, drills as routine.</li>
 <li><strong>Unavailable on this platform, and why:</strong> cluster-per-PR, many small clusters, cluster-per-tenant, rotation-as-defence — all four need concurrent clusters with separate identities, and the fixed identity that makes the 18-second build possible (34 seconds when this chapter was first written) forbids exactly that. Per-build identity costs roughly a hundred seconds.</li>
 <li><strong>Not claimed:</strong> any production recovery time; any data restore; that this generalises beyond one cluster on one host.</li>
@@ -3275,7 +3373,7 @@ yes
 <li><strong>A network with no network in it.</strong> Everything shares one Docker bridge. Addresses are handed out by MetalLB in layer-2 mode from a hardcoded range, <code>172.18.255.200–225</code> (Appendix B). There is no router, no VLAN, no firewall, no external DNS.</li>
 <li><strong>Trust that was generated once and committed.</strong> The warm path's certificate authorities are fixed, and their private keys are in version control, labelled demo-only (Chapter 3). The mesh's root of trust was generated on the workstation.</li>
 <li><strong>No identity.</strong> The web console has no login. Neither does the agent console embedded in it. The one authenticated surface is the agent platform's own API, which does require a bearer token.</li>
-<li><strong>Capacity that is one deep.</strong> One warm standby cluster, one model resident on the GPU at a time (Chapter 9).</li>
+<li><strong>Capacity that is one deep.</strong> One warm standby cluster (or, by default since October, none until someone asks), one model resident on the GPU at a time (Chapter 9).</li>
 </ul>
 <p>None of this is a criticism of the platform. A lab that paid for all of it would have taught less, more slowly. But every item is a thing the data centre would have to supply, and a reader who skips this list will mistake eighteen seconds for readiness.</p>
 <h2 id="high-availability-and-what-it-is-actually-for">High availability, and what it is actually for</h2>
@@ -3307,7 +3405,7 @@ yes
 <li>Size hosts from the <strong>sum of reservations</strong> of everything you intend to place on them, not from observed utilization.</li>
 <li>Then treat the gap between reservation and use as the thing to manage down, because that gap is the owned-hardware form of the cloud waste in the prologue. Right-sizing requests is the work; it is unglamorous and it is where the margin is.</li>
 <li>Reserve headroom deliberately: enough to lose a failure domain and still place everything that was running on it. That is an availability cost that appears on the capacity plan, and it is routinely forgotten.</li>
-<li>Price warmth explicitly. Chapter 9's standby holds eight cores and 14 GiB idle, permanently, to make a claim take under half a second instead of eighteen. That may be an excellent trade. It is never a free one, and it belongs on the plan as a line.</li>
+<li>Price warmth explicitly. Chapter 9's standby holds eight cores and 14 GiB idle, permanently, to make a claim take under half a second instead of eighteen. That may be an excellent trade. It is never a free one, and it belongs on the plan as a line. The lab now prices the other end as well. In on-demand mode nothing is held while nobody works, and the first command after a quiet hour waits about fifteen seconds for a cluster to be built. Which end is right depends on how often someone is waiting, and that is a question about the users, not the platform.</li>
 </ol>
 <h2 id="secrets-identity-and-the-two-things-the-lab-has-no-answer-for">Secrets, identity, and the two things the lab has no answer for</h2>
 <p><strong>Secrets.</strong> The platform commits certificate authority private keys and a fixed join token, marked demo-only (Chapter 3), and the agent platform's tokens live in cluster Secrets, which are encoded rather than encrypted. Neither transfers. The two common patterns are SOPS, which encrypts values inside the Git repository so the repository stays the source of truth, and External Secrets, which keeps material in a dedicated store — HashiCorp Vault, or a hardware security module — and syncs references into the cluster. The choice matters less than the property both provide and the platform currently lacks: <em>no plaintext secret in version control, and a rotation procedure that someone has actually run.</em></p>
@@ -3404,7 +3502,7 @@ yes
 <p>"When someone has broken it in front of you," she said, "and the screen went red."</p>
 <h2 id="the-ledger">The ledger</h2>
 <ul>
-<li><strong>Measured, and carried into this chapter:</strong> build 18.1 s (30 September, Chapter 8; reproduced at 17.95 s in Chapter 17's October re-run, and 33.7 s before the September work) and teardown 40.0 s (Chapter 17, 8 October; 45.7 s on 19 September, superseding an 18.9 s single run); a warm claim in 467 ms (Chapter 9); 22.42 GiB reserved against 7.45 GiB used, and a control-plane machine using 1% of its processor allowance (Chapter 20); energy per generated token on the GPU (Chapter 20).</li>
+<li><strong>Measured, and carried into this chapter:</strong> build 18.1 s (30 September, Chapter 8; reproduced at 17.95 s in Chapter 17's October re-run, and 33.7 s before the September work) and teardown 40.0 s (Chapter 17, 8 October; 45.7 s on 19 September, superseding an 18.9 s single run); a warm claim in 467 ms, and an on-demand wake to first answer in 15.3 s (N=3, mid-October; Chapter 9); 22.42 GiB reserved against 7.45 GiB used, and a control-plane machine using 1% of its processor allowance (Chapter 20); energy per generated token on the GPU (Chapter 20).</li>
 <li><strong>Designed, not built:</strong> every requirement in this chapter — high availability, replicated storage, tested restores, BGP and segmentation, external DNS and PKI, secrets management, OIDC identity, GitOps reconciliation, observability retention, and a support policy. <strong>None of it exists on the platform.</strong></li>
 <li><strong>Already known to be missing, from the book's own findings:</strong> replicated storage, any restore test, real authentication on the consoles, destination-scoped egress, secrets outside version control, and four pieces of platform state that live only in a running cluster (Chapters 3, 12, 14, 18).</li>
 <li><strong>The cheapest item on the list:</strong> writing the exception down next to the version number. The platform already does it.</li>
@@ -3741,7 +3839,7 @@ Programmed=False (ListenersNotValid)
 <li>The target cluster's control-plane machine had been given 4 cores and 8 GiB. It was using <strong>59 millicores — 1% of its processor allowance — and 1,114 MiB of memory.</strong></li>
 <li>The node had reserved 4.59 processor cores. At the moment it was sampled, it was using well under half of one.</li>
 </ul>
-<p>On owned hardware, capacity is set by what is <strong>reserved</strong>, not what is used. On this host, a second target cluster would not fit — its machines could not reserve the memory — even though two-thirds of the memory already reserved sat idle. That is the deck's <em>"overprovisioning"</em>, on hardware you own. It is the owner's margin to reclaim or waste, and right-sizing reservations is where it lives.</p>
+<p>On owned hardware, capacity is set by what is <strong>reserved</strong>, not what is used. On this host, a second target cluster would not fit — its machines could not reserve the memory — even though two-thirds of the memory already reserved sat idle. That is the deck's <em>"overprovisioning"</em>, on hardware you own. It is the owner's margin to reclaim or waste, and right-sizing reservations is where it lives. One way to reclaim it arrived in October: on-demand mode deletes the target cluster after an hour without use, returning its 14.57 GiB of reservations until the next <code>kubectl</code> command builds it again, about fifteen seconds later (Chapter 9). Reclaiming idle capacity is cheap when rebuilding it is cheap.</p>
 <p><strong>The energy cost of AI.</strong> The model most of the platform's agents use, <code>qwen2.5:7b</code>, was measured on the workstation's GPU. With the model loaded and idle, the GPU drew <strong>6.4 W</strong>. While generating text it drew <strong>38–42 W</strong>, at <strong>34–37 tokens per second</strong>. That comes to <strong>1.19 joules per generated token — 0.33 kWh per million tokens</strong>, for the GPU alone.</p>
 <p>Multiply that by any electricity price between 10 and 50 cents a kilowatt-hour, and the power for a million generated tokens costs roughly <strong>3 to 17 cents</strong>. The lesson is not that local AI is nearly free. It is that for local AI, the electricity is a rounding error. The cost is the hardware — which, on this GPU, holds one model at a time (Chapter 9) — and the people who run and check it.</p>
 <p><strong>The people.</strong> The repository behind this book holds <strong>88 commits, on 18 distinct days</strong>, from 11 February to 18 September 2026, from <strong>a single committer, Mahipal</strong>. <strong>70 of those 88 commits</strong> carry an AI coding assistant as co-author. (The count moved while this chapter was being written, because writing the book added commits to the platform — which is its own small lesson about measuring a thing you are standing on.) The platform's operating notes run to 612 lines, including 23 entries in a list of pitfalls — most of them a failure that looked like success.</p>
@@ -4107,7 +4205,7 @@ Programmed=False (ListenersNotValid)
 <h3 id="scripts">scripts/</h3>
 <p>The measurement instruments <code>phase-timings.sh</code> and <code>time-to-ready.sh</code> (Appendix D), along with <code>configure-kubevirt-perf.sh</code>, <code>fix-registry-hosts.sh</code>, <code>seed-cluster-secrets.sh</code>, <code>gen-warm-ca.sh</code>, <code>render-cluster.sh</code>, <code>render-demo-video.sh</code> and <code>import-base-images.sh</code>.</p>
 <h3 id="ui">ui/</h3>
-<p>The web console: a React frontend and a Go backend (port 8080), with SRE, AI and Visual modes (Chapters 12 and 13). <code>run-ui.sh</code> starts both for development. The production manifest in <code>ui/k8s/</code> was not deployed on 17 September: the <code>kubeui</code> namespace did not exist. <em>Targets:</em> <code>make ui</code>, <code>make ui-build</code>.</p>
+<p>The web console: a React frontend and a Go backend (port 8080), with SRE, AI and Visual modes (Chapters 12 and 13). <code>run-ui.sh</code> starts both for development. The production manifest in <code>ui/k8s/</code> was not deployed on 17 September: the <code>kubeui</code> namespace did not exist. <em>Targets:</em> <code>make ui</code>, <code>make ui-build</code>. Since 13 October the backend also runs the target cluster in <strong>on-demand mode</strong> by default (Chapter 9): <code>handlers/activator.go</code> is the front door that builds the cluster on first access, <code>handlers/activity.go</code> decides when an unused cluster is deleted, and <code>ui/k8s/target-frontdoor.yaml</code> gives the front door its address. <code>POOL_MODE=standby</code> restores the always-built standby; <code>POOL_IDLE_TTL</code> sets the idle limit (default <code>1h</code>).</p>
 <h3 id="docs-and-the-top-level">docs/, and the top level</h3>
 <p><code>docs/sub-60s-cluster-strategy.md</code> records the cluster-speed work and its dead ends (Chapters 7 and 8). <code>docs/warm-pool-strategy.md</code> covers the standby (Chapter 9), and <code>docs/demo/</code> holds the recorded agent demo. At the top level: <code>CLAUDE.md</code>, the platform's operating memory and pitfall list; <code>Sovereign_Cloud_Agentic_Strategy.md</code>, the agent strategy (Chapters 3, 14 and 16); <code>demo.sh</code> and <code>show-cluster.sh</code>, the original demo, whose narration has drifted (Chapter 5); and <code>target-cluster-kubeconfig</code>, the target cluster's credentials file.</p>
 <h3 id="the-make-targets-that-matter">The make targets that matter</h3>
@@ -4139,7 +4237,7 @@ Programmed=False (ListenersNotValid)
 <tr>
 <td><code>make verify</code></td>
 <td>Checks the target cluster and refreshes agent credentials</td>
-<td></td>
+<td>Rewrites the repository's kubeconfig to the direct address <code>.215</code>, which bypasses the on-demand front door: that kubeconfig neither wakes the cluster nor keeps it alive (Chapter 9, October)</td>
 </tr>
 <tr>
 <td><code>make kubevirt-perf</code></td>
@@ -4333,9 +4431,16 @@ Programmed=False (ListenersNotValid)
 <td>Yes</td>
 <td>3</td>
 </tr>
+<tr>
+<td><code>.223</code></td>
+<td>Target-cluster front door, on-demand mode — added 13 October, after this table's survey</td>
+<td>cluster2</td>
+<td>Not surveyed</td>
+<td>Not counted</td>
+</tr>
 </tbody>
 </table></div>
-<p>"Files naming it" counts shell, YAML, Go, TypeScript, env and Makefile files outside <code>book/</code>. Seven of the seventeen reserved addresses were not in use on 17 September, and every one of them is still written into between three and ten files.</p>
+<p>"Files naming it" counts shell, YAML, Go, TypeScript, env and Makefile files outside <code>book/</code>. Seven of the seventeen addresses reserved on 17 September were not in use that day, and every one of them is still written into between three and ten files.</p>
 <p>The node addresses on the same network matter too. <code>172.18.0.1</code> is the host, where the models run. <code>.2</code>, <code>.3</code> and <code>.4</code> were <code>cluster1-control-plane</code>, <code>cluster2-control-plane</code> and the image registry — in that order <em>on that day</em>. Docker hands those addresses out in the order containers join the network, which is why <code>172.18.0.2:5000</code>, the registry address baked into image references, is an alias that only containerd resolves (Appendix C.5).</p>
 <h3 id="pool-discipline">Pool discipline</h3>
 <ul>
@@ -4461,7 +4566,7 @@ Programmed=False (ListenersNotValid)
 </tr>
 <tr>
 <td>A ghost node baked into the golden image satisfied "2 nodes Ready" before the worker joined</td>
-<td>Both timing scripts, and (found 18 September) the UI backend's own <code>targetNodesReady</code> — used by both the on-demand deploy path and the warm pool (Chapter 7, Chapter 9)</td>
+<td>Both timing scripts, and (found 18 September) the UI backend's own <code>targetNodesReady</code> — used by both the Deploy button's build path and the warm pool (Chapter 7, Chapter 9)</td>
 <td>Measure/count by name (Appendix D); fixed in <code>pool.go</code> 18 September, standalone scripts still not fixed</td>
 </tr>
 <tr>
@@ -4552,6 +4657,11 @@ Programmed=False (ListenersNotValid)
 <td>Both Kind clusters number pods from <code>10.244.0.0/24</code>, so a pod address means different machines in each</td>
 <td>Cross-cluster calls (Chapter 10)</td>
 <td>Hand-plumbed proxy (before); east-west gateways (after)</td>
+</tr>
+<tr>
+<td>In on-demand mode, a sleeping cluster does not answer at <code>.215</code> but wakes through <code>.223</code>; and a kubeconfig aimed at <code>.215</code> keeps working without ever counting as use, so the cluster is deleted under its user after an hour</td>
+<td>Target cluster, from 13 October (Chapter 9)</td>
+<td>By design. Use the published kubeconfig, which points at <code>.223</code>; <code>make verify</code> rewrites it to <code>.215</code></td>
 </tr>
 </tbody>
 </table></div>
@@ -4771,6 +4881,16 @@ Programmed=False (ListenersNotValid)
 <td>Standby claim</td>
 <td><strong>467 ms</strong> median (1.059 / 0.467 / 0.465)</td>
 <td>18 September, by name-based readiness check, warm-image standby; was 194 ms in June</td>
+</tr>
+<tr>
+<td>On-demand wake, no cluster to first <code>kubectl</code> answer</td>
+<td><strong>15.3 s</strong> median (15.3 / 15.3 / 15.7)</td>
+<td>Mid-October, N=3, through the front door at <code>.223</code> (platform repository, <code>CLAUDE.md</code>, "On-demand mode"). A different boundary from the 18.1 s: the API answers on the control plane alone. Both nodes <code>Ready</code> at about 20.5 s</td>
+</tr>
+<tr>
+<td>On-demand idle delete</td>
+<td>about 14 s</td>
+<td>Same source, no run count or boundary recorded; not reconciled with the 40.02 s teardown above</td>
 </tr>
 <tr>
 <td>Model load, cold vs warm</td>
@@ -5091,6 +5211,7 @@ Programmed=False (ListenersNotValid)
 <li><strong>Depreciation</strong> — spreading the cost of hardware over its useful life; the landlords themselves disagree on whether a server lasts five years or six.</li>
 <li><strong>East-west gateway</strong> — the door one cluster's mesh uses to reach another's, carrying encrypted, identity-bearing traffic between them.</li>
 <li><strong>Egress</strong> — traffic leaving a system; also the fee some providers charge for data leaving them.</li>
+<li><strong>Front door</strong> — in on-demand mode, the address users and agents are given instead of the cluster's own. It passes traffic through when the cluster is up, builds the cluster when it is not, and counts what passes through as use.</li>
 <li><strong>Gateway API</strong> — the Kubernetes standard for declaring how traffic enters and moves between services, with ownership split between platform and application teams.</li>
 <li><strong>Golden image</strong> — a pre-built machine image with everything a cluster node needs baked in, so nothing is downloaded at boot.</li>
 <li><strong>Istio</strong> — the open-source service mesh this platform uses.</li>
@@ -5104,6 +5225,7 @@ Programmed=False (ListenersNotValid)
 <li><strong>mTLS</strong> (mutual TLS) — encryption in which <em>both</em> sides prove their identity, not just the server.</li>
 <li><strong>NetworkPolicy</strong> — a Kubernetes rule stating which workloads may talk to which, enforced by the network layer.</li>
 <li><strong>Ollama</strong> — the open-source server that runs AI models on the platform's own GPU.</li>
+<li><strong>On-demand mode</strong> — the platform's default since 13 October: no cluster exists while nobody uses it, the first access builds one, and an hour without use deletes it. The opposite trade to a warm standby.</li>
 <li><strong>Repatriation</strong> — moving workloads from a rented cloud back onto infrastructure the organization owns.</li>
 <li><strong>ServiceEntry</strong> — an Istio record that tells the mesh about a service outside it; the "before" picture of cross-cluster discovery.</li>
 <li><strong>SkillPack</strong> — a bundle of tools an agent may use, with the permissions those tools need.</li>

@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 8,900 words · about 39 minutes to read</dd>
+      <dd>About 9,200 words · about 40 minutes to read</dd>
     </dl>
   </header>
 
@@ -442,7 +442,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <h3 id="scripts">scripts/</h3>
 <p>The measurement instruments <code>phase-timings.sh</code> and <code>time-to-ready.sh</code> (Appendix D), along with <code>configure-kubevirt-perf.sh</code>, <code>fix-registry-hosts.sh</code>, <code>seed-cluster-secrets.sh</code>, <code>gen-warm-ca.sh</code>, <code>render-cluster.sh</code>, <code>render-demo-video.sh</code> and <code>import-base-images.sh</code>.</p>
 <h3 id="ui">ui/</h3>
-<p>The web console: a React frontend and a Go backend (port 8080), with SRE, AI and Visual modes (Chapters 12 and 13). <code>run-ui.sh</code> starts both for development. The production manifest in <code>ui/k8s/</code> was not deployed on 17 September: the <code>kubeui</code> namespace did not exist. <em>Targets:</em> <code>make ui</code>, <code>make ui-build</code>.</p>
+<p>The web console: a React frontend and a Go backend (port 8080), with SRE, AI and Visual modes (Chapters 12 and 13). <code>run-ui.sh</code> starts both for development. The production manifest in <code>ui/k8s/</code> was not deployed on 17 September: the <code>kubeui</code> namespace did not exist. <em>Targets:</em> <code>make ui</code>, <code>make ui-build</code>. Since 13 October the backend also runs the target cluster in <strong>on-demand mode</strong> by default (Chapter 9): <code>handlers/activator.go</code> is the front door that builds the cluster on first access, <code>handlers/activity.go</code> decides when an unused cluster is deleted, and <code>ui/k8s/target-frontdoor.yaml</code> gives the front door its address. <code>POOL_MODE=standby</code> restores the always-built standby; <code>POOL_IDLE_TTL</code> sets the idle limit (default <code>1h</code>).</p>
 <h3 id="docs-and-the-top-level">docs/, and the top level</h3>
 <p><code>docs/sub-60s-cluster-strategy.md</code> records the cluster-speed work and its dead ends (Chapters 7 and 8). <code>docs/warm-pool-strategy.md</code> covers the standby (Chapter 9), and <code>docs/demo/</code> holds the recorded agent demo. At the top level: <code>CLAUDE.md</code>, the platform's operating memory and pitfall list; <code>Sovereign_Cloud_Agentic_Strategy.md</code>, the agent strategy (Chapters 3, 14 and 16); <code>demo.sh</code> and <code>show-cluster.sh</code>, the original demo, whose narration has drifted (Chapter 5); and <code>target-cluster-kubeconfig</code>, the target cluster's credentials file.</p>
 <h3 id="the-make-targets-that-matter">The make targets that matter</h3>
@@ -474,7 +474,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <tr>
 <td><code>make verify</code></td>
 <td>Checks the target cluster and refreshes agent credentials</td>
-<td></td>
+<td>Rewrites the repository's kubeconfig to the direct address <code>.215</code>, which bypasses the on-demand front door: that kubeconfig neither wakes the cluster nor keeps it alive (Chapter 9, October)</td>
 </tr>
 <tr>
 <td><code>make kubevirt-perf</code></td>
@@ -668,9 +668,16 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>Yes</td>
 <td>3</td>
 </tr>
+<tr>
+<td><code>.223</code></td>
+<td>Target-cluster front door, on-demand mode — added 13 October, after this table's survey</td>
+<td>cluster2</td>
+<td>Not surveyed</td>
+<td>Not counted</td>
+</tr>
 </tbody>
 </table></div>
-<p>"Files naming it" counts shell, YAML, Go, TypeScript, env and Makefile files outside <code>book/</code>. Seven of the seventeen reserved addresses were not in use on 17 September, and every one of them is still written into between three and ten files.</p>
+<p>"Files naming it" counts shell, YAML, Go, TypeScript, env and Makefile files outside <code>book/</code>. Seven of the seventeen addresses reserved on 17 September were not in use that day, and every one of them is still written into between three and ten files.</p>
 <p>The node addresses on the same network matter too. <code>172.18.0.1</code> is the host, where the models run. <code>.2</code>, <code>.3</code> and <code>.4</code> were <code>cluster1-control-plane</code>, <code>cluster2-control-plane</code> and the image registry — in that order <em>on that day</em>. Docker hands those addresses out in the order containers join the network, which is why <code>172.18.0.2:5000</code>, the registry address baked into image references, is an alias that only containerd resolves (Appendix C.5).</p>
 <h3 id="pool-discipline">Pool discipline</h3>
 <ul>
@@ -796,7 +803,7 @@ td strong { color: var(--accent); font-weight: 600; }
 </tr>
 <tr>
 <td>A ghost node baked into the golden image satisfied "2 nodes Ready" before the worker joined</td>
-<td>Both timing scripts, and (found 18 September) the UI backend's own <code>targetNodesReady</code> — used by both the on-demand deploy path and the warm pool (Chapter 7, Chapter 9)</td>
+<td>Both timing scripts, and (found 18 September) the UI backend's own <code>targetNodesReady</code> — used by both the Deploy button's build path and the warm pool (Chapter 7, Chapter 9)</td>
 <td>Measure/count by name (Appendix D); fixed in <code>pool.go</code> 18 September, standalone scripts still not fixed</td>
 </tr>
 <tr>
@@ -887,6 +894,11 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>Both Kind clusters number pods from <code>10.244.0.0/24</code>, so a pod address means different machines in each</td>
 <td>Cross-cluster calls (Chapter 10)</td>
 <td>Hand-plumbed proxy (before); east-west gateways (after)</td>
+</tr>
+<tr>
+<td>In on-demand mode, a sleeping cluster does not answer at <code>.215</code> but wakes through <code>.223</code>; and a kubeconfig aimed at <code>.215</code> keeps working without ever counting as use, so the cluster is deleted under its user after an hour</td>
+<td>Target cluster, from 13 October (Chapter 9)</td>
+<td>By design. Use the published kubeconfig, which points at <code>.223</code>; <code>make verify</code> rewrites it to <code>.215</code></td>
 </tr>
 </tbody>
 </table></div>
@@ -1106,6 +1118,16 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>Standby claim</td>
 <td><strong>467 ms</strong> median (1.059 / 0.467 / 0.465)</td>
 <td>18 September, by name-based readiness check, warm-image standby; was 194 ms in June</td>
+</tr>
+<tr>
+<td>On-demand wake, no cluster to first <code>kubectl</code> answer</td>
+<td><strong>15.3 s</strong> median (15.3 / 15.3 / 15.7)</td>
+<td>Mid-October, N=3, through the front door at <code>.223</code> (platform repository, <code>CLAUDE.md</code>, "On-demand mode"). A different boundary from the 18.1 s: the API answers on the control plane alone. Both nodes <code>Ready</code> at about 20.5 s</td>
+</tr>
+<tr>
+<td>On-demand idle delete</td>
+<td>about 14 s</td>
+<td>Same source, no run count or boundary recorded; not reconciled with the 40.02 s teardown above</td>
 </tr>
 <tr>
 <td>Model load, cold vs warm</td>
@@ -1426,6 +1448,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>Depreciation</strong> — spreading the cost of hardware over its useful life; the landlords themselves disagree on whether a server lasts five years or six.</li>
 <li><strong>East-west gateway</strong> — the door one cluster's mesh uses to reach another's, carrying encrypted, identity-bearing traffic between them.</li>
 <li><strong>Egress</strong> — traffic leaving a system; also the fee some providers charge for data leaving them.</li>
+<li><strong>Front door</strong> — in on-demand mode, the address users and agents are given instead of the cluster's own. It passes traffic through when the cluster is up, builds the cluster when it is not, and counts what passes through as use.</li>
 <li><strong>Gateway API</strong> — the Kubernetes standard for declaring how traffic enters and moves between services, with ownership split between platform and application teams.</li>
 <li><strong>Golden image</strong> — a pre-built machine image with everything a cluster node needs baked in, so nothing is downloaded at boot.</li>
 <li><strong>Istio</strong> — the open-source service mesh this platform uses.</li>
@@ -1439,6 +1462,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>mTLS</strong> (mutual TLS) — encryption in which <em>both</em> sides prove their identity, not just the server.</li>
 <li><strong>NetworkPolicy</strong> — a Kubernetes rule stating which workloads may talk to which, enforced by the network layer.</li>
 <li><strong>Ollama</strong> — the open-source server that runs AI models on the platform's own GPU.</li>
+<li><strong>On-demand mode</strong> — the platform's default since 13 October: no cluster exists while nobody uses it, the first access builds one, and an hour without use deletes it. The opposite trade to a warm standby.</li>
 <li><strong>Repatriation</strong> — moving workloads from a rented cloud back onto infrastructure the organization owns.</li>
 <li><strong>ServiceEntry</strong> — an Istio record that tells the mesh about a service outside it; the "before" picture of cross-cluster discovery.</li>
 <li><strong>SkillPack</strong> — a bundle of tools an agent may use, with the permissions those tools need.</li>
