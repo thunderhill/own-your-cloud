@@ -72,7 +72,7 @@ That growth figure carries the chapter's most practical distinction. A bill can 
 
 The published waste figure from the prologue — 29% of cloud spend, by respondents' own estimate — is often used as an argument for leaving. It is really an argument for managing.
 
-Owned hardware can be wasted too. Chapter 9 of this book measured a *warm standby*: a spare cluster kept running so that a user could claim one in under half a second instead of waiting for one to be built. It is a good design. It also holds eight processor cores and 14 GiB of memory idle, around the clock, waiting. On the platform this book describes, that standby is switched off by default, for exactly that reason.
+Owned hardware can be wasted too. Chapter 9 of this book measured a *warm standby*: a spare cluster kept running so that a user could claim one in under half a second instead of waiting for one to be built. It is a good design. It also holds eight processor cores and 14 GiB of memory idle, around the clock, waiting. Since October, the platform this book describes no longer keeps one by default, for exactly that reason. No cluster exists while nobody is using it. The first command builds one, and an hour without use deletes it again.
 
 Idle capacity costs money wherever it runs. The difference is who sends the bill, and whether anyone reads it.
 
@@ -82,9 +82,9 @@ Idle capacity costs money wherever it runs. The difference is who sends the bill
 
 If owning is going to compete with renting, it has to match the cloud's signature promise: capacity in seconds, not months. That is testable, and the rest of this book tests it.
 
-On the platform in this book, a complete Kubernetes cluster — a control plane and a worker, each running as its own virtual machine — is built from a written declaration to both machines ready in a median of **33.7 seconds**, measured on 17 September 2026 (Chapter 7). Tearing one down takes **45.7 seconds** (Chapter 17; an earlier single-run figure of 18.9 s did not survive being measured five times). Claiming a pre-built standby took **467 milliseconds**, median of three runs measured 18 September 2026 — about 72 times faster than the cold build (Chapter 9).
+On the platform in this book, a complete Kubernetes cluster — a control plane and a worker, each running as its own virtual machine — is built from a written declaration to both machines ready in a median of **18.1 seconds**, measured on 30 September 2026 (Chapter 8; it was 33.7 seconds two weeks earlier). Tearing one down takes **40.0 seconds**, measured on 8 October (Chapter 17; an earlier single-run figure of 18.9 s did not survive being measured five times). Destroying a cluster and having its replacement serve a request again takes just under a minute. Claiming a pre-built standby took **467 milliseconds**, median of three runs measured 18 September 2026 — about 39 times faster than the cold build (Chapter 9). Since mid-October the default is the opposite trade: no cluster held at all, and an ordinary `kubectl` command that finds none gets an answer from a newly built one in **15.3 seconds** (three runs, 15.3–15.7 s), at the price of nothing held idle once an hour has passed without use (Chapter 9).
 
-Speed, it turns out, is not something only a landlord can offer. But the same chapters also show what it cost to get there. The first measured build took 50 seconds. Four attempts to make it faster failed. The two changes that worked took months of instrumentation to find (Chapter 8). And the dashboard reported the worker as ready for months while it was unable to run anything (Chapter 5).
+Speed, it turns out, is not something only a landlord can offer. But the same chapters also show what it cost to get there. The first measured build took 50 seconds. Four attempts to make it faster failed, and two of those verdicts were later revised. The changes that worked took months of instrumentation to find, and the largest of them was a default setting that nobody here had chosen (Chapter 8). And the dashboard reported the worker as ready for months while it was unable to run anything (Chapter 5).
 
 That is the honest shape of the ROI question. Owning can match renting on speed. What it costs in people and attention is the part the rest of this book counts.
 
@@ -110,7 +110,7 @@ The CFO ran his finger down the first column. "Most of it is steady."
 - **The paradox (public record):** committed cloud spend averaging about 50% of cost of revenue among benchmarked public software companies; repatriation reported at one-third to one-half of the cloud cost for equivalent workloads (Andreessen Horowitz, 2021).
 - **The evidence (public record):** Dropbox, $74.6 million saved over two years; 37signals, a cloud bill cut from $3.2 million to $1.3 million a year, with more than $10 million projected over five years.
 - **Not supported:** the deck's 2–3x multiplier, 15–25% annual increases, and "80% of IT budgets" have no source. Its $1.3 trillion 2025 market figure does not match Gartner's $723.4 billion forecast.
-- **Measured on owned hardware (build log):** a two-VM Kubernetes cluster ready in 33.7 s median; torn down in 45.7 s.
+- **Measured on owned hardware (build log):** a two-VM Kubernetes cluster ready in 18.1 s median (30 September); torn down in 40.0 s; destroy-to-serving in 60.0 s (8 October).
 
 ## Ask your team
 
@@ -121,6 +121,7 @@ The CFO ran his finger down the first column. "Most of it is steady."
 ## Open the repo
 
 - `docs/sub-60s-cluster-strategy.md` — how cluster build time was measured and brought down, including the dead ends.
-- `scripts/phase-timings.sh` (`make phase-timings`) — the per-phase measurement behind the 33.7-second figure.
+- `scripts/phase-timings.sh` (`make phase-timings`) and `scripts/time-to-ready-by-name.sh` (`make time-to-ready-by-name`) — the per-phase measurement, and the by-name timing behind the 18.1-second figure.
 - `docs/warm-pool-strategy.md` and `ui/backend/handlers/pool.go` — the standby, and what it costs to keep warm.
+- `ui/backend/handlers/activator.go` — the on-demand front door that builds a cluster on first access, and deletes it when nobody uses it.
 - The strategy deck, slides 3–9 — its first two chapters. (Not a repository file; see Appendix H — Sources.)

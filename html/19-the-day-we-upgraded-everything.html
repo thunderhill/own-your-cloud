@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 3,900 words · about 17 minutes to read</dd>
+      <dd>About 4,000 words · about 17 minutes to read</dd>
     </dl>
   </header>
 
@@ -546,7 +546,8 @@ Programmed=False (ListenersNotValid)
 </tbody>
 </table></div>
 <p><strong>33.7 seconds</strong>, against 34.5 before the upgrade. Within the noise of three runs, the upgrade changed nothing. Six minor versions of k3s and two of Kubernetes, and a cluster that builds in the same time — which is a perfectly good result, as long as nobody claims it is a better one.</p>
-<p>Tearing the cluster down was measured separately, once: the delete command returned after <strong>10.15 seconds</strong> while Cluster API worked through its finalizers, and every VM and machine object was gone at <strong>18.9 seconds</strong>. That was a single run, and it did not survive being measured again: five runs in Chapter 17 put it at <strong>45.73 seconds</strong>, with the machines themselves stopping at 35.6 s. The figure below is left as it was recorded on the day.</p>
+<p>The upgrade did turn out to change something, a week later and in a way no stopwatch on the day could have shown. k3s 1.37 reordered how a worker joins, and that turned one of Chapter 8's recorded dead ends into a four-second saving. An upgrade does not only risk breaking what works. It can also change which of your past conclusions are still true.</p>
+<p>Tearing the cluster down was measured separately, once: the delete command returned after <strong>10.15 seconds</strong> while Cluster API worked through its finalizers, and every VM and machine object was gone at <strong>18.9 seconds</strong>. That was a single run, and it did not survive being measured again: five runs in Chapter 17 put it at <strong>45.73 seconds</strong>, with the machines themselves stopping at 35.6 s (and 40.0 s in a re-run on 8 October). The figure below is left as it was recorded on the day.</p>
 <h2 id="the-balance-sheet-of-memory">The balance sheet of memory</h2>
 <p>Here is the day's accounting in the terms the risk committee asked for.</p>
 <p><strong>Rebuilt from the repository:</strong> both host clusters, the golden image, the target cluster, the service mesh with all five acts, and the agent platform with its three agents. <strong>Recovered from the old cluster, because nothing else held it:</strong> the Kind cluster setup, the KubeVirt and CDI installation, and a working proxy image for the k3s providers. <strong>Found wrong in the repository:</strong> a version variable that controlled nothing, an image check that tested presence rather than contents, and a service-account binding that had quietly stopped applying. <strong>Already known, and therefore cheap:</strong> five errors that cost one attempt each.</p>

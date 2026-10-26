@@ -357,7 +357,7 @@
     <p class="eyebrow">Table of contents · working draft · 2026-09-17</p>
     <h1>Own Your Cloud</h1>
     <p class="subtitle">From Cloud Tenant to Infrastructure Owner — a sovereign-Kubernetes story told in chapters</p>
-    <p class="alternates">Working title. Alternates: <em>The Thirty-Four-Second Cluster</em> · <em>Reclaiming the Margin</em></p>
+    <p class="alternates">Working title. Alternates: <em>The Eighteen-Second Cluster</em> · <em>Reclaiming the Margin</em></p>
 
     <div class="spine">
       <span class="label">The spine number</span>
@@ -500,15 +500,15 @@
         <span class="ch-num">8</span>
         <div>
           <h3 class="ch-title">Two Lines and a CPU Quota</h3>
-          <p class="ch-blurb">Four documented dead ends — <code>:preinit</code>, <code>:warm</code>, gating the worker on control-plane readiness ("<span class="n">53.1 s</span> median, a <span class="n">3.1 s</span> REGRESSION. The premise was wrong"), the no-route-to-host dials — and the two one-line fixes that delivered <span class="n">−31%</span>: <code>advertise-address</code> (<span class="n">50.0 → 42.7 s</span>) and <code>supportContainerResources</code> (<span class="n">42.7 → 34.5 s</span>). Thesis: <em>"every attempt to make the image smarter failed, while the two things that worked were a bad advertised address and a CPU quota."</em> With the caveat that limits every claim: N=3 against a 6 s spread; N≥7 or a quiet host.</p>
-          <p class="ch-source"><code>docs/sub-60s-cluster-strategy.md</code> §3, §6 · <code>scripts/configure-kubevirt-perf.sh</code></p>
+          <p class="ch-blurb">Four documented dead ends — <code>:preinit</code>, <code>:warm</code>, gating the worker on control-plane readiness ("<span class="n">53.1 s</span> median, a <span class="n">3.1 s</span> REGRESSION. The premise was wrong"), the no-route-to-host dials — and the two one-line fixes that delivered <span class="n">−31%</span>: <code>advertise-address</code> (<span class="n">50.0 → 42.7 s</span>) and <code>supportContainerResources</code> (<span class="n">42.7 → 34.5 s</span>). Then, dated 23–30 September, the same build reaches <span class="n">18.1 s</span>: a patched CAPK controller, dead end three reopened by the k3s upgrade, dead end four corrected, a taint that hid a broken VM-to-VM network, guest boot trims, a skewed stopwatch, and Cluster API's default rate limiter switched off (<span class="n">−5.8 s</span>). Thesis: <em>"every attempt to make the image smarter failed, while the two things that worked were a bad advertised address and a CPU quota."</em> With the caveat that limits every claim: N=3 against a 6 s spread; N≥7 or a quiet host.</p>
+          <p class="ch-source"><code>docs/sub-60s-cluster-strategy.md</code> §3, §6–§11 · <code>02-capi-init/patch-capk.sh</code> · <code>scripts/configure-kubevirt-perf.sh</code></p>
         </div>
       </li>
       <li class="chapter">
         <span class="ch-num">9</span>
         <div>
           <h3 class="ch-title">Warmth Is Mandatory</h3>
-          <p class="ch-blurb">The warm pool: a standby cluster claimed in <span class="n">194 ms</span> instead of built in <span class="n">~50 s</span>, and the stable-pod-IP constraint that makes it tractable. Then the same rule applied to models — llama3.2's <span class="n">28–30 s</span> CPU cold start is why "Warmth is mandatory" is an architecture constraint shared by VMs and LLMs alike.</p>
+          <p class="ch-blurb">The warm pool: a standby cluster claimed in <span class="n">194 ms</span> instead of built in <span class="n">18.1 s</span> (30 September), and the stable-pod-IP constraint that makes it tractable. Then the same rule applied to models — llama3.2's <span class="n">28–30 s</span> CPU cold start is why "Warmth is mandatory" is an architecture constraint shared by VMs and LLMs alike.</p>
           <p class="ch-source"><code>docs/warm-pool-strategy.md</code> · <code>ui/backend/handlers/pool.go</code> · strategy doc, constraint #5</p>
         </div>
       </li>
@@ -602,7 +602,7 @@
         <span class="ch-num">17</span>
         <div>
           <h3 class="ch-title">The Same Cluster Twice</h3>
-          <p class="ch-blurb">What sub-minute bring-up actually changes, measured: <span class="n">81.96 s</span> from the destroy command to a served request, N=5, with the boundaries pre-registered before the first run. The build reproduces at <span class="n">34.39 s</span>; the teardown, published from a single run at 18.9 s, turns out to be <span class="n">45.73 s</span>. Four consequences the platform can demonstrate, and four it cannot &mdash; because the fixed identity that buys the 34-second build forbids concurrent clusters. Proved on purpose: an admin credential from five rebuilds ago opens a 32-second-old cluster.</p>
+          <p class="ch-blurb">What sub-minute bring-up actually changes, measured: <span class="n">81.96 s</span> from the destroy command to a served request, N=5, with the boundaries pre-registered before the first run. The build reproduces at <span class="n">34.39 s</span>; the teardown, published from a single run at 18.9 s, turns out to be <span class="n">45.73 s</span>. Re-run on 8 October, after the 18-second build: <span class="n">59.97 s</span>, with teardown (<span class="n">40.0 s</span>) now more than twice the build. Four consequences the platform can demonstrate, and four it cannot &mdash; because the fixed identity that buys the 18-second build forbids concurrent clusters. Proved on purpose: an admin credential from five rebuilds ago opens a 32-second-old cluster.</p>
           <p class="ch-source"><code>measurements/ch-recovery-drill.sh</code> &middot; DORA &middot; Palantir on ephemeral compute</p>
         </div>
       </li>
@@ -646,7 +646,7 @@
       <li><span class="ltr">A</span><span><strong>The repo, stage by stage</strong> — <code>00-prereqs</code> through <code>07-istio-advanced</code>, one paragraph each, and the <code>make</code> targets that matter.</span></li>
       <li><span class="ltr">B</span><span><strong>Addresses that must not move</strong> — the MetalLB IP allocation table and pool discipline.</span></li>
       <li><span class="ltr">C</span><span><strong>The failure-mode catalog</strong> — the pitfalls and the chapters' findings, reorganized by <em>symptom</em>: four causes behind one identical "exit 2, zero log output" crash; scripts that reported success; statuses wrong in both directions; the registry alias; the admission race; per-run identities.</span></li>
-      <li><span class="ltr">D</span><span><strong>The measurement protocol</strong> — <code>phase-timings.sh</code>, why N≥7 on a noisy host, counting nodes by name rather than by number, and the figures as last measured: teardown <span class="n">45.7 s</span>, bring-up <span class="n">33.7 s</span> for both nodes.</span></li>
+      <li><span class="ltr">D</span><span><strong>The measurement protocol</strong> — <code>phase-timings.sh</code>, why N≥7 on a noisy host, counting nodes by name rather than by number, and the figures as last measured: bring-up <span class="n">18.1 s</span> for both nodes (30 September), teardown <span class="n">40.0 s</span> and destroy-to-serving <span class="n">60.0 s</span> (8 October).</span></li>
       <li><span class="ltr">E</span><span><strong>The ten labs</strong> — quick reference, with the ✅ / ⚠️ honesty markers preserved.</span></li>
       <li><span class="ltr">F</span><span><strong>A glossary for the boardroom</strong> — CAPI, KubeVirt, ambient mesh, waypoint, SPIFFE, agentic control plane, sovereign cloud — one plain-English sentence each.</span></li>
       <li><span class="ltr">G</span><span><strong>Key files, quoted</strong> — the load-bearing manifests and code, verbatim with their repo paths, so the book can be checked without the companion repository.</span></li>
@@ -661,7 +661,7 @@
         <h3>Must be written from scratch</h3>
         <ul>
           <li>All of Part IV in CxO-readable prose — the repo holds the technical truth; nothing holds the narrative.</li>
-          <li>The TCO bridge in ch. 19: 24-second clusters, warm pools, and local models, in dollars. The deck's figures are industry-generic; Meridian needs real cost data.</li>
+          <li>The TCO bridge in ch. 19: 18-second clusters, warm pools, and local models, in dollars. The deck's figures are industry-generic; Meridian needs real cost data.</li>
           <li>The Meridian device and the recurring closers.</li>
           <li>A boardroom-level case for KubeVirt and "why VMs still matter" (ch. 4) — absent from both sources.</li>
         </ul>

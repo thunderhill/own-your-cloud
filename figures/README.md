@@ -4,13 +4,14 @@ Draft figures for *Own Your Cloud*. **These are drafts, meant to be replaced.** 
 
 ## Status
 
-Five figures are drawn. The remaining twenty-five are specified below but not drawn — the chapters' draft notes name them, and this file is the brief.
+Six figures are drawn. The remaining twenty-five are specified below but not drawn — the chapters' draft notes name them, and this file is the brief.
 
 | Figure | Chapter | File | Status |
 |---|---|---|---|
 | 5.2 | 5 | `fig-05-2-six-layers.svg` | **drawn** |
 | 7.1 | 7 | `fig-07-1-boot-timeline.svg` | **drawn** |
 | 8.1 | 8 | `fig-08-1-median-and-spread.svg` | **drawn** |
+| 8.2 | 8 | `fig-08-2-eighteen-seconds.svg` | **drawn** |
 | 11.3 | 11 | `fig-11-3-two-identical-screens.svg` | **drawn** |
 | 12.2 | 12 | `fig-12-2-phantom-topology.svg` | **drawn** |
 | all others | — | — | specified below, not drawn |
@@ -40,7 +41,7 @@ These apply to the drawn drafts and to anything that replaces them.
 
 These match `tools/build_chapter.py`'s CSS, so figures sit in the page rather than on it.
 
-## The drawn five
+## The drawn six
 
 Each entry gives the data source, so a designer can rebuild the figure faithfully rather than tracing it.
 
@@ -55,6 +56,10 @@ Each entry gives the data source, so a designer can rebuild the figure faithfull
 ### 8.1 — The median falls and the spread collapses
 **Shows:** a dot plot of three runs at each of three stages, with the median as a bar and the spread as a thin line.
 **Data source:** Chapter 8. Baseline 52.7 / 50.0 / 46.6 (median 50.0, spread 6.1); after `advertise-address` 42.7 / 42.8 / 41.2 (median 42.7, spread 1.6); after `supportContainerResources` 34.5 / 34.2 / 34.7 (median 34.5, spread 0.5).
+
+### 8.2 — Eighteen seconds
+**Shows:** a waterfall of median time-to-ready from the 17 September baseline (33.7 s) to 30 September (18.1 s), one floating bar per change; a grey step marks a re-run with a corrected stopwatch, which is not a speed-up.
+**Data source:** Chapter 8, "Since then: eighteen seconds"; the platform repository's `docs/sub-60s-cluster-strategy.md` §7–§11. Medians: 33.7 → 33.4 (CAPK patch) → 33.0 (taint removed) → 29.0 (`/v1-k3s/readyz` gate) → 28.8 (VM routes) → 25.0 (boot trims, N=7) → 24.4 (re-run, 30 September, clean timing) → 23.9 (early k3s) → 18.1 (Cluster API rate limiting off). Drawn from these tables, not from the repository's PNG bridge chart, whose "Sept 23" bar lands at 25.4 rather than the measured 25.0.
 
 ### 11.3 — Two identical screens
 **Shows:** two terminal panels, one during working failover and one during a total outage, printing the identical line `success=20  failed=0`; beneath, the shell line that causes it.
@@ -76,7 +81,7 @@ From the chapters' draft notes. Each line is the brief.
 
 **Chapter 7** — 7.2: the ghost — a node list at the moment the control plane turns `Ready`, with `ubuntu-bake-vm-warm` sitting in it.
 
-**Chapter 8** — 8.2: reachability sketch — node → control-plane VM pod IP (`200`, 0.3 ms); worker VM → control-plane VM pod IP (timeout); worker VM → VIP `172.18.255.215` (reachable).
+**Chapter 8** — 8.3: reachability sketch (records the 9 September picture; Chapter 8's "Since then" shows the missing piece: the control plane's reply ARPing on-link, fixed by routing on both VMs) — node → control-plane VM pod IP (`200`, 0.3 ms); worker VM → control-plane VM pod IP (timeout); worker VM → VIP `172.18.255.215` (reachable).
 
 **Chapter 9** — 9.1: the standby lifecycle, `(none) → WARM → CLAIMED` with the background rebuild arrow. 9.2: the two inventories as a diagram — shelves one item deep.
 

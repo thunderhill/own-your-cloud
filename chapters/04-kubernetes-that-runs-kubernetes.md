@@ -96,7 +96,7 @@ This is the factory as it stood on the day this chapter was checked.
 | `MachineDeployment` | The worker pool: how many, from which template |
 | `Secret` | A pre-shared join token, so the worker can boot in parallel with the control plane |
 
-**The factory built what the order said.** Cluster API recorded two Machines. Each is backed by a KubeVirt virtual machine, `target-cluster-cp-s9j8h` and `target-cluster-workers-rz9xt-m5x6z`, both `Running` and ready. From the moment the file is applied, both machines are ready in a median of **33.7 seconds**, and the whole cluster is torn down in **45.7 seconds** (Chapters 7 and 17).
+**The factory built what the order said.** Cluster API recorded two Machines. Each is backed by a KubeVirt virtual machine, `target-cluster-cp-s9j8h` and `target-cluster-workers-rz9xt-m5x6z`, both `Running` and ready. From the moment the file is applied, both machines are ready in a median of **18.1 seconds**, and the whole cluster is torn down in **40.0 seconds** (Chapters 8 and 17; on 17 September, 33.7 and 45.7).
 
 **The factory fits in a workstation.** The management cluster, the cluster it built, a second cluster for the service mesh, and the AI agents all ran on one host (the prologue lists it). The manufacturing pattern is the same one a data centre would use. The capacity is not.
 
@@ -147,7 +147,7 @@ Vikram read it over her shoulder. "*Measured* is doing a lot of work in that sen
 - **The idea (briefing):** Cluster API extends Kubernetes' declaration-and-reconciliation model to whole clusters, run from a management cluster, with providers for different infrastructure.
 - **The spectrum (briefing):** Tanzu, CAPZ and KKP as markers from convenience to control, and a fourth option — self-managed on open standards. The labels are the deck's opinions.
 - **Virtual machines (build log):** KubeVirt runs VMs as Kubernetes objects; this platform's workload clusters run on VMs. There is no VMware migration tooling in the repository.
-- **The factory, 17 September 2026 (build log):** Cluster API v1.14.2, CAPK v0.11.2, k3s providers v0.3.0, KubeVirt v1.9.0, CDI v1.66.0. A 258-line declaration of seven objects produces two VM-backed machines, ready in 33.7 s median and torn down in 45.7 s.
+- **The factory, 17 September 2026 (build log):** Cluster API v1.14.2, CAPK v0.11.2, k3s providers v0.3.0, KubeVirt v1.9.0, CDI v1.66.0. A 258-line declaration of seven objects produces two VM-backed machines, ready in 33.7 s median and torn down in 45.7 s; by early October, 18.1 s and 40.0 s (Chapters 8 and 17).
 - **Found:** Cluster API reported the working cluster as `Available=False`; the repository's architecture diagram still shows March.
 
 ## Ask your team

@@ -147,6 +147,8 @@ The worker's own log explained why. During those "wasted" retry cycles, the agen
 
 > From the outside, a retry loop looks like waste. Often it is the only part of the system working in parallel.
 
+*This held on k3s 1.31. On 1.37 the agent no longer overlaps that work, and gating on the right endpoint saved four seconds. See "Since then: eighteen seconds" below.*
+
 ## Dead end four: no route to host
 
 The worker's log held something else: a connection error, three times, each attempt taking about 3.1 seconds, before the agent fell back to the control plane's stable virtual IP, `172.18.255.215`, and succeeded.
@@ -168,6 +170,8 @@ The log showed why. Between the line where k3s announced that it was starting th
 It was a real bug, and the fix was kept for correctness. It was not the slow thing.
 
 > A real bug is not necessarily the expensive one. The instrument is what tells you which is which.
+
+*One correction: this fix routed only the worker's side. Traffic between the two VMs still did not work, and nobody noticed for two weeks. See "Since then" below.*
 
 ### Found on the way
 
@@ -335,14 +339,42 @@ She opened the board summary on her workstation, found the line that said *< 40 
 
 *Figure 8.1 — Two one-line changes: the median falls from 50.0 s to 34.5 s, and the spread from 6.1 s to 0.5 s.*
 
+## Since then: eighteen seconds
+
+*Build log · 23 and 30 September 2026*
+
+Two weeks after the postscript, the same build reached both nodes `Ready` in a median of **18.1 seconds**: five clean runs on 30 September, every one between 17.7 and 18.3. The control plane is `Ready` at 14.3 seconds and the worker 3.8 seconds after it. Chapter 17 measured it again with a different instrument and got the same number.
+
+None of it came from a smarter image. Most of it came from parts of the system this chapter had called unreachable.
+
+**A controller that could not hear.** After the September upgrade, three runs measured 31.3, 33.2 and **62.8** seconds. The slow run had not been slow inside the guest. The control-plane VM was created thirty seconds after its bootstrap data was ready. The KubeVirt provider for Cluster API (CAPK) was built against a newer Cluster API but still watched the older API types, so every event it should have acted on was dropped. It noticed new work only when an unrelated event or a 10–20-second requeue happened to fire. While it waited, it also dialled the new cluster's API address before any machine existed, and blocked for up to client-go's thirty-second timeout. The fix is a source patch to the controller, built and pushed to the local registry. The median barely moved (33.4 s). The spread fell from **31.5 seconds to 1.6**. It fixed the tail, not the median, and a tail is what a team waiting in the queue actually experiences.
+
+**Dead end three, reopened.** k3s 1.37 retries the worker's first configuration request after a *random* five to ten seconds. One run's journal showed the first attempt landing 0.27 seconds before the control plane was ready, which cost a full retry. On k3s 1.31 the gate had been a regression, because the agent did useful work during its retries. On 1.37 the agent starts its container runtime only *after* it has its configuration, so there is nothing left to overlap. The probe mattered as well. `/v1-k3s/config` answered about two seconds early and gained nothing (32.8 s). The supervisor's own `/v1-k3s/readyz` is the endpoint that waits until the server can actually answer. Gated on that, the median went to **29.0 seconds**, and the worker now joins 3.4–4 seconds after the control plane instead of 6–9. A dead end is a result about one version, and an upgrade can reopen it.
+
+**The taint that hid a broken network.** The same journal explained Chapter 5's idle worker. The worker was told to wait for an external cloud controller that does not exist, so its "uninitialized" taint was never removed. After fifteen minutes k3s's network-policy controller gave up waiting and crashed, and it kept crashing from then on. Removing that one line made the worker schedulable, and showed what the taint had been hiding: **traffic between the two VMs had never worked.** Dead end four had routed the pod range through the gateway on the worker only. A packet capture showed the worker's request arriving and the control plane's *reply* going out on-link, looking for an address that nothing would answer. Routing it on both VMs gave 0% loss and working cross-node DNS. It did not change the timing (28.8 s). It was a correctness fix, not a speed fix. The chapter had believed that network was fixed for two weeks.
+
+**Four seconds in the guest's boot.** Three trims in the golden image: booting without an initial ramdisk, skipping probes for a disk controller and a PS/2 mouse that the VM does not have, and no longer waiting for IPv6 link-local addressing on an IPv4 network. The firmware-to-kernel phase went from 1.73 to about 0.8 seconds, kernel start from about 3.2 to 1.4, and network wait-online from up to 1.9 seconds to 12 milliseconds. Median of seven runs: **25.0 seconds**. Three of the seven were above 25, and the build log says so.
+
+**The stopwatch, again.** On 30 September a candidate change measured *28.5 seconds*, slower than what it replaced, while the phase script measured the same build at 17.6. `time-to-ready-by-name.sh` applied each new cluster while the previous one's VMs still held 14 GiB of memory, and the new control plane sat unschedulable for up to twelve seconds inside the timed window. This book's measurements notes had pointed out the flaw on 19 September, when it built the Chapter 17 drill instead of reusing that script. The fix waits for the old VMs to be gone, outside the clock. Every 30 September run before the fix was affected. Re-measured cleanly, the starting point that day was **24.4 seconds**.
+
+**A default nobody chose.** Controller logs showed Cluster API acting about two seconds after every object it created, while every other controller reacted within tens of milliseconds. Cluster API v1.14 rate-limits each of its reconcilers to one pass per object per second. The feature is on by default, and it exists to protect management clusters that run many workload clusters. This one runs one at a time. With it switched off, the chain from `kubectl apply` to both VMs existing takes about one second instead of six or seven: **−5.8 seconds**, the largest single step of the month. Starting k3s as soon as its files are on disk, instead of at cloud-init's last stage, saved another half second. Result: **18.1 seconds.**
+
+The summary at the end of the September section had said about six seconds of Cluster API controller time was something *"no change inside the guest can reach."* That was true. A change outside the guest reached it. It had put a perfect systemd-free image at about three seconds; three ordinary boot trims took four. Both forecasts were reasonable, and the measurements beat them both.
+
+![Waterfall from 33.7 s to 18.1 s: CAPK patch −0.3, taint −0.4, readyz gate −4.0, VM routes −0.2, boot trims −3.8, a grey re-run step −0.6, early k3s −0.5, CAPI rate limit −5.8.](../figures/fig-08-2-eighteen-seconds.svg)
+
+*Figure 8.2 — What each September change removed. Two steps were correctness fixes that happened to cost nothing, and one grey step is a corrected stopwatch, not a speed-up.*
+
+What is left, by measured size: k3s's server startup (about 3.5 seconds), the worker's join once the API answers (about 3.5–4), and systemd before cloud-init (about 2). The condition attached to this chapter's opening fix applies to two more of them: the CAPK patch and the feature gate live in the management cluster's state, not in a manifest, and a rebuild must reapply both. The setup script now applies both. If the patch fails, it prints a warning and carries on with the unpatched controller. That is the shape of the KubeVirt setting Chapter 19 found missing after a rebuild, and the reason to read the warning.
+
 ## The ledger
 
-- **Spent:** two golden-image experiments, each a full bake cycle to disprove; one instrumentation script; two further hypotheses — gating the worker, rerouting the pod network — that did not survive measurement.
-- **Changed:** one line in the control plane's startup commands; one CPU ceiling on KubeVirt's helper containers.
+- **Spent:** two golden-image experiments, each a full bake cycle to disprove; one instrumentation script; two further hypotheses — gating the worker, rerouting the pod network — that did not survive measurement on k3s 1.31.
+- **Changed:** one line in the control plane's startup commands; one CPU ceiling on KubeVirt's helper containers. Later: a source patch to the CAPK controller, one Cluster API feature gate, a readiness gate on the worker, routes on both VMs, three boot trims, and an earlier k3s start.
 - **Hardware added:** none.
-- **Saved:** 15.5 seconds on every cold cluster build — 50.0 s to 34.5 s, −31%. Run-to-run spread from 6.1 s to 0.5 s.
-- **Proved:** four dead ends, recorded with their numbers so that nobody pays for them twice.
-- **Still owed:** a setting that lives in cluster state rather than in Git, and two timing scripts that can stop the clock on a ghost node (Chapter 7).
+- **Saved:** 15.5 seconds on every cold cluster build by 9 September — 50.0 s to 34.5 s, −31%, spread from 6.1 s to 0.5 s. By 30 September, 18.1 s (N=5, 17.7–18.3), −64% from June.
+- **Proved:** four dead ends, recorded with their numbers so that nobody pays for them twice — and that two of them were results about one version or one side, not permanent truths.
+- **Still owed:** three settings that live in cluster state rather than in Git (the CPU ceiling, the CAPK patch, the feature gate); two timing scripts that can stop the clock on a ghost node (Chapter 7); VM routes that are runtime state and missing from the older manifests; and a rate limiter that a management cluster serving many clusters would want back on.
 
 ## Ask your team
 
@@ -358,4 +390,7 @@ She opened the board summary on her workstation, found the line that said *< 40 
 - `03-target-cluster/target-cluster-warm.yaml` — the `advertise-address` line in the control plane's `preK3sCommands`.
 - `make kubevirt-perf` — applies the CPU ceiling; the header of `scripts/configure-kubevirt-perf.sh` explains it.
 - `git show c7ad792` — the commit that landed both fixes, with the measurements in its message.
+- `docs/sub-60s-cluster-strategy.md` §7–§11 and `docs/why-target-cluster-ready-in-18-seconds.md` — the September work from 33.7 s to 18.1 s, with every table.
+- `make capk-patch` — the patched CAPK controller; `02-capi-init/init-management-cluster.sh` — the `EXP_RECONCILER_RATE_LIMITING=false` line.
+- `make time-to-ready-by-name RUNS=5` — the instrument behind the 18.1 s, now waiting for the previous VMs before it starts the clock.
 - **Without the repo:** Appendix G.2 quotes the `advertise-address` line with its measurement comment; G.3 quotes the `supportContainerResources` patch.

@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 2,700 words · about 12 minutes to read</dd>
+      <dd>About 2,800 words · about 12 minutes to read</dd>
     </dl>
   </header>
 
@@ -555,6 +555,7 @@ td strong { color: var(--accent); font-weight: 600; }
 </table></div>
 <p>In every run, at the moment the control plane first reported Ready, the node list read: control plane <code>Ready</code>, <code>ubuntu-bake-vm-warm</code> <code>Ready</code>. No worker.</p>
 <p>The upgraded platform builds a two-node cluster in <strong>33.7 seconds</strong>, median of three. Before the upgrade the figure was 34.5. The upgrade did not make the cluster ten seconds faster. Within the noise of three runs, it changed nothing.</p>
+<p>Two weeks later the same build measured 18.1 seconds. Chapter 8's last section explains how, including one change that only became possible on the upgraded k3s. The 33.7 here is the figure as it stood on 17 September.</p>
 <p>The tight 0.4-second spread that made 23.9 look so trustworthy was not a sign of a stable pipeline. Measured by name, the spread is 4.7 seconds. The instrument had simply been timing the steadier half of the cluster.</p>
 <p>Two more things turned up in the same hour. The worker's install path never prints the <em>"k3s started"</em> line the instrument searches for — the control plane prints it at 12.8 seconds, the worker never does — so that row could never have been filled. And the KubeVirt API that was unavailable on 9 September, and that forced the instrument's no-login design, reports <code>Available=True</code> on the rebuilt cluster. The constraint that shaped the instrument did not survive the rebuild. The instrument's virtues did: nothing on the guests, nothing changed by measuring.</p>
 <p>What this does not overturn deserves the same precision. The 9 September tables report a worker-join phase, which means the worker's Ready time was captured in those runs — so, as far as the surviving tables show, the chain from 50.0 to 34.5 seconds in Chapter 8 was a both-nodes measurement. But the raw files behind those tables were not kept, so that cannot be re-checked. The 16 September files were kept, in a temporary directory — which is the only reason this chapter could find its own mistake.</p>
@@ -586,6 +587,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>Found wrong (17 September):</strong> a node count satisfied by a ghost Node baked into the golden image; a "both nodes" total that treated a missing worker timestamp as zero; a worker milestone the worker never logs.</li>
 <li><strong>Corrected:</strong> the upgraded platform builds both nodes in 33.7 seconds (median of three; control plane alone, 24.7) — not 23.9, and no measurable change from before the upgrade.</li>
 <li><strong>Still owed:</strong> both timing scripts still count nodes rather than naming them; the 9 September raw files no longer exist to re-check.</li>
+<li><strong>Since (30 September):</strong> 18.1 s for both nodes, median of five, measured by name (Chapter 8).</li>
 </ul>
 <h2 id="ask-your-team">Ask your team</h2>
 <ol>

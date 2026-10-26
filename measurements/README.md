@@ -151,3 +151,51 @@ yes
 ### One correction to Chapter 5
 
 Chapter 5 records the worker as having *"been given nothing to do."* A pod that tolerates `node.cloudprovider.kubernetes.io/uninitialized` and pins to the worker by hostname **runs there normally** (verified 19 September, `drill-workload-worker.yaml`). The worker is not broken hardware; it is excluded by a scheduling gate. Nothing ordinary will land on it, which is the operative fact, but the machine works.
+
+## Chapter 17 drill, re-run after the 18-second build (pre-registered)
+
+**This section was written and committed BEFORE the first measured run of the re-run.**
+
+Between 23 and 30 September the platform repository cut the build from 33.7 s to a reported 18.1 s (median of 5, `scripts/time-to-ready-by-name.sh`, 30 September; `docs/sub-60s-cluster-strategy.md` §7–§11). Every Chapter 17 figure was measured on the older platform. This re-run measures the same cycle on the new one.
+
+**Nothing about the drill changes.** Same script (`ch-recovery-drill.sh`, unmodified), same boundaries T0–T9 as the table above, same workload (`drill-workload.yaml`), same pre-flight gates, N=5 after one discarded rehearsal, same headline (MTTR = T9 − T0).
+
+**Platform state, recorded 8 October 2026 before any run:**
+
+- `capi-controller-manager` runs with `--feature-gates=…ReconcilerRateLimiting=false…`
+- CAPK image `172.18.0.2:5000/capk-manager:v0.11.2-kubeui2` (the patched build from `02-capi-init/patch-capk.sh`)
+- `:warm` digest `sha256:0342dd8898bb…`, identical to `:warm-b1` (the image with `k3s-early.service` and the guest boot trims)
+- KubeVirt v1.9.0, `supportContainerResources` cpu `1`; cluster2 server v1.37.0
+- Manifest: `03-target-cluster/target-cluster-warm.yaml` at platform commit `f0f74a2`. Worker taint removed, worker gated on `/v1-k3s/readyz`, VM-to-VM routes on both VMs.
+
+**Stated in advance, so the result can contradict them:**
+
+1. **Build (T6 − T4) near 18 s.** The repository reports 18.1 s from a different script. A median outside 16–21 s would mean the two instruments disagree, and the book would report that disagreement instead of picking one.
+2. **The workload may now land on the worker.** The taint that kept every pod on the control plane is gone. Record the node either way. If the pod lands on the worker, T9 also shows that the control plane can reach a pod on the worker, which was impossible before the VM-to-VM fix.
+3. **Teardown (T2 − T0) is expected to be roughly unchanged, around 45 s.** None of the September work targeted deletion. If teardown is still about 45 s, it is now more than twice the build and the largest share of the MTTR.
+4. **No prediction is made for the headline MTTR.** Arithmetic from expectations 1 and 3 would suggest about 66 s. It is not a target, and the result is reported whatever it is.
+
+### Results — 8 October 2026
+
+`ch17-recovery-drill-20261008-011322.tsv`, N=5 after one discarded rehearsal (`ch17-recovery-drill-20261008-011221.tsv`). Host load 2.98–3.68 before runs (higher than on 19 September); MemAvailable 14.2 GiB; the `ollama-warm` schedule did not fire during any run (`lastRunTime` 29 September throughout).
+
+| Figure | Median | All five runs | Spread | 19 September |
+|---|---:|---|---:|---:|
+| **MTTR — destroy to first HTTP 200** | **59.97 s** | 59.06 / 59.43 / 59.97 / 60.21 / 60.46 | 1.40 s | 81.96 s |
+| Delete command returns | 0.83 s | 0.66 / 0.69 / 0.83 / 0.91 / 0.95 | 0.29 s | 10.13 s |
+| Teardown — last API object and qemu gone | 40.02 s | 39.92 / 39.99 / 40.02 / 40.11 / 40.31 | 0.39 s | 45.73 s |
+| Seed secrets | 0.73 s | 0.72 / 0.72 / 0.73 / 0.73 / 0.77 | 0.05 s | — |
+| Build — both nodes Ready | 17.95 s | 16.91 / 17.93 / 17.95 / 17.98 / 18.24 | 1.33 s | 34.39 s |
+| Build — control plane alone | 14.11 s | 13.50 / 14.11 / 14.11 / 14.18 / 14.40 | 0.90 s | 25.60 s |
+| Workload applied to first HTTP 200 | 1.09 s | 0.74 / 1.04 / 1.09 / 1.35 / 1.36 | 0.62 s | 1.34 s |
+
+**Against the pre-registered expectations:**
+
+1. **Build near 18 s — held.** 17.95 s against the repository's 18.1 s from a different script. The two instruments agree.
+2. **Workload on the worker — did not happen, for a different reason than before.** The pod landed on the control plane in all five runs. The worker carried no taint (checked on the run-5 cluster: both nodes untainted, with system pods on each), so this was ordinary scheduling, not exclusion. A pod pinned to the worker on that cluster served through the API server's proxy (HTTP 200), and a pod on the control plane reached it directly across nodes. Both paths were impossible before 23 September.
+3. **Teardown roughly unchanged at ~45 s — wrong.** It fell to **40.02 s**, and the delete command now returns in under a second instead of ten. This was not predicted and **not investigated**. The September controller changes (the patched CAPK and Cluster API's rate limiter, both of which act during deletion too) are the obvious candidates, but nothing here separates them. The qemu-versus-objects split from 19 September was not re-run. Teardown is now 2.2× the build and two-thirds of the MTTR.
+4. **No MTTR prediction was made.** The arithmetic in the pre-registration suggested about 66 s. The measured value is 59.97 s, and two of the five runs were above 60.
+
+**Every run:** zero `Pulling` events; the ghost node `ubuntu-bake-vm-warm` was excluded by name; `kube-system` reports `creationTimestamp: 2026-09-29T21:06:16Z`, the bake date of the current `:warm` image (it was 16 September in the earlier drill). The image changed and the restore-from-image property did not.
+
+The shared-identity test was not repeated. The CA set and join token are unchanged, so nothing here bears on it.

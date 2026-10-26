@@ -1,7 +1,7 @@
 # Own Your Cloud
 ### From Cloud Tenant to Infrastructure Owner — a sovereign-Kubernetes story told in chapters
 
-*Working title. Alternates: **The Thirty-Four-Second Cluster** · **Reclaiming the Margin**.*
+*Working title. Alternates: **The Eighteen-Second Cluster** · **Reclaiming the Margin**.*
 
 ---
 
@@ -68,12 +68,12 @@ Instrumentation first. Why `phase-timings.sh` exists — *"two optimisation dead
 > Source: `docs/sub-60s-cluster-strategy.md` (phase-level measurement), `scripts/phase-timings.sh`.
 
 **8. Two Lines and a CPU Quota**
-Four documented dead ends — `:preinit`, `:warm`, gating the worker on control-plane readiness (*"53.1 s median, a 3.1 s REGRESSION. The premise was wrong"*), the no-route-to-host dials — and the two one-line fixes that delivered −31%: `advertise-address` (50.0 → 42.7 s) and `supportContainerResources` (42.7 → 34.5 s). Thesis: *"every attempt to make the image smarter failed, while the two things that worked were a bad advertised address and a CPU quota."* With the measurement caveat that limits every claim (N=3 against a 6 s spread; N≥7 or a quiet host).
-> Source: `docs/sub-60s-cluster-strategy.md` §3, §6; `scripts/configure-kubevirt-perf.sh`.
+Four documented dead ends — `:preinit`, `:warm`, gating the worker on control-plane readiness (*"53.1 s median, a 3.1 s REGRESSION. The premise was wrong"*), the no-route-to-host dials — and the two one-line fixes that delivered −31%: `advertise-address` (50.0 → 42.7 s) and `supportContainerResources` (42.7 → 34.5 s). Then, dated 23–30 September, the same build reaches **18.1 s**: a patched CAPK controller, dead end three reopened by the k3s upgrade, dead end four corrected, a taint that hid a broken VM-to-VM network, guest boot trims, a skewed stopwatch, and Cluster API's default rate limiter switched off (−5.8 s). Thesis: *"every attempt to make the image smarter failed, while the two things that worked were a bad advertised address and a CPU quota."* With the measurement caveat that limits every claim (N=3 against a 6 s spread; N≥7 or a quiet host).
+> Source: `docs/sub-60s-cluster-strategy.md` §3, §6–§11; `scripts/configure-kubevirt-perf.sh`; `02-capi-init/patch-capk.sh`.
 
 **9. Warmth Is Mandatory**
-The warm pool: a standby cluster **claimed in 467 ms** (18 September; was 194 ms in June, unmeasured since — re-measured after fixing the pool's own ghost-node readiness bug) instead of built in ~34 s, and the stable-pod-IP constraint that makes it tractable. Then the same rule applied to models — llama3.2's **28–30 s CPU cold start** is why *"Warmth is mandatory"* is an architecture constraint shared by VMs and LLMs alike.
-> Source: `docs/warm-pool-strategy.md`, `ui/backend/handlers/pool.go`, `Sovereign_Cloud_Agentic_Strategy.md` constraint #5.
+The warm pool: a standby cluster **claimed in 467 ms** (18 September; was 194 ms in June, unmeasured since — re-measured after fixing the pool's own ghost-node readiness bug) instead of built in 18.1 s (30 September; ~34 s when first re-measured), and the stable-pod-IP constraint that makes it tractable. Then the same rule applied to models — llama3.2's **28–30 s CPU cold start** is why *"Warmth is mandatory"* is an architecture constraint shared by VMs and LLMs alike. And since 13 October, the opposite default: **on-demand mode**, in which no cluster exists while nobody uses it. A front door at `.223` builds one on the first `kubectl`, which gets its answer in **15.3 s** (N=3), and the cluster is deleted after an hour without use. It is only possible because of the fixed identity Chapter 17 priced.
+> Source: `docs/warm-pool-strategy.md`, `ui/backend/handlers/pool.go`, `ui/backend/handlers/activator.go`, `Sovereign_Cloud_Agentic_Strategy.md` constraint #5.
 
 ---
 
@@ -119,7 +119,7 @@ The three-plane agent fleet — Infrastructure, Tenant, Mesh — plus Security, 
 *Back to the boardroom.*
 
 **17. The Same Cluster Twice**
-What sub-minute bring-up actually changes, measured: **81.96 s** from the destroy command to a served request (N=5, boundaries pre-registered before the first run). The build reproduces at 34.39 s; the teardown, published from a single run at 18.9 s, turns out to be **45.73 s**, and the API objects outlive the machines. Four consequences the platform can demonstrate — recovery as a command, debugging with a control group, upgrades as rebuilds, drills as routine — and four it cannot, because the fixed identity that buys the 34-second build forbids concurrent clusters. Proved on purpose: an admin credential from five rebuilds ago opens a 32-second-old cluster with cluster-admin.
+What sub-minute bring-up actually changes, measured: **81.96 s** from the destroy command to a served request (N=5, boundaries pre-registered before the first run). The build reproduces at 34.39 s; the teardown, published from a single run at 18.9 s, turns out to be **45.73 s**, and the API objects outlive the machines. Re-run on 8 October, after the 18-second build: **59.97 s**, with teardown (40.0 s) now more than twice the build. Four consequences the platform can demonstrate — recovery as a command, debugging with a control group, upgrades as rebuilds, drills as routine — and four it cannot, because the fixed identity that buys the 18-second build forbids concurrent clusters. Proved on purpose: an admin credential from five rebuilds ago opens a 32-second-old cluster with cluster-admin.
 > Source: `measurements/ch-recovery-drill.sh` and its raw data; DORA; Palantir on ephemeral compute.
 
 **18. From the Lab to the Data Centre**
@@ -144,10 +144,10 @@ Meridian's CTO, twelve months later. Short. It ends on the flyer's line.
 - **A. The repo, stage by stage** — `00-prereqs` through `07-istio-advanced`, one paragraph each, and the `make` targets that matter.
 - **B. Addresses that must not move** — the MetalLB IP allocation table and pool discipline.
 - **C. The failure-mode catalog** — the pitfalls and the chapters' findings, reorganized by *symptom*: four causes behind one identical "exit 2, zero log output" crash; scripts that reported success; statuses wrong in both directions; the registry alias; the admission race; per-run identities.
-- **D. The measurement protocol** — `phase-timings.sh`, why N≥7 on a noisy host, counting nodes by name rather than by number, and the figures as last measured: teardown 45.7 s, bring-up 33.7 s for both nodes.
+- **D. The measurement protocol** — `phase-timings.sh`, why N≥7 on a noisy host, counting nodes by name rather than by number, and the figures as last measured: bring-up 18.1 s for both nodes (30 September), teardown 40.0 s and destroy-to-serving 60.0 s (8 October).
 - **E. The ten labs** — quick reference, with the ✅ / ⚠️ honesty markers preserved.
 - **F. A glossary for the boardroom** — CAPI, KubeVirt, ambient mesh, waypoint, SPIFFE, agentic control plane, sovereign cloud — one plain-English sentence each.
-- **G. Key files, quoted** — the load-bearing manifests and code, verbatim with their repo paths, so the book can be checked without the companion repository: the warm manifest's seven objects, the two one-line speed fixes, the two ways to count a failover, the egress allowlist, an agent as an object, the `K3S_VERSION` that controlled nothing, and the dead-image patch.
+- **G. Key files, quoted** — the load-bearing manifests and code, verbatim with their repo paths, so the book can be checked without the companion repository: the warm manifest's seven objects, the two one-line speed fixes, the two ways to count a failover, the egress allowlist, an agent as an object, the `K3S_VERSION` that controlled nothing, the dead-image patch, and Cluster API's rate limiter that nobody here chose.
 - **H. Sources** — the companion repository; the author's briefing material, described rather than linked because no path would resolve for a reader; and the public record, with each citation's verification status.
 
 ---
@@ -156,7 +156,7 @@ Meridian's CTO, twelve months later. Short. It ends on the flyer's line.
 
 **Must be written from scratch (no existing source):**
 - All of Part IV in CxO-readable prose — the repo holds the technical truth, nothing holds the narrative.
-- The **TCO bridge** in ch. 20: connecting 24-second clusters, warm pools, and local models to dollars. The deck's figures are industry-generic; Meridian needs real cost data to land.
+- The **TCO bridge** in ch. 20: connecting 18-second clusters, warm pools, and local models to dollars. The deck's figures are industry-generic; Meridian needs real cost data to land.
 - The Meridian framing device and the recurring chapter closers.
 - A boardroom-level explanation of KubeVirt and "why VMs still matter" (ch. 4) — absent from both the deck and the repo.
 

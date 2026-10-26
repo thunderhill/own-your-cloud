@@ -149,7 +149,7 @@ The six mesh panels from the same commit went further. None of them imported any
 
 ## An address with an expiry date
 
-The last confession is the one in the chapter's title. The proxy in cluster2 reaches the virtual machine through its pod's address, typed in by the script. The Service has no selector, so no controller will ever correct that address. The pod it names was created when that morning's target cluster was built. A rebuild — 33.7 seconds, as Chapter 7 measured — replaces the pod, and the address goes with it. Traffic reaches the pod at all only because it arrives from outside the cluster and is forwarded by the node; as Chapter 8 found, other pods cannot dial a virtual machine's pod address directly.
+The last confession is the one in the chapter's title. The proxy in cluster2 reaches the virtual machine through its pod's address, typed in by the script. The Service has no selector, so no controller will ever correct that address. The pod it names was created when that morning's target cluster was built. A rebuild — 18.1 seconds since 30 September (Chapter 8) — replaces the pod, and the address goes with it. Traffic reaches the pod at all only because it arrives from outside the cluster and is forwarded by the node; as Chapter 8 found, other pods cannot dial a virtual machine's pod address directly.
 
 In fairness, the script looks the address up again each time it runs. But it does not remove what it creates: it prints five cleanup commands and exits. Whatever is left behind holds a snapshot of an address that expires with the cluster.
 
@@ -175,7 +175,7 @@ A single label on a Service replaces the address book, the fixed address and the
 
 It would have been easy to delete `05-istio/` that same day. Instead the README records that it *"is left untouched. It stays as the 'before' picture."* A company keeps last year's accounts for the same reason: an improvement you cannot compare against is only a claim.
 
-There is one honest limit, and the README states it too. Act 3 connects **cluster1 and cluster2** — not the target cluster. The target cluster is *"k3s nested in KubeVirt VMs (pod IPs unreachable from cluster1 without a NodePort proxy) and the warm pool destroys and rebuilds it, which would break mesh membership each time."* On 17 September the target cluster had no service mesh at all: four namespaces, none of them Istio's. The virtual-machine clusters are the product this book is about. The only cross-cluster path they have ever had is the one in this chapter.
+There is one honest limit, and the README states it too. Act 3 connects **cluster1 and cluster2** — not the target cluster. The target cluster is *"k3s nested in KubeVirt VMs (pod IPs unreachable from cluster1 without a NodePort proxy) and the warm pool destroys and rebuilds it, which would break mesh membership each time."* Since October the default is harsher still: on-demand mode deletes the target cluster after an hour without use (Chapter 9). On 17 September the target cluster had no service mesh at all: four namespaces, none of them Istio's. The virtual-machine clusters are the product this book is about. The only cross-cluster path they have ever had is the one in this chapter.
 
 * * *
 

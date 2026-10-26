@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 3,000 words · about 13 minutes to read</dd>
+      <dd>About 3,100 words · about 13 minutes to read</dd>
     </dl>
   </header>
 
@@ -497,7 +497,7 @@ failoverActive := (!httpbinAlive &amp;&amp; ok(probes[1])) || (!nginxAlive &amp;
 <p><em>none made an API call, and several hardcoded invented pod names and IPs for a target-cluster mesh that no longer exists.</em></p>
 </blockquote>
 <h2 id="an-address-with-an-expiry-date">An address with an expiry date</h2>
-<p>The last confession is the one in the chapter's title. The proxy in cluster2 reaches the virtual machine through its pod's address, typed in by the script. The Service has no selector, so no controller will ever correct that address. The pod it names was created when that morning's target cluster was built. A rebuild — 33.7 seconds, as Chapter 7 measured — replaces the pod, and the address goes with it. Traffic reaches the pod at all only because it arrives from outside the cluster and is forwarded by the node; as Chapter 8 found, other pods cannot dial a virtual machine's pod address directly.</p>
+<p>The last confession is the one in the chapter's title. The proxy in cluster2 reaches the virtual machine through its pod's address, typed in by the script. The Service has no selector, so no controller will ever correct that address. The pod it names was created when that morning's target cluster was built. A rebuild — 18.1 seconds since 30 September (Chapter 8) — replaces the pod, and the address goes with it. Traffic reaches the pod at all only because it arrives from outside the cluster and is forwarded by the node; as Chapter 8 found, other pods cannot dial a virtual machine's pod address directly.</p>
 <p>In fairness, the script looks the address up again each time it runs. But it does not remove what it creates: it prints five cleanup commands and exits. Whatever is left behind holds a snapshot of an address that expires with the cluster.</p>
 <p>Three smaller things came with it:</p>
 <ul>
@@ -536,7 +536,7 @@ failoverActive := (!httpbinAlive &amp;&amp; ok(probes[1])) || (!nginxAlive &amp;
 </table></div>
 <p>A single label on a Service replaces the address book, the fixed address and the hand-written proxy. Chapter 11 tells that story, including the day a waypoint silently broke it. (The "after" column has since moved to Istio 1.31; Chapter 19.)</p>
 <p>It would have been easy to delete <code>05-istio/</code> that same day. Instead the README records that it <em>"is left untouched. It stays as the 'before' picture."</em> A company keeps last year's accounts for the same reason: an improvement you cannot compare against is only a claim.</p>
-<p>There is one honest limit, and the README states it too. Act 3 connects <strong>cluster1 and cluster2</strong> — not the target cluster. The target cluster is <em>"k3s nested in KubeVirt VMs (pod IPs unreachable from cluster1 without a NodePort proxy) and the warm pool destroys and rebuilds it, which would break mesh membership each time."</em> On 17 September the target cluster had no service mesh at all: four namespaces, none of them Istio's. The virtual-machine clusters are the product this book is about. The only cross-cluster path they have ever had is the one in this chapter.</p>
+<p>There is one honest limit, and the README states it too. Act 3 connects <strong>cluster1 and cluster2</strong> — not the target cluster. The target cluster is <em>"k3s nested in KubeVirt VMs (pod IPs unreachable from cluster1 without a NodePort proxy) and the warm pool destroys and rebuilds it, which would break mesh membership each time."</em> Since October the default is harsher still: on-demand mode deletes the target cluster after an hour without use (Chapter 9). On 17 September the target cluster had no service mesh at all: four namespaces, none of them Istio's. The virtual-machine clusters are the product this book is about. The only cross-cluster path they have ever had is the one in this chapter.</p>
 <hr class="scene-break" />
 <p class="dateline dateline-fiction">Meridian · the following week</p>
 <p>Vikram's list had six lines. Anita read them in order and stopped at the fourth.</p>
