@@ -111,7 +111,7 @@ Put the two kinds of warmth side by side and they turn out to have the same shap
 
 | | A cluster | A model |
 |---|---|---|
-| Cold | 18.1 s, both nodes (30 Sept; 33.7 s on 17 Sept) | 2.3–2.6 s on the GPU (28–30 s on CPU) |
+| Cold | about 9 s, both nodes (21 Oct, hosted control plane; 18.1 s on 30 Sept, 33.7 s on 17 Sept) | 2.3–2.6 s on the GPU (28–30 s on CPU) |
 | Warm | 467 ms median (18 Sept, 3 runs; was 194 ms in June) | 0.14–0.17 s |
 | What warmth holds | 8 cores and 14 GiB of memory, idle | most of a 6 GB GPU |
 | How deep | one standby | one model at a time |
@@ -224,8 +224,8 @@ Put the two modes side by side and the trade this chapter has priced all along i
 
 | | Standby (`POOL_MODE=standby`) | On demand (default since 13 October) |
 |---|---|---|
-| First access | 467 ms claim (18 September) | 15.3 s to first answer; about 20.5 s to both nodes |
-| Held while nobody is using it | 8 cores and 14 GiB, all day | nothing, once the idle hour has passed |
+| First access | 467 ms claim (18 September) | 15.3 s to first answer; about 20.5 s to both nodes. Since 21 October: 10.4 s to both nodes (one run) |
+| Held while nobody is using it | 8 cores and 14 GiB, all day | nothing, once the idle hour has passed. Since 21 October: the resident server pod, about 1 GiB |
 | Held after the last use | a fresh standby, rebuilt in the background | the cluster, for up to an hour (`POOL_IDLE_TTL`, default `1h`) |
 | Who keeps it honest | the weekly claim-and-rebuild drill | every first command of the day |
 
@@ -243,7 +243,32 @@ None of this is free, and the conditions belong next to the fifteen seconds rath
 - **Clients other than `kubectl` see the 503.** A client that does not retry on `Retry-After` gets one refusal on a cold wake, and has to try again itself.
 - **One wake path was not demonstrated.** When the demo script was written (15 October), `target-cluster-agent`'s serving pod was crash-looping, so the chat path starts a build but could not be shown end to end. The demo script says to skip it.
 
-Constraint 5 is called *"Warmth is mandatory."* For clusters, as of October, the platform no longer keeps one warm by default. That does not break the rule. It is what the rule's trade looks like once a cold build costs fifteen seconds instead of fifty. For models, nothing changed: a model still has to be loaded before the agent can answer, and the GPU still holds one at a time.
+### 21 October: the wake, without a control plane to build
+
+*Build log · 21 October 2026*
+
+Six days after the demo script was written, the cluster changed shape underneath it. Chapter 8's last section moved the k3s server out of its VM into a pod on cluster2 that runs all the time, and both VMs became workers. A build went from 18.1 seconds to about nine.
+
+The front door had to change with it. Its old test for "up" was the API answering, and that test is now true all the time, because the server never sleeps. Worse, this server answers an unauthenticated health check with *401*, so the old probe would have read "down" forever. Counted the other way, as "up", it would have passed requests through to an API with no nodes behind it and never woken anything. The front door now counts the cluster as up when **both target nodes are Ready**.
+
+That collapses the two boundaries in the table above into one. Measured from no cluster, with a plain `kubectl get nodes` through `.223`:
+
+| Boundary | Time |
+|---|---:|
+| `kubectl get nodes` answered, listing both nodes `Ready` | **10.4 s** (one run) |
+| Console Deploy from nothing, including its prerequisite checks | 11.2 s (one run) |
+| Console Delete, nodes removed, server untouched | 13 s (one run) |
+
+**Ten seconds from nothing to a cluster with both nodes working**, against fifteen seconds to an API that answered and about twenty to both nodes. It is also **one run**. The book asks for five, and until then it is a single observation from the platform notes, recorded with that label in Appendix D.
+
+Two other changes from the same week alter what a user sees.
+
+- **Deleting from the console now means "stay off".** An idle delete still leaves the next access free to wake the cluster. A delete clicked in the console marks the target *stopped*, in a ConfigMap so it survives a backend restart. While stopped, the front door answers `503` with no `Retry-After`, so `kubectl` fails at once instead of retrying, a chat to `target-cluster-agent` does not wake it, and the standby pool does not rebuild it. Only Deploy clears it. Before this, a person who deleted the cluster to free the machine could have it rebuilt behind them by the next stray command.
+- **The idle hour is a setting.** The console sets it to anything from one minute to a day, or *never*. It persists across restarts and overrides `POOL_IDLE_TTL`. It does not reset the idle clock, so a value shorter than the current idle time deletes the cluster on the next check. A badge in every page's header shows the state: up, waking, deleting, asleep or stopped.
+
+One line of the price table above is no longer true. "Nothing, once the idle hour has passed" now means nothing *but the server*: a pod asking for about 1 GiB of memory runs whether or not anyone wants the cluster. It is far less than the 8 cores and 14 GiB of a standby, and it is not zero.
+
+Constraint 5 is called *"Warmth is mandatory."* For clusters, as of October, the platform no longer keeps one warm by default. That does not break the rule. It is what the rule's trade looks like once a cold build costs fifteen seconds instead of fifty, and ten since 21 October. The control plane is the part that stayed warm. For models, nothing changed: a model still has to be loaded before the agent can answer, and the GPU still holds one at a time.
 
 ## The ledger
 
@@ -253,6 +278,7 @@ Constraint 5 is called *"Warmth is mandatory."* For clusters, as of October, the
 - **Fixed and re-measured (18 September):** the pool's node-readiness check now counts by name, not by count (the same ghost-node bug Chapter 7 found, confirmed live in `pool.go`); its standby manifest switched to the warm image, with CA/token seeding added to the build path. Three claim-delete-rebuild-claim cycles: 1.059 s, 0.467 s, 0.465 s — **median 467 ms**, not 194. Still about 72x faster than a cold build. The pool remains opt-in — this fixes what happens when it's on, not the default.
 - **Since (30 September):** the pool is on by default (`run-ui.sh` now sets `POOL_ENABLED=true`), and the cold build it competes with is 18.1 s, so a claim is about 39× faster rather than 72× for the same idle cost. Not re-measured: the claim time itself, and whether the pool's rebuild-after-delete waits on the previous VMs' memory, as Chapter 8's stopwatch once did.
 - **Changed again (13–15 October):** the default is now on-demand mode, with no cluster while nobody uses it. A front door at `172.18.255.223` builds one on first access and the backend deletes it after an hour unused. **Cold wake to first `kubectl` answer: 15.3 / 15.3 / 15.7 s** (N=3); both nodes `Ready` at about 20.5 s, about two seconds slower than the 18.1-second build; idle delete about 14 s (one unrecorded measurement), not reconciled with Chapter 17's 40 s. Idle cost: nothing, after up to an hour. Depends on the fixed CAs Chapter 17 priced, on the backend running, and on clients that retry a 503.
+- **Changed again (21 October):** the control plane is a resident pod on cluster2 (Chapter 8), so a wake builds only the two worker VMs. **Cold wake to `kubectl get nodes` with both nodes `Ready`: 10.4 s** (one run); console Deploy 11.2 s, console Delete 13 s (one run each). The front door's "up" is now two Ready nodes. A console Delete now marks the target stopped until Deploy; the idle timeout is settable from the console. Idle cost: the server pod, about 1 GiB, all day.
 - **Model warmth, measured on the GPU (17 September):** 2.3–2.6 s cold, 0.14–0.17 s warm — against the 28–30 s CPU figure in the rule.
 - **Found:** the GPU holds one model at a time, and a lab run evicted the model two of the three agents use.
 - **Held by:** a host setting outside the repository, not the heartbeat the rule names, which stopped after two runs.
