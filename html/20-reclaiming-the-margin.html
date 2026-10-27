@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository. <span class="legend-public">Public record</span> and <span class="legend-public">Briefing</span> sections quote named sources — published reports, or the strategy deck behind this book.</dd>
       <dt>Length</dt>
-      <dd>About 4,200 words · about 18 minutes to read</dd>
+      <dd>About 4,300 words · about 19 minutes to read</dd>
     </dl>
   </header>
 
@@ -526,7 +526,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <h2 id="what-the-platform-can-put-on-the-worksheet">What the platform can put on the worksheet</h2>
 <p class="dateline dateline-record">Build log · 17 September 2026</p>
 <p>The platform in this book cannot supply Meridian's numbers. It can supply something the slide lacks: inputs that were measured. Four of them matter for a TCO.</p>
-<p><strong>Speed.</strong> A two-machine Kubernetes cluster is built from its declaration to both machines ready in a median of 18.1 seconds, and torn down in 40.0 (Chapters 8 and 17). Destroy-and-replace, to a served request, takes about a minute. For steady workloads, "we rent because renting is faster" is no longer a line that has to be paid for.</p>
+<p><strong>Speed.</strong> A two-machine Kubernetes cluster is built from its declaration to both machines ready in about 9 seconds against a control plane that is always running (21 October, three runs; 18.1 seconds when the control plane was a VM too), and was torn down in 40.0 (Chapters 8 and 17). Destroy-and-replace, to a served request, took about a minute on the VM control plane. For steady workloads, "we rent because renting is faster" is no longer a line that has to be paid for.</p>
 <p><strong>Reservation versus use.</strong> Waste is not only a cloud problem. On the management cluster that afternoon:</p>
 <ul>
 <li>Its 59 running pods had <strong>reserved 22.42 GiB</strong> of memory. Of that, 14.57 GiB was held by the two virtual machines of the target cluster.</li>
@@ -562,7 +562,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>Speed to capacity</td>
 <td>Minutes</td>
 <td>The factory's build time</td>
-<td>18.1 s to a two-machine cluster; 40.0 s to remove one</td>
+<td>About 9 s to a two-machine cluster (18.1 s with a VM control plane); 40.0 s to remove one</td>
 </tr>
 <tr>
 <td>Software</td>

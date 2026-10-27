@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 9,200 words · about 40 minutes to read</dd>
+      <dd>About 9,700 words · about 42 minutes to read</dd>
     </dl>
   </header>
 
@@ -463,8 +463,8 @@ td strong { color: var(--accent); font-weight: 600; }
 </tr>
 <tr>
 <td><code>make target-cluster</code></td>
-<td>Builds the default warm cluster</td>
-<td>18.1 s to both nodes ready, 30 September (Appendix D); 33.7 s on 17 September</td>
+<td>Builds the default cluster: since 21 October, two worker VMs against the resident control-plane pod (<code>make hosted-cp</code>)</td>
+<td>About 9 s to both nodes ready, 21 October (Appendix D); the VM control plane, now <code>make target-cluster-warm</code>, 18.1 s on 30 September and 33.7 s on 17 September</td>
 </tr>
 <tr>
 <td><code>make clean</code></td>
@@ -614,7 +614,7 @@ td strong { color: var(--accent); font-weight: 600; }
 </tr>
 <tr>
 <td><code>.215</code></td>
-<td>Target cluster API server</td>
+<td>Target cluster API server (since 21 October the resident server pod, or the VM control plane, never both)</td>
 <td>cluster2</td>
 <td>Yes</td>
 <td>18</td>
@@ -802,6 +802,11 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>Fixed 23 September: <code>cloud-provider=external</code> removed. The fix exposed C.5's VM-to-VM row</td>
 </tr>
 <tr>
+<td>After <code>kubectl delete cluster</code>, both Node objects stayed in the resident server, still <code>Ready</code></td>
+<td>Hosted control plane, from 21 October: Cluster API deletes Nodes through a control-plane object, and this cluster has none (Chapter 8)</td>
+<td>Every console teardown deletes them explicitly; a hand-run delete must too</td>
+</tr>
+<tr>
 <td>A ghost node baked into the golden image satisfied "2 nodes Ready" before the worker joined</td>
 <td>Both timing scripts, and (found 18 September) the UI backend's own <code>targetNodesReady</code> — used by both the Deploy button's build path and the warm pool (Chapter 7, Chapter 9)</td>
 <td>Measure/count by name (Appendix D); fixed in <code>pool.go</code> 18 September, standalone scripts still not fixed</td>
@@ -847,6 +852,11 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>Cluster API reported <code>Available=False</code> (<code>WaitingForKthreesServer</code>) for a working cluster</td>
 <td>k3s control-plane provider v0.3.0 (Chapter 4)</td>
 <td>Not investigated</td>
+</tr>
+<tr>
+<td>The API server answered <code>/readyz</code> with 401, so a probe read a healthy server as down</td>
+<td>Hosted k3s server, unauthenticated <code>/readyz</code> (Chapter 8, 21 October; the VM server answered 200)</td>
+<td>Pod probes use <code>/v1-k3s/readyz</code> with the node token; the front door counts Ready nodes instead (Chapter 9)</td>
 </tr>
 </tbody>
 </table></div>
@@ -896,7 +906,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>Hand-plumbed proxy (before); east-west gateways (after)</td>
 </tr>
 <tr>
-<td>In on-demand mode, a sleeping cluster does not answer at <code>.215</code> but wakes through <code>.223</code>; and a kubeconfig aimed at <code>.215</code> keeps working without ever counting as use, so the cluster is deleted under its user after an hour</td>
+<td>In on-demand mode, a sleeping cluster does not answer at <code>.215</code> but wakes through <code>.223</code> (since 21 October <code>.215</code> always answers, with no nodes behind it); and a kubeconfig aimed at <code>.215</code> keeps working without ever counting as use, so the cluster is deleted under its user after an hour</td>
 <td>Target cluster, from 13 October (Chapter 9)</td>
 <td>By design. Use the published kubeconfig, which points at <code>.223</code>; <code>make verify</code> rewrites it to <code>.215</code></td>
 </tr>
@@ -992,6 +1002,11 @@ td strong { color: var(--accent); font-weight: 600; }
 <td><code>LinkLocalAddressing=no</code>, baked 23 September</td>
 </tr>
 <tr>
+<td>The server pod waited for its own Service, which has no endpoints until the pod is ready</td>
+<td>Hosted k3s server with <code>--disable-agent</code>: its egress proxy dials the advertised address at startup (Chapter 8)</td>
+<td><code>publishNotReadyAddresses: true</code> on the Service</td>
+</tr>
+<tr>
 <td><code>helm upgrade --wait</code> polls an intentionally suspended example MCPServer</td>
 <td>Sympozium upgrades</td>
 <td>Drop <code>--wait</code>; verify by hand</td>
@@ -1080,6 +1095,11 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>March 2026 (Chapter 10)</td>
 <td>The mind map and README diagram still describe the old network</td>
 </tr>
+<tr>
+<td>The control plane moved from a VM into a resident pod on cluster2; both VMs became workers</td>
+<td>21 October 2026 (Chapter 8)</td>
+<td><code>.215</code> now has one owner: the old VM control plane claims the same address, and the platform refuses to run both. The console's mesh topology view still draws a control-plane VM</td>
+</tr>
 </tbody>
 </table></div>
 <h2 id="appendix-d-the-measurement-protocol">Appendix D — The measurement protocol</h2>
@@ -1096,13 +1116,18 @@ td strong { color: var(--accent); font-weight: 600; }
 <tbody>
 <tr>
 <td>Cluster bring-up, both nodes ready</td>
-<td><strong>18.1 s</strong> median (18.1 / 17.7 / 18.3 / 18.1 / 18.1)</td>
-<td>30 September, N=5, by node name, clean teardown between runs, warm manifest, Kubernetes 1.37 (platform repository, <code>docs/sub-60s-cluster-strategy.md</code> §11). Was 33.7 s on 17 September</td>
+<td><strong>about 9 s</strong>: 8.8 / 8.5 / 8.5 in the last three runs; 8.5–9.5 s across the day</td>
+<td>21 October, N=3 per step (below rule 2), clean teardown between runs, hosted control plane and <code>:agent</code> image, <code>scripts/time-to-ready-hosted.sh</code> (platform repository, <code>docs/sub-60s-cluster-strategy.md</code> §12, branch <code>feat/hosted-control-plane</code>). A different boundary from the row below: the control plane is already running</td>
 </tr>
 <tr>
-<td>Control plane alone</td>
+<td>Cluster bring-up, VM control plane</td>
+<td><strong>18.1 s</strong> median (18.1 / 17.7 / 18.3 / 18.1 / 18.1)</td>
+<td>30 September, N=5, by node name, clean teardown between runs, warm manifest, Kubernetes 1.37 (§11). Was 33.7 s on 17 September</td>
+</tr>
+<tr>
+<td>Control plane alone, VM</td>
 <td><strong>14.3 s</strong> median</td>
-<td>Same runs; was 24.7 s</td>
+<td>Same runs; was 24.7 s. On the hosted path it is a resident pod, Ready about 6 s after creation</td>
 </tr>
 <tr>
 <td>Teardown</td>
@@ -1110,9 +1135,14 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>8 October, N=5 (spread 0.39 s), Chapter 17's drill re-run. On 19 September (N=5, spread 1.24 s): returns at 10.13 s, machines stop at 35.6 s, last object at 45.73 s, which superseded an 18.9 s single run from 17 September</td>
 </tr>
 <tr>
+<td>Teardown, hosted control plane</td>
+<td>about 12–13 s until VMs and Nodes are gone</td>
+<td>21 October, platform notes, single runs, not pre-registered; not reconciled with the 40.02 s above, which was the VM control plane</td>
+</tr>
+<tr>
 <td>Destroy to first served request</td>
 <td><strong>59.97 s</strong> median (59.06–60.46)</td>
-<td>8 October, N=5, pre-registered boundaries; 81.96 s on 19 September</td>
+<td>8 October, N=5, pre-registered boundaries, VM control plane; 81.96 s on 19 September. Not re-run on the hosted path</td>
 </tr>
 <tr>
 <td>Standby claim</td>
@@ -1120,9 +1150,14 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>18 September, by name-based readiness check, warm-image standby; was 194 ms in June</td>
 </tr>
 <tr>
-<td>On-demand wake, no cluster to first <code>kubectl</code> answer</td>
-<td><strong>15.3 s</strong> median (15.3 / 15.3 / 15.7)</td>
-<td>Mid-October, N=3, through the front door at <code>.223</code> (platform repository, <code>CLAUDE.md</code>, "On-demand mode"). A different boundary from the 18.1 s: the API answers on the control plane alone. Both nodes <code>Ready</code> at about 20.5 s</td>
+<td>On-demand wake, no cluster to <code>kubectl get nodes</code> listing both nodes <code>Ready</code></td>
+<td><strong>10.4 s</strong></td>
+<td>21 October, <strong>N=1</strong>, hosted control plane, through the front door at <code>.223</code>, which now waits for two Ready nodes (platform repository, <code>docs/sub-60s-cluster-strategy.md</code> §12)</td>
+</tr>
+<tr>
+<td>On-demand wake, VM control plane</td>
+<td><strong>15.3 s</strong> median (15.3 / 15.3 / 15.7) to first answer; both nodes <code>Ready</code> at about 20.5 s</td>
+<td>Mid-October, N=3 (<code>CLAUDE.md</code>, "On-demand mode"). The API answered on the control plane alone</td>
 </tr>
 <tr>
 <td>On-demand idle delete</td>
@@ -1211,9 +1246,45 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>18.1 / 17.7 / 18.3 / 18.1 / 18.1</td>
 <td>0.6 s</td>
 </tr>
+<tr>
+<td>Control plane hosted as a pod, <code>:warm</code> image (21 October)</td>
+<td>14.2 s</td>
+<td>14.6 / 14.2 / 14.2</td>
+<td>0.4 s</td>
+</tr>
+<tr>
+<td>+ <code>:agent</code> image, no cloud-init</td>
+<td>11.4 s</td>
+<td>11.4 / 10.9 / 11.5 (after a first run of 12.1)</td>
+<td>0.6 s</td>
+</tr>
+<tr>
+<td>+ uncompressed disk image</td>
+<td>10.6 s</td>
+<td>10.6 / 10.6 / 10.8</td>
+<td>0.2 s</td>
+</tr>
+<tr>
+<td>+ containerd as its own service</td>
+<td>9.7 s</td>
+<td>9.8 / 9.7 / 9.4</td>
+<td>0.4 s</td>
+</tr>
+<tr>
+<td>(direct kernel boot, rejected)</td>
+<td>9.9 s</td>
+<td>10.2 / 9.9 / 9.7</td>
+<td>0.5 s</td>
+</tr>
+<tr>
+<td>+ no serial-console sidecar</td>
+<td><strong>8.5 s</strong></td>
+<td>8.8 / 8.5 / 8.5</td>
+<td>0.3 s</td>
+</tr>
 </tbody>
 </table></div>
-<p>Notice the last column. The spread that had collapsed to half a second was back to 4.7 seconds after the rebuild, and with three runs a change smaller than about five seconds could not be seen. The CAPK patch, which removed most of the run-to-run variation (its own A/B: 31.5 s spread upstream, 1.6 s patched), brought the spread back under two seconds. The 30 September steps used five runs each, still below the seven this appendix's own rules ask for on a noisy host. Their spreads, 0.6–1.4 s, are why they are reported anyway, and the flag stays on them.</p>
+<p>Notice the last column. The spread that had collapsed to half a second was back to 4.7 seconds after the rebuild, and with three runs a change smaller than about five seconds could not be seen. The CAPK patch, which removed most of the run-to-run variation (its own A/B: 31.5 s spread upstream, 1.6 s patched), brought the spread back under two seconds. The 30 September steps used five runs each, still below the seven this appendix's own rules ask for on a noisy host. Their spreads, 0.6–1.4 s, are why they are reported anyway, and the flag stays on them. The 21 October steps used three runs each on a host whose load rose during the session. The platform notes widen the result to 8.5–9.5 s for that reason, and so does this appendix.</p>
 <h3 id="d2-the-instrument">D.2 The instrument</h3>
 <p><code>scripts/phase-timings.sh</code> attributes a build's wall clock to its phases, read-only and without logging in to the guests. Its sources, in its own words:</p>
 <ul>

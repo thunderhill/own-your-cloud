@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 4,600 words · about 20 minutes to read</dd>
+      <dd>About 5,200 words · about 23 minutes to read</dd>
     </dl>
   </header>
 
@@ -491,7 +491,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <tbody>
 <tr>
 <td>Cold</td>
-<td>18.1 s, both nodes (30 Sept; 33.7 s on 17 Sept)</td>
+<td>about 9 s, both nodes (21 Oct, hosted control plane; 18.1 s on 30 Sept, 33.7 s on 17 Sept)</td>
 <td>2.3–2.6 s on the GPU (28–30 s on CPU)</td>
 </tr>
 <tr>
@@ -622,12 +622,12 @@ td strong { color: var(--accent); font-weight: 600; }
 <tr>
 <td>First access</td>
 <td>467 ms claim (18 September)</td>
-<td>15.3 s to first answer; about 20.5 s to both nodes</td>
+<td>15.3 s to first answer; about 20.5 s to both nodes. Since 21 October: 10.4 s to both nodes (one run)</td>
 </tr>
 <tr>
 <td>Held while nobody is using it</td>
 <td>8 cores and 14 GiB, all day</td>
-<td>nothing, once the idle hour has passed</td>
+<td>nothing, once the idle hour has passed. Since 21 October: the resident server pod, about 1 GiB</td>
 </tr>
 <tr>
 <td>Held after the last use</td>
@@ -653,7 +653,41 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>Clients other than <code>kubectl</code> see the 503.</strong> A client that does not retry on <code>Retry-After</code> gets one refusal on a cold wake, and has to try again itself.</li>
 <li><strong>One wake path was not demonstrated.</strong> When the demo script was written (15 October), <code>target-cluster-agent</code>'s serving pod was crash-looping, so the chat path starts a build but could not be shown end to end. The demo script says to skip it.</li>
 </ul>
-<p>Constraint 5 is called <em>"Warmth is mandatory."</em> For clusters, as of October, the platform no longer keeps one warm by default. That does not break the rule. It is what the rule's trade looks like once a cold build costs fifteen seconds instead of fifty. For models, nothing changed: a model still has to be loaded before the agent can answer, and the GPU still holds one at a time.</p>
+<h3 id="21-october-the-wake-without-a-control-plane-to-build">21 October: the wake, without a control plane to build</h3>
+<p class="dateline dateline-record">Build log · 21 October 2026</p>
+<p>Six days after the demo script was written, the cluster changed shape underneath it. Chapter 8's last section moved the k3s server out of its VM into a pod on cluster2 that runs all the time, and both VMs became workers. A build went from 18.1 seconds to about nine.</p>
+<p>The front door had to change with it. Its old test for "up" was the API answering, and that test is now true all the time, because the server never sleeps. Worse, this server answers an unauthenticated health check with <em>401</em>, so the old probe would have read "down" forever. Counted the other way, as "up", it would have passed requests through to an API with no nodes behind it and never woken anything. The front door now counts the cluster as up when <strong>both target nodes are Ready</strong>.</p>
+<p>That collapses the two boundaries in the table above into one. Measured from no cluster, with a plain <code>kubectl get nodes</code> through <code>.223</code>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Boundary</th>
+<th style="text-align: right;">Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kubectl get nodes</code> answered, listing both nodes <code>Ready</code></td>
+<td style="text-align: right;"><strong>10.4 s</strong> (one run)</td>
+</tr>
+<tr>
+<td>Console Deploy from nothing, including its prerequisite checks</td>
+<td style="text-align: right;">11.2 s (one run)</td>
+</tr>
+<tr>
+<td>Console Delete, nodes removed, server untouched</td>
+<td style="text-align: right;">13 s (one run)</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Ten seconds from nothing to a cluster with both nodes working</strong>, against fifteen seconds to an API that answered and about twenty to both nodes. It is also <strong>one run</strong>. The book asks for five, and until then it is a single observation from the platform notes, recorded with that label in Appendix D.</p>
+<p>Two other changes from the same week alter what a user sees.</p>
+<ul>
+<li><strong>Deleting from the console now means "stay off".</strong> An idle delete still leaves the next access free to wake the cluster. A delete clicked in the console marks the target <em>stopped</em>, in a ConfigMap so it survives a backend restart. While stopped, the front door answers <code>503</code> with no <code>Retry-After</code>, so <code>kubectl</code> fails at once instead of retrying, a chat to <code>target-cluster-agent</code> does not wake it, and the standby pool does not rebuild it. Only Deploy clears it. Before this, a person who deleted the cluster to free the machine could have it rebuilt behind them by the next stray command.</li>
+<li><strong>The idle hour is a setting.</strong> The console sets it to anything from one minute to a day, or <em>never</em>. It persists across restarts and overrides <code>POOL_IDLE_TTL</code>. It does not reset the idle clock, so a value shorter than the current idle time deletes the cluster on the next check. A badge in every page's header shows the state: up, waking, deleting, asleep or stopped.</li>
+</ul>
+<p>One line of the price table above is no longer true. "Nothing, once the idle hour has passed" now means nothing <em>but the server</em>: a pod asking for about 1 GiB of memory runs whether or not anyone wants the cluster. It is far less than the 8 cores and 14 GiB of a standby, and it is not zero.</p>
+<p>Constraint 5 is called <em>"Warmth is mandatory."</em> For clusters, as of October, the platform no longer keeps one warm by default. That does not break the rule. It is what the rule's trade looks like once a cold build costs fifteen seconds instead of fifty, and ten since 21 October. The control plane is the part that stayed warm. For models, nothing changed: a model still has to be loaded before the agent can answer, and the GPU still holds one at a time.</p>
 <div class="endmatter"><h2 id="the-ledger">The ledger</h2>
 <ul>
 <li><strong>Built (June):</strong> a one-deep cluster standby, claimed in 194–195 ms instead of built from scratch, rebuilt in about 60 seconds in the background.</li>
@@ -662,6 +696,7 @@ td strong { color: var(--accent); font-weight: 600; }
 <li><strong>Fixed and re-measured (18 September):</strong> the pool's node-readiness check now counts by name, not by count (the same ghost-node bug Chapter 7 found, confirmed live in <code>pool.go</code>); its standby manifest switched to the warm image, with CA/token seeding added to the build path. Three claim-delete-rebuild-claim cycles: 1.059 s, 0.467 s, 0.465 s — <strong>median 467 ms</strong>, not 194. Still about 72x faster than a cold build. The pool remains opt-in — this fixes what happens when it's on, not the default.</li>
 <li><strong>Since (30 September):</strong> the pool is on by default (<code>run-ui.sh</code> now sets <code>POOL_ENABLED=true</code>), and the cold build it competes with is 18.1 s, so a claim is about 39× faster rather than 72× for the same idle cost. Not re-measured: the claim time itself, and whether the pool's rebuild-after-delete waits on the previous VMs' memory, as Chapter 8's stopwatch once did.</li>
 <li><strong>Changed again (13–15 October):</strong> the default is now on-demand mode, with no cluster while nobody uses it. A front door at <code>172.18.255.223</code> builds one on first access and the backend deletes it after an hour unused. <strong>Cold wake to first <code>kubectl</code> answer: 15.3 / 15.3 / 15.7 s</strong> (N=3); both nodes <code>Ready</code> at about 20.5 s, about two seconds slower than the 18.1-second build; idle delete about 14 s (one unrecorded measurement), not reconciled with Chapter 17's 40 s. Idle cost: nothing, after up to an hour. Depends on the fixed CAs Chapter 17 priced, on the backend running, and on clients that retry a 503.</li>
+<li><strong>Changed again (21 October):</strong> the control plane is a resident pod on cluster2 (Chapter 8), so a wake builds only the two worker VMs. <strong>Cold wake to <code>kubectl get nodes</code> with both nodes <code>Ready</code>: 10.4 s</strong> (one run); console Deploy 11.2 s, console Delete 13 s (one run each). The front door's "up" is now two Ready nodes. A console Delete now marks the target stopped until Deploy; the idle timeout is settable from the console. Idle cost: the server pod, about 1 GiB, all day.</li>
 <li><strong>Model warmth, measured on the GPU (17 September):</strong> 2.3–2.6 s cold, 0.14–0.17 s warm — against the 28–30 s CPU figure in the rule.</li>
 <li><strong>Found:</strong> the GPU holds one model at a time, and a lab run evicted the model two of the three agents use.</li>
 <li><strong>Held by:</strong> a host setting outside the repository, not the heartbeat the rule names, which stopped after two runs.</li>
