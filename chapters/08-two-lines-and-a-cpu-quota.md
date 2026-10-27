@@ -367,14 +367,66 @@ The summary at the end of the September section had said about six seconds of Cl
 
 What is left, by measured size: k3s's server startup (about 3.5 seconds), the worker's join once the API answers (about 3.5–4), and systemd before cloud-init (about 2). The condition attached to this chapter's opening fix applies to two more of them: the CAPK patch and the feature gate live in the management cluster's state, not in a manifest, and a rebuild must reapply both. The setup script now applies both. If the patch fails, it prints a warning and carries on with the unpatched controller. That is the shape of the KubeVirt setting Chapter 19 found missing after a rebuild, and the reason to read the warning.
 
+That list did not survive the next three weeks. The largest item on it, the server's own startup, was removed by moving the server somewhere else. See "Since then: nine seconds."
+
+## Since then: nine seconds
+
+*Build log · 21 October 2026*
+
+Three weeks later both nodes were `Ready` in about **nine seconds**: 8.8, 8.5 and 8.5 in the last three runs, and between 8.5 and 9.5 across the day. The image did not change much. The shape of the cluster did.
+
+**The control plane left the virtual machine.** With the k3s server inside a VM, nothing could join until that guest had booted *and* the server had started. The September work had already trimmed both, and they still came to nine or ten seconds before any worker could join. The only way to take them off the clock was to have the server running before the clock starts. The server is now a pod on cluster2, in its own namespace, with the same fixed certificate authorities as before and the same address, `172.18.255.215`. It stays up all the time. Both virtual machines are now workers ("agents", in k3s terms), and a build is only VM start, guest boot and agent join.
+
+Two problems came up on the way, and both are recorded in the platform notes.
+
+- **The server deadlocked at its own front door.** With the server's local agent disabled (`--disable-agent`, a flag k3s does not document), k3s's egress proxy dials the server's advertised address, which is the Service, before the pod is ready. A Kubernetes Service has no endpoints until its pod is ready, so the pod waited for itself. One field on the Service, `publishNotReadyAddresses: true`, fixed it.
+- **The health check said 401.** This server answers an unauthenticated `/readyz` with *401 Unauthorized*; the VM server had answered *200*. The pod's probes now use the supervisor's `/v1-k3s/readyz` with the node token. The console's backend had been probing the plain `/readyz` to decide whether the cluster was up, and that probe would have read "down" forever. It now counts Ready nodes instead (Chapter 9).
+
+The first measurement, on the old `:warm` image, was **14.2 seconds** (14.6 / 14.2 / 14.2). Then the September method, one lever at a time, three clean runs each:
+
+| Change | Both nodes `Ready` (median) | Kept |
+|---|---:|---|
+| Hosted control plane, `:warm` image | 14.2 s | yes |
+| `:agent` image: no cloud-init, agent starts at network-online, images already in containerd | 11.4 s | yes |
+| Uncompressed disk image (every guest read had gone through zlib) | 10.6 s | yes |
+| containerd as its own early service (k3s had always checked once, missed it, and waited a full second) | 9.7 s | yes |
+| Direct kernel boot, skipping firmware and GRUB | 9.9 s | **no** |
+| No serial-console logging sidecar | 8.5 s | yes |
+| containerd started before `basic.target` | ~0.1 s, within the noise | yes |
+
+Two results deserve their own sentences. **Direct kernel boot made it slower.** It skips about 0.8 seconds of firmware and GRUB, and it adds a second init container to the launcher pod. Init containers run one after another, so qemu started a second later. The saving was real, and it was cancelled by something outside the guest. **The serial console cost 1.2 seconds**, nearly all of it *before* the kernel. The guest reached `Ready` only 0.2 seconds sooner without it. Firmware writing to a serial port that another process was reading had been slow, and nothing inside the guest could have measured that. Chapter 7's instrument read its boot timeline from that same console, and the platform now gives up that view to win the time back.
+
+Where the nine seconds go now, from one run of about 8.6:
+
+```
+apply -> VM running                     ~3.3-4.0 s   (Cluster API ~0.5, pod 1, launcher/libvirt/qemu ~2)
+firmware + GRUB                         ~0.5-0.8 s   (not measurable without the console)
+kernel                                   1.4 s
+userspace to network + containerd        to 2.3-2.8 s guest uptime
+agent start, certificates, kubelet       to 3.75 s
+registered -> Ready                      to 4.2 s
+```
+
+**The platform notes put the floor above six seconds.** Getting a VM to its first instruction takes about four seconds of Cluster API, KubeVirt, libvirt and qemu, and a k3s agent then needs about 2.7 seconds of guest time even after everything above. In the notes' words: *"Under 6s is not reachable with this stack."* A month earlier the September section had made two forecasts, and the measurements beat both. This one is a forecast too.
+
+The same care applies to the new number as to the old one.
+
+- **Three runs per step, on a noisy host.** The host's load average rose to about three during the session, and the spread between runs rose to half a second. That is why the notes report a range, about 8.5–9.5 seconds with a median near 9, and not 8.5. The book's own rule asks for five runs, and Appendix D carries the flag.
+- **A different boundary.** The 18.1 seconds included starting a control plane. The nine seconds does not, because one is always running. On this platform both mean "a cluster you can use, starting from nothing that can be deleted". They are not the same claim about the cluster's parts.
+- **It is not free.** The server pod asks for about 1 GiB and runs all day. Chapter 9 prices that against what on-demand mode had saved.
+- **Deleting a cluster no longer deletes its nodes.** Cluster API removes a cluster's nodes through its control-plane object, and this cluster no longer has one. The resident server keeps both Node objects, still marked `Ready`. That is the ghost-node pattern of Chapter 7, one level up. Every teardown path in the console now deletes them explicitly.
+- **`.215` has exactly one owner.** The old VM control plane claims the same address. The platform refuses to start one while the other exists, and switching back is three documented steps.
+- **The teardown is unmeasured by this book's method.** The platform reports about 12–13 seconds for VMs and Nodes to be gone. Chapter 17's 40.0 seconds was measured on the VM control plane with boundaries written down in advance, and has not been re-run on the new shape.
+- **Not merged when this was written.** The work is on a platform branch (`feat/hosted-control-plane`), with its record in `docs/sub-60s-cluster-strategy.md` §12.
+
 ## The ledger
 
 - **Spent:** two golden-image experiments, each a full bake cycle to disprove; one instrumentation script; two further hypotheses — gating the worker, rerouting the pod network — that did not survive measurement on k3s 1.31.
-- **Changed:** one line in the control plane's startup commands; one CPU ceiling on KubeVirt's helper containers. Later: a source patch to the CAPK controller, one Cluster API feature gate, a readiness gate on the worker, routes on both VMs, three boot trims, and an earlier k3s start.
+- **Changed:** one line in the control plane's startup commands; one CPU ceiling on KubeVirt's helper containers. Later: a source patch to the CAPK controller, one Cluster API feature gate, a readiness gate on the worker, routes on both VMs, three boot trims, and an earlier k3s start. In October: the control plane moved into a resident pod, an agent-only image, an uncompressed disk, containerd as its own service, and no serial-console sidecar.
 - **Hardware added:** none.
-- **Saved:** 15.5 seconds on every cold cluster build by 9 September — 50.0 s to 34.5 s, −31%, spread from 6.1 s to 0.5 s. By 30 September, 18.1 s (N=5, 17.7–18.3), −64% from June.
+- **Saved:** 15.5 seconds on every cold cluster build by 9 September — 50.0 s to 34.5 s, −31%, spread from 6.1 s to 0.5 s. By 30 September, 18.1 s (N=5, 17.7–18.3), −64% from June. By 21 October, about 9 s (8.8 / 8.5 / 8.5, N=3) with the control plane hosted, −82% from June.
 - **Proved:** four dead ends, recorded with their numbers so that nobody pays for them twice — and that two of them were results about one version or one side, not permanent truths.
-- **Still owed:** three settings that live in cluster state rather than in Git (the CPU ceiling, the CAPK patch, the feature gate); two timing scripts that can stop the clock on a ghost node (Chapter 7); VM routes that are runtime state and missing from the older manifests; and a rate limiter that a management cluster serving many clusters would want back on.
+- **Still owed:** three settings that live in cluster state rather than in Git (the CPU ceiling, the CAPK patch, the feature gate); two timing scripts that can stop the clock on a ghost node (Chapter 7); VM routes that are runtime state and missing from the older manifests; and a rate limiter that a management cluster serving many clusters would want back on. From October: three-run medians below the book's own rule, a resident server that costs about 1 GiB all day, Node objects that only an explicit delete removes, and a teardown not yet re-measured by Chapter 17's method.
 
 ## Ask your team
 
@@ -393,4 +445,6 @@ What is left, by measured size: k3s's server startup (about 3.5 seconds), the wo
 - `docs/sub-60s-cluster-strategy.md` §7–§11 and `docs/why-target-cluster-ready-in-18-seconds.md` — the September work from 33.7 s to 18.1 s, with every table.
 - `make capk-patch` — the patched CAPK controller; `02-capi-init/init-management-cluster.sh` — the `EXP_RECONCILER_RATE_LIMITING=false` line.
 - `make time-to-ready-by-name RUNS=5` — the instrument behind the 18.1 s, now waiting for the previous VMs before it starts the clock.
+- `docs/sub-60s-cluster-strategy.md` §12 — the October work from 18.1 s to about 9 s, with the rejected levers (platform branch `feat/hosted-control-plane`).
+- `make hosted-cp-verify` — 24 checks on the resident server; `scripts/time-to-ready-hosted.sh --runs 3` — the instrument behind the nine seconds; `make bake-image-agent build-containerdisk-agent pre-pull-agent` — the agent image.
 - **Without the repo:** Appendix G.2 quotes the `advertise-address` line with its measurement comment; G.3 quotes the `supportContainerResources` patch.
