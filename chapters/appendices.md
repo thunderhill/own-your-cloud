@@ -74,7 +74,7 @@ The Makefile defines 65 targets. These are the ones this book used.
 | Target | What it does | Note, 17 September 2026 unless dated |
 |---|---|---|
 | `make all` | `prereqs` → `metallb` → `capi-init` → `target-cluster` | Assumes the four unscripted prerequisites above |
-| `make target-cluster` | Builds the default warm cluster | 18.1 s to both nodes ready, 30 September (Appendix D); 33.7 s on 17 September |
+| `make target-cluster` | Builds the default cluster: since 21 October, two worker VMs against the resident control-plane pod (`make hosted-cp`) | About 9 s to both nodes ready, 21 October (Appendix D); the VM control plane, now `make target-cluster-warm`, 18.1 s on 30 September and 33.7 s on 17 September |
 | `make clean` | Deletes the target cluster | 40.0 s until every object and machine is gone, 8 October; 45.7 s on 19 September (Chapter 17) |
 | `make verify` | Checks the target cluster and refreshes agent credentials | Rewrites the repository's kubeconfig to the direct address `.215`, which bypasses the on-demand front door: that kubeconfig neither wakes the cluster nor keeps it alive (Chapter 9, October) |
 | `make kubevirt-perf` | Applies the KubeVirt CPU setting | Cluster state, not manifest state: re-run after rebuilding `cluster2` |
@@ -110,7 +110,7 @@ Both Kind clusters live on one Docker network, `172.18.0.0/16`, and both run Met
 | `.212` | Sympozium API and dashboard | cluster2 | Yes | 4 |
 | `.213` | `cluster2-agent` | cluster2 | Yes | 4 |
 | `.214` | `target-cluster-agent` | cluster2 | Yes | 4 |
-| `.215` | Target cluster API server | cluster2 | Yes | 18 |
+| `.215` | Target cluster API server (since 21 October the resident server pod, or the VM control plane, never both) | cluster2 | Yes | 18 |
 | `.216` | Target-cluster nginx proxy — legacy `05-istio`, only while it runs | cluster2 | No | 5 |
 | `.217` | Security agent | cluster2 | No | 4 |
 | `.218` | `cost-analyzer` | cluster2 | No | 3 |
@@ -170,6 +170,7 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | Cause | Where | Fix or status |
 |---|---|---|
 | The worker node was `Ready` but tainted as uninitialized, so it accepted no workloads; behind the `Ready`, its agent failed after fifteen minutes and restarted, indefinitely | Target cluster (Chapter 5) | Fixed 23 September: `cloud-provider=external` removed. The fix exposed C.5's VM-to-VM row |
+| After `kubectl delete cluster`, both Node objects stayed in the resident server, still `Ready` | Hosted control plane, from 21 October: Cluster API deletes Nodes through a control-plane object, and this cluster has none (Chapter 8) | Every console teardown deletes them explicitly; a hand-run delete must too |
 | A ghost node baked into the golden image satisfied "2 nodes Ready" before the worker joined | Both timing scripts, and (found 18 September) the UI backend's own `targetNodesReady` — used by both the Deploy button's build path and the warm pool (Chapter 7, Chapter 9) | Measure/count by name (Appendix D); fixed in `pool.go` 18 September, standalone scripts still not fixed |
 | A missing worker timestamp was treated as zero, so "both nodes" meant the control plane only | `phase-timings.sh` (Chapter 7) | Not fixed |
 | The deterministic permission check tested an identity running pods no longer used | Agent RBAC after 0.10.75 (Chapter 15) | Bindings moved to a group; check the live pod's account |
@@ -182,6 +183,7 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | Cause | Where | Fix or status |
 |---|---|---|
 | Cluster API reported `Available=False` (`WaitingForKthreesServer`) for a working cluster | k3s control-plane provider v0.3.0 (Chapter 4) | Not investigated |
+| The API server answered `/readyz` with 401, so a probe read a healthy server as down | Hosted k3s server, unauthenticated `/readyz` (Chapter 8, 21 October; the VM server answered 200) | Pod probes use `/v1-k3s/readyz` with the node token; the front door counts Ready nodes instead (Chapter 9) |
 
 ### C.5 Unreachable from here, reachable from there
 
@@ -194,7 +196,7 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | Remote-cluster credentials embedded `127.0.0.1:<port>`, so the peer sat at `timeout` while all else looked healthy | `istioctl create-remote-secret` on Kind | Pass `--server https://<node-ip>:6443`; Act 3 asserts `synced` |
 | `host.docker.internal` does not resolve inside Kind pods | Model endpoint | Use `172.18.0.1` through an in-cluster shim Service |
 | Both Kind clusters number pods from `10.244.0.0/24`, so a pod address means different machines in each | Cross-cluster calls (Chapter 10) | Hand-plumbed proxy (before); east-west gateways (after) |
-| In on-demand mode, a sleeping cluster does not answer at `.215` but wakes through `.223`; and a kubeconfig aimed at `.215` keeps working without ever counting as use, so the cluster is deleted under its user after an hour | Target cluster, from 13 October (Chapter 9) | By design. Use the published kubeconfig, which points at `.223`; `make verify` rewrites it to `.215` |
+| In on-demand mode, a sleeping cluster does not answer at `.215` but wakes through `.223` (since 21 October `.215` always answers, with no nodes behind it); and a kubeconfig aimed at `.215` keeps working without ever counting as use, so the cluster is deleted under its user after an hour | Target cluster, from 13 October (Chapter 9) | By design. Use the published kubeconfig, which points at `.223`; `make verify` rewrites it to `.215` |
 
 ### C.6 The model gave a confident, wrong answer
 
@@ -221,6 +223,7 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | A controller dropped every event because it watched older API types, and acted only on a 10–20 s requeue; while waiting it dialled an API with no machine behind it, for up to 30 s | CAPK v0.11.2 under Cluster API v1.14 (Chapter 8) | Patched 23 September (`make capk-patch`); cluster state |
 | A worker's first config request landed fractionally early and waited a random 5–10 s to retry | k3s 1.37 agent (Chapter 8) | Gate on the supervisor's `/v1-k3s/readyz` |
 | The guest waited up to 1.9 s for IPv6 link-local on an IPv4-only network | Golden image, `systemd-networkd-wait-online` (Chapter 8) | `LinkLocalAddressing=no`, baked 23 September |
+| The server pod waited for its own Service, which has no endpoints until the pod is ready | Hosted k3s server with `--disable-agent`: its egress proxy dials the advertised address at startup (Chapter 8) | `publishNotReadyAddresses: true` on the Service |
 | `helm upgrade --wait` polls an intentionally suspended example MCPServer | Sympozium upgrades | Drop `--wait`; verify by hand |
 | Gateway API CRDs exceed the annotation size limit of client-side apply | Gateway API install | Apply with `--server-side` |
 
@@ -244,6 +247,7 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 | `--server-side` started requiring a value | Helm 4 | A bare `--server-side --force-conflicts` fails |
 | The three GatewayClasses name their generated Services differently; the Prometheus container is `prometheus-server` | Istio add-ons | Look Services up by label; name the container explicitly |
 | VM networking moved from masquerade to bridge, in the same commit as the diagram describing masquerade | March 2026 (Chapter 10) | The mind map and README diagram still describe the old network |
+| The control plane moved from a VM into a resident pod on cluster2; both VMs became workers | 21 October 2026 (Chapter 8) | `.215` now has one owner: the old VM control plane claims the same address, and the platform refuses to run both. The console's mesh topology view still draws a control-plane VM |
 
 ## Appendix D — The measurement protocol
 
@@ -253,12 +257,15 @@ One sidecar — the agent platform's `web-proxy` — produced this identical sym
 
 | Measurement | Value | When, and how |
 |---|---|---|
-| Cluster bring-up, both nodes ready | **18.1 s** median (18.1 / 17.7 / 18.3 / 18.1 / 18.1) | 30 September, N=5, by node name, clean teardown between runs, warm manifest, Kubernetes 1.37 (platform repository, `docs/sub-60s-cluster-strategy.md` §11). Was 33.7 s on 17 September |
-| Control plane alone | **14.3 s** median | Same runs; was 24.7 s |
+| Cluster bring-up, both nodes ready | **about 9 s**: 8.8 / 8.5 / 8.5 in the last three runs; 8.5–9.5 s across the day | 21 October, N=3 per step (below rule 2), clean teardown between runs, hosted control plane and `:agent` image, `scripts/time-to-ready-hosted.sh` (platform repository, `docs/sub-60s-cluster-strategy.md` §12, branch `feat/hosted-control-plane`). A different boundary from the row below: the control plane is already running |
+| Cluster bring-up, VM control plane | **18.1 s** median (18.1 / 17.7 / 18.3 / 18.1 / 18.1) | 30 September, N=5, by node name, clean teardown between runs, warm manifest, Kubernetes 1.37 (§11). Was 33.7 s on 17 September |
+| Control plane alone, VM | **14.3 s** median | Same runs; was 24.7 s. On the hosted path it is a resident pod, Ready about 6 s after creation |
 | Teardown | Delete command returns at **0.83 s**; every object and machine gone at **40.02 s** | 8 October, N=5 (spread 0.39 s), Chapter 17's drill re-run. On 19 September (N=5, spread 1.24 s): returns at 10.13 s, machines stop at 35.6 s, last object at 45.73 s, which superseded an 18.9 s single run from 17 September |
-| Destroy to first served request | **59.97 s** median (59.06–60.46) | 8 October, N=5, pre-registered boundaries; 81.96 s on 19 September |
+| Teardown, hosted control plane | about 12–13 s until VMs and Nodes are gone | 21 October, platform notes, single runs, not pre-registered; not reconciled with the 40.02 s above, which was the VM control plane |
+| Destroy to first served request | **59.97 s** median (59.06–60.46) | 8 October, N=5, pre-registered boundaries, VM control plane; 81.96 s on 19 September. Not re-run on the hosted path |
 | Standby claim | **467 ms** median (1.059 / 0.467 / 0.465) | 18 September, by name-based readiness check, warm-image standby; was 194 ms in June |
-| On-demand wake, no cluster to first `kubectl` answer | **15.3 s** median (15.3 / 15.3 / 15.7) | Mid-October, N=3, through the front door at `.223` (platform repository, `CLAUDE.md`, "On-demand mode"). A different boundary from the 18.1 s: the API answers on the control plane alone. Both nodes `Ready` at about 20.5 s |
+| On-demand wake, no cluster to `kubectl get nodes` listing both nodes `Ready` | **10.4 s** | 21 October, **N=1**, hosted control plane, through the front door at `.223`, which now waits for two Ready nodes (platform repository, `docs/sub-60s-cluster-strategy.md` §12) |
+| On-demand wake, VM control plane | **15.3 s** median (15.3 / 15.3 / 15.7) to first answer; both nodes `Ready` at about 20.5 s | Mid-October, N=3 (`CLAUDE.md`, "On-demand mode"). The API answered on the control plane alone |
 | On-demand idle delete | about 14 s | Same source, no run count or boundary recorded; not reconciled with the 40.02 s teardown above |
 | Model load, cold vs warm | 2.3–2.6 s cold; 0.14–0.17 s warm | 17 September, GPU, qwen2.5:7b and llama3.2 (Chapter 9) |
 | Local model energy | 1.19 J per generated token; 0.33 kWh per million tokens (GPU only) | 17 September, qwen2.5:7b (Chapter 20) |
@@ -277,8 +284,14 @@ And the history behind the headline number:
 | Re-run on 30 September with the corrected instrument | 24.4 s | 25.6 / 24.2 / 24.4 / 24.8 / 24.2 | 1.4 s |
 | + early k3s start | 23.9 s | 24.2 / 23.8 / 23.4 / 23.9 / 24.1 | 0.8 s |
 | + Cluster API rate limiting off | **18.1 s** | 18.1 / 17.7 / 18.3 / 18.1 / 18.1 | 0.6 s |
+| Control plane hosted as a pod, `:warm` image (21 October) | 14.2 s | 14.6 / 14.2 / 14.2 | 0.4 s |
+| + `:agent` image, no cloud-init | 11.4 s | 11.4 / 10.9 / 11.5 (after a first run of 12.1) | 0.6 s |
+| + uncompressed disk image | 10.6 s | 10.6 / 10.6 / 10.8 | 0.2 s |
+| + containerd as its own service | 9.7 s | 9.8 / 9.7 / 9.4 | 0.4 s |
+| (direct kernel boot, rejected) | 9.9 s | 10.2 / 9.9 / 9.7 | 0.5 s |
+| + no serial-console sidecar | **8.5 s** | 8.8 / 8.5 / 8.5 | 0.3 s |
 
-Notice the last column. The spread that had collapsed to half a second was back to 4.7 seconds after the rebuild, and with three runs a change smaller than about five seconds could not be seen. The CAPK patch, which removed most of the run-to-run variation (its own A/B: 31.5 s spread upstream, 1.6 s patched), brought the spread back under two seconds. The 30 September steps used five runs each, still below the seven this appendix's own rules ask for on a noisy host. Their spreads, 0.6–1.4 s, are why they are reported anyway, and the flag stays on them.
+Notice the last column. The spread that had collapsed to half a second was back to 4.7 seconds after the rebuild, and with three runs a change smaller than about five seconds could not be seen. The CAPK patch, which removed most of the run-to-run variation (its own A/B: 31.5 s spread upstream, 1.6 s patched), brought the spread back under two seconds. The 30 September steps used five runs each, still below the seven this appendix's own rules ask for on a noisy host. Their spreads, 0.6–1.4 s, are why they are reported anyway, and the flag stays on them. The 21 October steps used three runs each on a host whose load rose during the session. The platform notes widen the result to 8.5–9.5 s for that reason, and so does this appendix.
 
 ### D.2 The instrument
 
