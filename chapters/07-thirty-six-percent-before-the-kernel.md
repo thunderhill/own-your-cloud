@@ -149,7 +149,7 @@ In every run, at the moment the control plane first reported Ready, the node lis
 
 The upgraded platform builds a two-node cluster in **33.7 seconds**, median of three. Before the upgrade the figure was 34.5. The upgrade did not make the cluster ten seconds faster. Within the noise of three runs, it changed nothing.
 
-Two weeks later the same build measured 18.1 seconds. Chapter 8's last section explains how, including one change that only became possible on the upgraded k3s. The 33.7 here is the figure as it stood on 17 September.
+Two weeks later the same build measured 18.1 seconds. Chapter 8's last section explains how, including one change that only became possible on the upgraded k3s. The 33.7 here is the figure as it stood on 17 September. By 21 October it was about nine seconds, with the control plane no longer in a VM at all.
 
 The tight 0.4-second spread that made 23.9 look so trustworthy was not a sign of a stable pipeline. Measured by name, the spread is 4.7 seconds. The instrument had simply been timing the steadier half of the cluster.
 
@@ -200,6 +200,7 @@ Anita looked at the display for a moment. "When a number improves and nobody can
 - **Corrected:** the upgraded platform builds both nodes in 33.7 seconds (median of three; control plane alone, 24.7) — not 23.9, and no measurable change from before the upgrade.
 - **Still owed:** both timing scripts still count nodes rather than naming them; the 9 September raw files no longer exist to re-check.
 - **Since (30 September):** 18.1 s for both nodes, median of five, measured by name (Chapter 8).
+- **Since (21 October):** about 9 s, with the control plane hosted as a pod (Chapter 8). The serial console this chapter read its boot timeline from is no longer logged, because logging it cost 1.2 seconds.
 
 ## Ask your team
 

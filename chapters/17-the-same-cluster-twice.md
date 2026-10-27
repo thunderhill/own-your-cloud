@@ -101,13 +101,13 @@ Four things follow from this, and this platform can show all four.
 
 ## The trade nobody put on the slide
 
-Now the other four — cluster-per-pull-request, many small clusters instead of a few large ones, cluster-per-tenant, and rotating clusters on a schedule to deny an attacker persistence. All four are good ideas. All four need the same thing: **several clusters, at once, with separate identities.** This platform can produce neither, and the reason is not an oversight. It is the same decision that bought the thirty-four seconds, and still holds up the eighteen.
+Now the other four — cluster-per-pull-request, many small clusters instead of a few large ones, cluster-per-tenant, and rotating clusters on a schedule to deny an attacker persistence. All four are good ideas. All four need the same thing: **several clusters, at once, with separate identities.** This platform can produce neither, and the reason is not an oversight. It is the same decision that bought the thirty-four seconds, and still holds up the nine.
 
 The fast path works by baking a fixed certificate authority set, a fixed join token and a fixed API address into the golden image, and pre-seeding matching secrets so the control plane adopts them. That removes the certificate work from the boot path — no `--cluster-reset`, no cert purge. The manifest says what it costs, in a comment sitting directly above the thing it enables:
 
 > *Safe only because exactly ONE target-cluster runs at a time.*
 
-The design document is blunter still: *"If you ever allow concurrent clusters, switch to per-build random identity."* And per-build identity is what the slower path does — the `:preinit` build, whose floor is around a hundred seconds. **The speed and the multiplicity are the same decision, taken in opposite directions.** You may have an eighteen-second cluster, or you may have many clusters. Not both, on this design.
+The design document is blunter still: *"If you ever allow concurrent clusters, switch to per-build random identity."* And per-build identity is what the slower path does — the `:preinit` build, whose floor is around a hundred seconds. **The speed and the multiplicity are the same decision, taken in opposite directions.** You may have a nine-second cluster, or you may have many clusters. Not both, on this design.
 
 Chapter 5 noticed the consequence by accident: a kubeconfig found in `/tmp`, written for a cluster that had since been rebuilt six times, still worked. This chapter tested it on purpose. Run 1's administrator credential was kept. Five destroy-rebuild cycles later, it was presented to a cluster thirty-two seconds old — a different cluster, different node names, built from a different `kubectl apply`:
 
@@ -158,7 +158,7 @@ And *both nodes Ready* is still not two nodes of capacity. In all five runs the 
 
 It was more fixable, and also only half the story. Running was never the problem. On 23 September the taint was removed, and the first ordinary pods to land on the worker showed that traffic *between* the two virtual machines had never worked (Chapter 8). A pod on the worker could run, but pods on the control plane could not reach it. Both are fixed now. In the October re-run the worker carried no taint; a pod pinned to it served through the API server's proxy, and a control-plane pod reached it directly. The drill's own workload still landed on the control plane in all five runs, but now by ordinary scheduling rather than exclusion.
 
-The next chapter is the right place to take all of this apart, and it is deliberately unsentimental about exactly this kind of claim: *a reader who skips that list will mistake eighteen seconds for readiness.*
+The next chapter is the right place to take all of this apart, and it is deliberately unsentimental about exactly this kind of claim: *a reader who skips that list will mistake nine seconds for readiness.*
 
 * * *
 
@@ -183,7 +183,7 @@ Anita thought about that for a while.
 - **Proved:** an administrator credential from run 1 opened a different cluster, thirty-two seconds old, five rebuild cycles later, with full cluster-admin.
 - **Measured again (8 October, N=5, same pre-registered boundaries):** destroy to first served request **59.97 s** (59.06–60.46); build 17.95 s; teardown 40.02 s, not the unchanged ~45 s that was predicted; the delete command returns in 0.83 s instead of 10.13 s. Cause of the faster teardown not investigated.
 - **Also corrected:** Chapter 5's worker is excluded by a taint, not broken — a pod that tolerates it runs there normally. Half right: until 23 September, traffic between the two VMs was broken as well (Chapter 8). The taint is gone, and cross-node traffic was verified on 8 October.
-- **Carried from other chapters:** 33.7 s build and 18.9 s teardown (Chapter 7, the latter now superseded); 18.1 s build from 30 September (Chapter 8); 467 ms warm claim, and from October a 15.3 s on-demand wake to first `kubectl` answer (Chapter 9); 14.9 GiB reserved per cluster (Chapter 20); one afternoon for a full platform rebuild (Chapter 19).
+- **Carried from other chapters:** 33.7 s build and 18.9 s teardown (Chapter 7, the latter now superseded); 18.1 s build from 30 September, and about 9 s from 21 October with the control plane hosted as a pod (Chapter 8); 467 ms warm claim, and from October an on-demand wake of 15.3 s to first `kubectl` answer, 10.4 s to both nodes on the hosted path (Chapter 9). This drill ran on the VM control plane and has not been re-run on the hosted one; 14.9 GiB reserved per cluster (Chapter 20); one afternoon for a full platform rebuild (Chapter 19).
 - **Demonstrated consequences:** recovery as a command, debugging with a control group, upgrades as rebuilds, drills as routine.
 - **Unavailable on this platform, and why:** cluster-per-PR, many small clusters, cluster-per-tenant, rotation-as-defence — all four need concurrent clusters with separate identities, and the fixed identity that makes the 18-second build possible (34 seconds when this chapter was first written) forbids exactly that. Per-build identity costs roughly a hundred seconds.
 - **Not claimed:** any production recovery time; any data restore; that this generalises beyond one cluster on one host.

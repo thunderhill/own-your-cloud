@@ -86,7 +86,7 @@ Anita turned the page back round, and put her finger on the line in the corner t
 
 *The year, measured — collected from the chapters of this book.*
 
-- **The factory:** a two-machine Kubernetes cluster built from a written declaration, both machines ready in a median of 18.1 s and torn down in 40.0 s, on open-source Cluster API and KubeVirt, on owned hardware (Chapters 4, 7 and 8).
+- **The factory:** a two-machine Kubernetes cluster built from a written declaration, both machines ready in about 9 s against a resident control plane (18.1 s when the control plane was a VM, the figure the September scene above knew) and torn down in 40.0 s, on open-source Cluster API and KubeVirt, on owned hardware (Chapters 4, 7 and 8).
 - **The fabric:** failover between two clusters measured by status code, 30 calls out of 30, with one label replacing hand-written cross-cluster plumbing (Chapters 10 and 11).
 - **The brain:** AI agents on models hosted in the building; a planted fault triaged correctly in 3 runs out of 3; a smaller model that invented output when its tool failed quietly (Chapters 13–16).
 - **The gauges:** a worker reported `Ready` that could not run work; a cluster reported unavailable while it served workloads; a map labelled `live` drawing fourteen things that did not exist; a failover check that printed success during a total outage (Chapters 4, 5, 11 and 12).
