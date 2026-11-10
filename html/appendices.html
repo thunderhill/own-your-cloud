@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 9,700 words · about 42 minutes to read</dd>
+      <dd>About 9,800 words · about 43 minutes to read</dd>
     </dl>
   </header>
 
@@ -1116,8 +1116,8 @@ td strong { color: var(--accent); font-weight: 600; }
 <tbody>
 <tr>
 <td>Cluster bring-up, both nodes ready</td>
-<td><strong>about 9 s</strong>: 8.8 / 8.5 / 8.5 in the last three runs; 8.5–9.5 s across the day</td>
-<td>21 October, N=3 per step (below rule 2), clean teardown between runs, hosted control plane and <code>:agent</code> image, <code>scripts/time-to-ready-hosted.sh</code> (platform repository, <code>docs/sub-60s-cluster-strategy.md</code> §12, branch <code>feat/hosted-control-plane</code>). A different boundary from the row below: the control plane is already running</td>
+<td><strong>about 9 s</strong>: 8.8 / 8.5 / 8.5 in the last three runs; 8.5–9.5 s across the day. Re-measured 10 November: 8.8 / 8.4 / 9.3 s, median 8.8 s, VMs running at 3.5 / 3.8 / 3.7 s</td>
+<td>21 October, N=3 per step (below rule 2); 10 November, a second N=3 with no changes in between (not pooled; raw rows in <code>measurements/ch08-hosted-bringup-20261110.tsv</code>, a summary reported by the session that ran the script, whose own output was not saved), clean teardown between runs, hosted control plane and <code>:agent</code> image, <code>scripts/time-to-ready-hosted.sh</code> (platform repository, <code>docs/sub-60s-cluster-strategy.md</code> §12, branch <code>feat/hosted-control-plane</code>). A different boundary from the row below: the control plane is already running</td>
 </tr>
 <tr>
 <td>Cluster bring-up, VM control plane</td>
@@ -1284,7 +1284,7 @@ td strong { color: var(--accent); font-weight: 600; }
 </tr>
 </tbody>
 </table></div>
-<p>Notice the last column. The spread that had collapsed to half a second was back to 4.7 seconds after the rebuild, and with three runs a change smaller than about five seconds could not be seen. The CAPK patch, which removed most of the run-to-run variation (its own A/B: 31.5 s spread upstream, 1.6 s patched), brought the spread back under two seconds. The 30 September steps used five runs each, still below the seven this appendix's own rules ask for on a noisy host. Their spreads, 0.6–1.4 s, are why they are reported anyway, and the flag stays on them. The 21 October steps used three runs each on a host whose load rose during the session. The platform notes widen the result to 8.5–9.5 s for that reason, and so does this appendix.</p>
+<p>Notice the last column. The spread that had collapsed to half a second was back to 4.7 seconds after the rebuild, and with three runs a change smaller than about five seconds could not be seen. The CAPK patch, which removed most of the run-to-run variation (its own A/B: 31.5 s spread upstream, 1.6 s patched), brought the spread back under two seconds. The 30 September steps used five runs each, still below the seven this appendix's own rules ask for on a noisy host. Their spreads, 0.6–1.4 s, are why they are reported anyway, and the flag stays on them. The 21 October steps used three runs each on a host whose load rose during the session. The platform notes widen the result to 8.5–9.5 s for that reason, and so does this appendix. A second set of three, on 10 November with nothing changed since, gave 8.4–9.3 s and falls inside that range; it is reported next to the first set and not pooled with it, and the flag stays.</p>
 <h3 id="d2-the-instrument">D.2 The instrument</h3>
 <p><code>scripts/phase-timings.sh</code> attributes a build's wall clock to its phases, read-only and without logging in to the guests. Its sources, in its own words:</p>
 <ul>

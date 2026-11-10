@@ -68,7 +68,7 @@ pip install markdown
 
 Each chapter page is self-contained HTML with light and dark themes; fonts load from Google Fonts.
 
-`build_pdf.sh` assembles every chapter into one print-styled document (figures inlined as data URIs, so it is a single self-contained file), renders it with headless Chrome, then uses Ghostscript to add page numbers and nested bookmarks — Chrome implements neither. The result is **`own-your-cloud.pdf`**: 217 A4 pages, front cover to back cover, with a clickable contents page, 28 bookmarks, and vector figures. The covers come from [`cover/cover.html`](cover/cover.html) (drawn in Claude Design at 720 px wide and zoomed to fill an A4 page), so they are the first and last pages of the same Chrome print; the front cover, title page and back cover carry no page number. It needs `google-chrome` or `chromium`; `gs` and `poppler-utils` are optional and only affect page numbers and bookmarks.
+`build_pdf.sh` assembles every chapter into one print-styled document (figures inlined as data URIs, so it is a single self-contained file), renders it with headless Chrome, then uses Ghostscript to add page numbers and nested bookmarks — Chrome implements neither. The result is **`own-your-cloud.pdf`**: 232 A4 pages, front cover to back cover, with a clickable contents page, 28 bookmarks, and vector figures. The covers come from [`cover/cover.html`](cover/cover.html) (drawn in Claude Design at 720 px wide and zoomed to fill an A4 page), so they are the first and last pages of the same Chrome print; the front cover, title page and back cover carry no page number. It needs `google-chrome` or `chromium`; `gs` and `poppler-utils` are optional and only affect page numbers and bookmarks.
 
 ## License
 

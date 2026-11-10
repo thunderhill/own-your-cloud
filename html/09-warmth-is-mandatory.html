@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 5,200 words · about 23 minutes to read</dd>
+      <dd>About 5,300 words · about 23 minutes to read</dd>
     </dl>
   </header>
 
@@ -678,9 +678,13 @@ td strong { color: var(--accent); font-weight: 600; }
 <td>Console Delete, nodes removed, server untouched</td>
 <td style="text-align: right;">13 s (one run)</td>
 </tr>
+<tr>
+<td>Second wake, after an idle delete, with the cluster not stopped by hand</td>
+<td style="text-align: right;">12.3 s (one run)</td>
+</tr>
 </tbody>
 </table></div>
-<p><strong>Ten seconds from nothing to a cluster with both nodes working</strong>, against fifteen seconds to an API that answered and about twenty to both nodes. It is also <strong>one run</strong>. The book asks for five, and until then it is a single observation from the platform notes, recorded with that label in Appendix D.</p>
+<p><strong>Ten seconds from nothing to a cluster with both nodes working</strong>, against fifteen seconds to an API that answered and about twenty to both nodes. It is also <strong>one run</strong>, and the one other wake the notes record, after an idle delete, took 12.3 seconds, so the real figure sits somewhere between ten and twelve. The book asks for five, and until then it is a single observation from the platform notes, recorded with that label in Appendix D.</p>
 <p>Two other changes from the same week alter what a user sees.</p>
 <ul>
 <li><strong>Deleting from the console now means "stay off".</strong> An idle delete still leaves the next access free to wake the cluster. A delete clicked in the console marks the target <em>stopped</em>, in a ConfigMap so it survives a backend restart. While stopped, the front door answers <code>503</code> with no <code>Retry-After</code>, so <code>kubectl</code> fails at once instead of retrying, a chat to <code>target-cluster-agent</code> does not wake it, and the standby pool does not rebuild it. Only Deploy clears it. Before this, a person who deleted the cluster to free the machine could have it rebuilt behind them by the next stray command.</li>

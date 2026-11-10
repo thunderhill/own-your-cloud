@@ -258,8 +258,9 @@ That collapses the two boundaries in the table above into one. Measured from no 
 | `kubectl get nodes` answered, listing both nodes `Ready` | **10.4 s** (one run) |
 | Console Deploy from nothing, including its prerequisite checks | 11.2 s (one run) |
 | Console Delete, nodes removed, server untouched | 13 s (one run) |
+| Second wake, after an idle delete, with the cluster not stopped by hand | 12.3 s (one run) |
 
-**Ten seconds from nothing to a cluster with both nodes working**, against fifteen seconds to an API that answered and about twenty to both nodes. It is also **one run**. The book asks for five, and until then it is a single observation from the platform notes, recorded with that label in Appendix D.
+**Ten seconds from nothing to a cluster with both nodes working**, against fifteen seconds to an API that answered and about twenty to both nodes. It is also **one run**, and the one other wake the notes record, after an idle delete, took 12.3 seconds, so the real figure sits somewhere between ten and twelve. The book asks for five, and until then it is a single observation from the platform notes, recorded with that label in Appendix D.
 
 Two other changes from the same week alter what a user sees.
 

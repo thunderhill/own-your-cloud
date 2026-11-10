@@ -373,7 +373,7 @@ That list did not survive the next three weeks. The largest item on it, the serv
 
 *Build log · 21 October 2026*
 
-Three weeks later both nodes were `Ready` in about **nine seconds**: 8.8, 8.5 and 8.5 in the last three runs, and between 8.5 and 9.5 across the day. The image did not change much. The shape of the cluster did.
+Three weeks later both nodes were `Ready` in about **nine seconds**: 8.8, 8.5 and 8.5 in the last three runs, and between 8.5 and 9.5 across the day. (A fresh set of three on 10 November gave 8.8, 8.4 and 9.3; see the section after this one.) The image did not change much. The shape of the cluster did.
 
 **The control plane left the virtual machine.** With the k3s server inside a VM, nothing could join until that guest had booted *and* the server had started. The September work had already trimmed both, and they still came to nine or ten seconds before any worker could join. The only way to take them off the clock was to have the server running before the clock starts. The server is now a pod on cluster2, in its own namespace, with the same fixed certificate authorities as before and the same address, `172.18.255.215`. It stays up all the time. Both virtual machines are now workers ("agents", in k3s terms), and a build is only VM start, guest boot and agent join.
 
@@ -419,12 +419,41 @@ The same care applies to the new number as to the old one.
 - **The teardown is unmeasured by this book's method.** The platform reports about 12–13 seconds for VMs and Nodes to be gone. Chapter 17's 40.0 seconds was measured on the VM control plane with boundaries written down in advance, and has not been re-run on the new shape.
 - **Not merged when this was written.** The work is on a platform branch (`feat/hosted-control-plane`), with its record in `docs/sub-60s-cluster-strategy.md` §12.
 
+## Checked again: ten November
+
+*Build log · 10 November 2026*
+
+Three weeks after the nine-second result, a Claude Code session on the platform repository was asked whether the build time was still below ten seconds, and to check rather than recall. It ran the same script, `scripts/time-to-ready-hosted.sh --runs 3`, on the same shape of cluster: the server already running as a pod, both machines booting from the `:agent` image, a clean teardown before every run.
+
+| Run | Both machines running | Both nodes `Ready` |
+|---:|---:|---:|
+| 1 | 3.5 s | 8.8 s |
+| 2 | 3.8 s | 8.4 s |
+| 3 | 3.7 s | 9.3 s |
+| **Median** | **3.7 s** | **8.8 s** |
+
+Every run was under ten seconds, and the range, 8.4 to 9.3, sits inside the 8.5 to 9.5 the platform notes gave on 21 October. Two things about this table are worth more than the headline.
+
+**It was a different day and a different session.** The 21 October runs were the last three of a series of changes, taken while the host's load average was about three. These are three runs of a configuration that nobody was changing. A figure that survives three weeks without anyone tuning it is better evidence than the same figure measured on the day it was achieved.
+
+**The first column agrees with the breakdown.** The 21 October trace spent about 3.3 to 4.0 seconds between `kubectl apply` and a running virtual machine, before the guest executes a single instruction. Here it is 3.5, 3.8 and 3.7. That is about 40 percent of the build, and it is the part the platform notes call the floor for this stack. It is also the most direct check on the claim that nothing inside the guest was left to win: the remaining five seconds or so are the guest booting, joining the server and registering.
+
+The same care applies as before, and it matters more now that the number has been repeated.
+
+- **This is a second set of three, not a larger set of six.** The book asks for five runs on a quiet host and seven on a noisy one. The two sets were taken on different days under different conditions, so they are reported side by side and are not pooled. Appendix D still carries the flag.
+- **The boundary is the same one as before.** The clock starts with the server already running and no cluster existing. It is a build time. It does not include waking a cluster through the front door.
+- **The wake was not re-measured.** The assistant's summary also quoted about 15 seconds to a first answer and 20.5 seconds to both nodes. Those are the mid-October figures for the VM control plane, which this chapter and Chapter 9 already supersede. The wake on the hosted path is still the single 10.4-second run from 21 October, with a second observation of 12.3 seconds after an idle delete (Chapter 9). Nothing on 10 November changed either number.
+- **The teardown was not measured either.** The script deletes the previous cluster before each run, but it does not time doing so.
+- **The raw rows are a summary.** The three rows come from the assistant's report of the script's output. The script's own standard output was not saved. They are kept in `measurements/ch08-hosted-bringup-20261110.tsv`, with that provenance written next to them.
+
+One side effect is worth recording because it is the kind of thing a measurement leaves behind: the test left a target cluster running, and `make clean` removes it.
+
 ## The ledger
 
 - **Spent:** two golden-image experiments, each a full bake cycle to disprove; one instrumentation script; two further hypotheses — gating the worker, rerouting the pod network — that did not survive measurement on k3s 1.31.
 - **Changed:** one line in the control plane's startup commands; one CPU ceiling on KubeVirt's helper containers. Later: a source patch to the CAPK controller, one Cluster API feature gate, a readiness gate on the worker, routes on both VMs, three boot trims, and an earlier k3s start. In October: the control plane moved into a resident pod, an agent-only image, an uncompressed disk, containerd as its own service, and no serial-console sidecar.
 - **Hardware added:** none.
-- **Saved:** 15.5 seconds on every cold cluster build by 9 September — 50.0 s to 34.5 s, −31%, spread from 6.1 s to 0.5 s. By 30 September, 18.1 s (N=5, 17.7–18.3), −64% from June. By 21 October, about 9 s (8.8 / 8.5 / 8.5, N=3) with the control plane hosted, −82% from June.
+- **Saved:** 15.5 seconds on every cold cluster build by 9 September — 50.0 s to 34.5 s, −31%, spread from 6.1 s to 0.5 s. By 30 September, 18.1 s (N=5, 17.7–18.3), −64% from June. By 21 October, about 9 s (8.8 / 8.5 / 8.5, N=3) with the control plane hosted, −82% from June; re-checked on 10 November at 8.8 / 8.4 / 9.3 s, median 8.8 (a second set of three, not pooled with the first).
 - **Proved:** four dead ends, recorded with their numbers so that nobody pays for them twice — and that two of them were results about one version or one side, not permanent truths.
 - **Still owed:** three settings that live in cluster state rather than in Git (the CPU ceiling, the CAPK patch, the feature gate); two timing scripts that can stop the clock on a ghost node (Chapter 7); VM routes that are runtime state and missing from the older manifests; and a rate limiter that a management cluster serving many clusters would want back on. From October: three-run medians below the book's own rule, a resident server that costs about 1 GiB all day, Node objects that only an explicit delete removes, and a teardown not yet re-measured by Chapter 17's method.
 

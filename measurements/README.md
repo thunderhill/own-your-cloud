@@ -199,3 +199,19 @@ Between 23 and 30 September the platform repository cut the build from 33.7 s to
 **Every run:** zero `Pulling` events; the ghost node `ubuntu-bake-vm-warm` was excluded by name; `kube-system` reports `creationTimestamp: 2026-09-29T21:06:16Z`, the bake date of the current `:warm` image (it was 16 September in the earlier drill). The image changed and the restore-from-image property did not.
 
 The shared-identity test was not repeated. The CA set and join token are unchanged, so nothing here bears on it.
+
+## `ch08-hosted-bringup-20261110.tsv`
+
+A re-measurement of the hosted-control-plane cluster build, three weeks after the 21 October runs in Chapter 8.
+
+**Date:** 10 November 2026.
+**Instrument:** `scripts/time-to-ready-hosted.sh --runs 3` in the platform repository. The clock starts at `kubectl apply` and stops when both target nodes report `Ready`. Before each run the script deletes the Cluster, waits for the VMs, VMIs and launcher pods to be gone, then deletes the stale Node objects.
+**Starting state:** the hosted k3s server pod already running on cluster2; no target cluster existing; the `:agent` image.
+**Provenance:** the three rows are the script's summary as reported by the Claude Code session that ran it. The script's raw standard output was not saved to a file, and the UI backend was not running.
+
+| Column | Meaning |
+|---|---|
+| `vmis_running_s` | seconds from apply until both VirtualMachineInstances were `Running` |
+| `nodes_ready_s` | seconds from apply until both nodes were `Ready` |
+
+**Result:** median 8.8 s, range 8.4–9.3 s; all three runs under 10 s. Not measured here, and not covered by the file: the on-demand wake through the front door, and teardown.

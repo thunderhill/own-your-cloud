@@ -93,7 +93,7 @@ The three largest owners of servers in the world disagree about how long a serve
 
 The platform in this book cannot supply Meridian's numbers. It can supply something the slide lacks: inputs that were measured. Four of them matter for a TCO.
 
-**Speed.** A two-machine Kubernetes cluster is built from its declaration to both machines ready in about 9 seconds against a control plane that is always running (21 October, three runs; 18.1 seconds when the control plane was a VM too), and was torn down in 40.0 (Chapters 8 and 17). Destroy-and-replace, to a served request, took about a minute on the VM control plane. For steady workloads, "we rent because renting is faster" is no longer a line that has to be paid for.
+**Speed.** A two-machine Kubernetes cluster is built from its declaration to both machines ready in about 9 seconds against a control plane that is always running (21 October and again 10 November, three runs each; 18.1 seconds when the control plane was a VM too), and was torn down in 40.0 (Chapters 8 and 17). Destroy-and-replace, to a served request, took about a minute on the VM control plane. For steady workloads, "we rent because renting is faster" is no longer a line that has to be paid for.
 
 **Reservation versus use.** Waste is not only a cloud problem. On the management cluster that afternoon:
 
