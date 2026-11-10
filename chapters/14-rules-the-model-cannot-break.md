@@ -161,6 +161,8 @@ Everything else in this chapter's failures *can* move down, and the moves are un
 
 None of these needs a better model. All of them need someone to decide that a rule is not real until something other than the model enforces it.
 
+One rule belongs below the model by design: a person decides. In the SovereignAI control plane, a human approves or denies a workflow step with a separate command, `sovctl approve <workflow-id> --step <step>`, under the human's own identity. The agent cannot submit that approval, and the approval is not a line in a prompt. The project's operator CLI is `sovctl`; its approval path is still partial.
+
 * * *
 
 *Meridian · two weeks later*
@@ -204,4 +206,5 @@ She drew a box around row seven. "That one first. Then the network rule. Then th
 - `kubectl auth can-i --list -n sympozium-system --as=system:serviceaccount:sympozium-system:sympozium-run-<run-name>` — what a real agent run can actually do.
 - `06-sympozium/mesh-sre-agent.yaml` — RULE 1, and the header explaining why the metrics path is closed.
 - `ui/backend/handlers/ai.go` — `allowedActions`.
+- `RampantBias/SovereignAI` — `cmd/cli/` (`sovctl`) and `decisions/00XX-HumanApprovalBoundary`: the human approval boundary. External to this repository.
 - **Without the repo:** Appendix G.5 quotes `agent-egress-ollama.yaml` whole — the port-only rules are visible in it.

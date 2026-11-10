@@ -404,7 +404,7 @@ td strong { color: var(--accent); font-weight: 600; }
       <dt>Two voices</dt>
       <dd><span class="legend-fiction">Meridian</span> scenes are composite fiction. <span class="legend-record">Build log</span> sections, and every number in them, come from the repository.</dd>
       <dt>Length</dt>
-      <dd>About 2,800 words · about 12 minutes to read</dd>
+      <dd>About 2,900 words · about 13 minutes to read</dd>
     </dl>
   </header>
 
@@ -579,6 +579,7 @@ get secrets -n sympozium-system        yes
 <li>Copy run records off the cluster before anything can delete them.</li>
 </ul>
 <p>None of these needs a better model. All of them need someone to decide that a rule is not real until something other than the model enforces it.</p>
+<p>One rule belongs below the model by design: a person decides. In the SovereignAI control plane, a human approves or denies a workflow step with a separate command, <code>sovctl approve &lt;workflow-id&gt; --step &lt;step&gt;</code>, under the human's own identity. The agent cannot submit that approval, and the approval is not a line in a prompt. The project's operator CLI is <code>sovctl</code>; its approval path is still partial.</p>
 <hr class="scene-break" />
 <p class="dateline dateline-fiction">Meridian · two weeks later</p>
 <p>Vikram brought the column back on one page, with the verdicts in the right-hand margin: one rule held, four held partly, three did not.</p>
@@ -612,6 +613,7 @@ get secrets -n sympozium-system        yes
 <li><code>kubectl auth can-i --list -n sympozium-system --as=system:serviceaccount:sympozium-system:sympozium-run-&lt;run-name&gt;</code> — what a real agent run can actually do.</li>
 <li><code>06-sympozium/mesh-sre-agent.yaml</code> — RULE 1, and the header explaining why the metrics path is closed.</li>
 <li><code>ui/backend/handlers/ai.go</code> — <code>allowedActions</code>.</li>
+<li><code>RampantBias/SovereignAI</code> — <code>cmd/cli/</code> (<code>sovctl</code>) and <code>decisions/00XX-HumanApprovalBoundary</code>: the human approval boundary. External to this repository.</li>
 <li><strong>Without the repo:</strong> Appendix G.5 quotes <code>agent-egress-ollama.yaml</code> whole — the port-only rules are visible in it.</li>
 </ul></div>
 </article>
