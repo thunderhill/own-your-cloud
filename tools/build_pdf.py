@@ -49,6 +49,96 @@ def inline_figures(html: str) -> str:
     return re.sub(r'<img [^>]*src="([^"]+)"', repl, html)
 
 
+# ── illustrated styling: source badges, part colours, part-opener art ──────────
+ICONS = {
+    "meridian": '<svg viewBox="0 0 12 12"><circle cx="6" cy="4" r="2.2"/><path d="M1.8 10.8c.4-2.4 2.2-3.6 4.2-3.6s3.8 1.2 4.2 3.6z"/></svg>',
+    "buildlog": '<svg viewBox="0 0 12 12"><rect x="1" y="2" width="10" height="8" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M3 5l1.8 1.3L3 7.6" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M6.4 8h2.6" stroke="currentColor" stroke-width="1.1"/></svg>',
+    "public": '<svg viewBox="0 0 12 12"><path d="M2.5 1.2h5l2.3 2.3v7.3h-7.3z" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M4 6h4M4 8h4" stroke="currentColor" stroke-width="1"/></svg>',
+    "briefing": '<svg viewBox="0 0 12 12"><rect x="1" y="1.6" width="10" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M3 7l2-2 1.6 1.4L9 4M4 10.6h4" fill="none" stroke="currentColor" stroke-width="1.1"/></svg>',
+}
+
+def style_datelines(body: str) -> str:
+    def badge(kind, label, rest):
+        rest = f'<span class="badge-date">{rest}</span>' if rest else ""
+        return (f'<p class="dateline dateline-{kind}"><span class="badge badge-{kind}">'
+                f'{ICONS[kind]}{label}</span>{rest}</p>')
+
+    def meridian(m):
+        return badge("meridian", "Meridian", m.group(1))
+    def buildlog(m):
+        return badge("buildlog", "Build log", m.group(1))
+    def public(m):
+        label, rest = m.group(1), m.group(2)
+        kind = "briefing" if label == "Briefing" else "public"
+        return badge(kind, label, rest)
+
+    body = re.sub(r"<p><em>Meridian · (.*?)</em></p>", meridian, body)
+    body = re.sub(r"<p><em>Build log · (.*?)</em></p>", buildlog, body)
+    body = re.sub(r"<p><em>(Public record|Briefing|Design guidance|Not independently verified) · (.*?)</em></p>",
+                  public, body)
+    return body
+
+
+def wrap_records(body: str) -> str:
+    """Give each dated source block a coloured rule down its left edge, ending at the next heading or scene break."""
+    stop = re.compile(r'<h[12][ >]|<hr class="scene-break"|<p class="dateline|<div class="bookend')
+    out, pos = [], 0
+    for m in re.finditer(r'<p class="dateline dateline-(\w+)">', body):
+        if m.start() < pos:
+            continue
+        nxt = stop.search(body, m.end())
+        end = nxt.start() if nxt else len(body)
+        out.append(body[pos:m.start()])
+        out.append(f'<div class="rec rec-{m.group(1)}">{body[m.start():end]}</div>')
+        pos = end
+    out.append(body[pos:])
+    return "".join(out)
+
+
+def wrap_bookends(body: str) -> str:
+    """The ledger / ask-your-team / open-the-repo sections become cards."""
+    pat = re.compile(r'<h2 id="(the-ledger|ask-your-team|open-the-repo)">(.*?)</h2>')
+    ms = list(pat.finditer(body))
+    if not ms:
+        return body
+    out = [body[:ms[0].start()]]
+    for i, m in enumerate(ms):
+        end = ms[i + 1].start() if i + 1 < len(ms) else len(body)
+        out.append(f'<div class="bookend bookend-{m.group(1)}"><p class="bookend-title">{m.group(2)}</p>'
+                   f'{body[m.end():end]}</div>')
+    return "".join(out)
+
+
+def part_class(num: int) -> str:
+    for hi, cls in ((4, "part-1"), (9, "part-2"), (12, "part-3"), (16, "part-4"), (20, "part-5")):
+        if num <= hi:
+            return cls
+    return ""
+
+
+PART_CLASS = {"Part I": "part-1", "Part II": "part-2", "Part III": "part-3", "Part IV": "part-4", "Part V": "part-5"}
+
+_S = 'viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"'
+PART_ART = {
+    "Part I": f'<svg {_S}><rect x="14" y="4" width="92" height="112" rx="4"/>'
+              + "".join(f'<rect x="28" y="{y}" width="{w}" height="4" rx="2" fill="currentColor" stroke="none" opacity=".22"/>'
+                        for y, w in ((20, 62), (30, 48), (40, 56), (50, 40), (60, 30)))
+              + '<path d="M14 112C50 108 80 90 106 32" stroke-width="2"/><circle cx="106" cy="32" r="3.2" fill="currentColor"/></svg>',
+    "Part II": f'<svg {_S}>' + "".join(
+        f'<rect x="{i*7}" y="{i*7}" width="{120-i*14}" height="{120-i*14}" rx="{14-i*2}"/>' for i in range(6)) + '</svg>',
+    "Part III": f'<svg viewBox="0 0 160 80" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="38" cy="40" r="34"/><circle cx="122" cy="40" r="34"/>'
+                '<path d="M60 44h40" stroke-dasharray="3 3"/><circle cx="60" cy="44" r="2.6" fill="currentColor"/><circle cx="100" cy="44" r="2.6" fill="currentColor"/>'
+                '<circle cx="26" cy="28" r="2.6" fill="currentColor"/><circle cx="26" cy="58" r="2.6" fill="currentColor"/>'
+                '<circle cx="136" cy="28" r="2.6" fill="currentColor"/><circle cx="136" cy="58" r="2.6" fill="currentColor"/></svg>',
+    "Part IV": f'<svg {_S}>' + "".join(
+        f'<path d="M62 62L{x} {y}" opacity=".6"/><circle cx="{x}" cy="{y}" r="4.2" fill="#fff"/>'
+        for x, y in ((14, 38), (46, 8), (100, 22), (112, 66), (84, 106), (24, 100)))
+              + '<circle cx="62" cy="62" r="7" fill="currentColor" stroke="none"/></svg>',
+    "Part V": f'<svg {_S}><path d="M2 20C40 30 66 84 118 112" stroke-width="2"/><path d="M2 112L118 8" opacity=".35" stroke-width="2"/>'
+              '<circle cx="62" cy="62" r="3.4" fill="currentColor"/></svg>',
+}
+
+
 def data_uri(path: pathlib.Path, mime: str) -> str:
     return f"data:{mime};base64," + base64.b64encode(path.read_bytes()).decode("ascii")
 
@@ -84,11 +174,9 @@ def render(path: pathlib.Path) -> str:
     body = re.sub(r'<p>(<img [^>]*>)</p>', r'<figure class="figure">\1</figure>', body)
     body = inline_figures(body)
 
-    # Datelines, as in the per-chapter build.
-    body = re.sub(r"<p><em>(Meridian · .*?)</em></p>", r'<p class="dateline dateline-fiction">\1</p>', body)
-    body = re.sub(r"<p><em>(Build log · .*?)</em></p>", r'<p class="dateline dateline-record">\1</p>', body)
-    body = re.sub(r"<p><em>((?:Public record|Briefing|Design guidance|Not independently verified) · .*?)</em></p>",
-                  r'<p class="dateline dateline-public">\1</p>', body)
+    body = style_datelines(body)
+    body = wrap_records(body)
+    body = wrap_bookends(body)
     body = body.replace("<hr />", '<hr class="scene-break" />')
     body = body.replace("<table>", '<div class="table-wrap"><table>').replace("</table>", "</table></div>")
     return body
@@ -97,16 +185,31 @@ def render(path: pathlib.Path) -> str:
 def main():
     chapters = sorted(p for p in (ROOT / "chapters").glob("*.md"))
     pieces, toc = [], []
+    titles = {}
+    for p_ in chapters:
+        t = (ROOT / "chapters" / p_.name).read_text().splitlines()[0]
+        mt = re.match(r"# Chapter (\d+) — (.*)", t)
+        if mt:
+            titles[int(mt.group(1))] = mt.group(2)
 
     for path in chapters:
         stem = path.stem
         key = stem[:2]
         if key in PARTS:
             part = PARTS[key]
+            roman, ptitle = part.split(" — ")
+            cur_part = PART_CLASS[roman]
+            first = int(key)
+            last = {"01": 4, "05": 9, "10": 12, "13": 16, "17": 20}[key]
+            chlist = "".join(
+                f'<li>Chapter {n} — {titles[n]}</li>' for n in range(first, last + 1) if n in titles)
             pieces.append(
-                f'<section class="part-page"><p class="part-kicker">{part.split(" — ")[0]}</p>'
-                f'<h1 class="part-title">{part.split(" — ")[1]}</h1>'
-                f'<p class="part-epigraph">{PART_EPIGRAPH[part]}</p></section>'
+                f'<section class="part-page {cur_part}"><span class="part-bar"></span>'
+                f'<div class="part-text"><span class="part-rule"></span><p class="part-kicker">{roman}</p>'
+                f'<h1 class="part-title">{ptitle}</h1>'
+                f'<p class="part-epigraph">{PART_EPIGRAPH[part]}</p></div>'
+                f'<div class="part-art">{PART_ART[roman]}</div>'
+                f'<ul class="part-chapters">{chlist}</ul></section>'
             )
             toc.append(f'<li class="toc-part">{part}</li>')
 
@@ -115,9 +218,18 @@ def main():
         anchor, heading = (m.group(1), m.group(2)) if m else (stem, stem)
         body = body[m.end():] if m else body
 
+        mnum = re.match(r"Chapter (\d+) — (.*)", re.sub(r"<[^>]+>", "", heading))
+        if mnum:
+            cnum = int(mnum.group(1))
+            cls = part_class(cnum)
+            head = (f'<p class="ch-num">{cnum:02d}</p><p class="ch-kicker">Chapter {cnum}</p>'
+                    f'<h1>{mnum.group(2)}</h1>')
+        else:
+            cls = "" if stem[:2] not in ("00", "99") else ""
+            head = f'<h1>{heading}</h1>'
         pieces.append(
-            f'<section class="chapter" id="{anchor}">'
-            f'<header class="ch-head"><h1>{heading}</h1></header>{body}</section>'
+            f'<section class="chapter {cls}" id="{anchor}">'
+            f'<header class="ch-head">{head}</header>{body}</section>'
         )
         toc.append(f'<li class="toc-ch"><a href="#{anchor}">{heading}</a></li>')
 
@@ -217,6 +329,53 @@ pre code { background:none; padding:0; }
 /* border-box matters: with the default box model the 1px border makes each image 2px wider than the
    text column, and Chrome then shrinks the whole printed document to fit (about 0.3%). */
 .figure figcaption { font-family:var(--sans); font-size:8.5pt; color:var(--ink-3); margin-top:2mm; }
+
+/* ── illustrated styling (palette and art from the illustrated edition) ── */
+:root { --part:#1F5F4A; --meridian:#A8700E; --buildlog:#1F7A5A; --public:#2F5FBF; --briefing:#6D4BC4; }
+.part-1 { --part:#B4432F; } .part-2 { --part:#0086A8; } .part-3 { --part:#2F5FBF; }
+.part-4 { --part:#6D4BC4; } .part-5 { --part:#A8700E; }
+
+@page part { size:A4; margin:0; }
+.part-page { page:part; position:relative; text-align:left; justify-content:flex-start; height:297mm; padding:82mm 18mm 0 26mm; box-sizing:border-box; color:var(--ink); }
+.part-bar { position:absolute; left:0; top:0; width:5mm; height:297mm; background:var(--part); }
+.part-rule { display:block; width:11mm; height:2px; background:var(--part); margin-bottom:5mm; }
+.part-kicker { color:var(--part); font-weight:600; font-size:8.5pt; letter-spacing:.3em; margin:0 0 3mm; }
+.part-title { font-size:34pt; font-weight:400; margin:0 0 9mm; }
+.part-epigraph { text-align:left; margin:0; max-width:100mm; font-family:var(--text); color:var(--ink-2); }
+.part-art { position:absolute; right:18mm; bottom:62mm; width:52mm; color:var(--part); }
+.part-art svg { width:100%; height:auto; display:block; }
+.part-chapters { position:absolute; left:26mm; right:18mm; bottom:24mm; list-style:none; margin:0; padding:3mm 0 0;
+                 border-top:1px solid var(--rule); font-family:var(--sans); font-size:8.5pt; color:var(--ink-2); }
+.part-chapters li { margin:0 0 1mm; }
+
+.chapter .ch-head { margin-bottom:8mm; }
+.ch-num { font-family:var(--display); font-size:50pt; line-height:1; font-weight:400; color:var(--part); margin:6mm 0 0; }
+.ch-kicker { font-family:var(--sans); font-weight:600; font-size:7.5pt; letter-spacing:.2em; text-transform:uppercase; color:var(--part); margin:1mm 0 3mm; }
+.chapter h2 { font-family:var(--sans); font-weight:600; font-size:12.5pt; position:relative; padding-left:6.5mm; margin:9mm 0 3.5mm; }
+.chapter h2::before { content:""; position:absolute; left:0; top:.32em; width:2.8mm; height:2.8mm; border-radius:.6mm; background:var(--part); }
+.chapter ol { list-style:none; counter-reset:n; padding-left:0; }
+.chapter ol > li { counter-increment:n; position:relative; padding-left:8mm; }
+.chapter ol > li::before { content:counter(n); position:absolute; left:0; top:.2em; width:5mm; height:5mm; border-radius:50%;
+  background:var(--part); color:#fff; font:600 7pt/5mm var(--sans); text-align:center; }
+.chapter blockquote { border-left-color:var(--part); }
+.chapter th { border-bottom-color:var(--part); }
+
+.dateline { text-transform:none; letter-spacing:0; margin:5mm 0 3mm; display:flex; align-items:center; gap:2.5mm; }
+.badge { display:inline-flex; align-items:center; gap:1.4mm; font-family:var(--sans); font-weight:600; font-size:6.8pt;
+         letter-spacing:.14em; text-transform:uppercase; color:#fff; padding:.7mm 2mm .7mm 1.6mm; border-radius:1mm; }
+.badge svg { width:2.9mm; height:2.9mm; fill:currentColor; }
+.badge-date { font-family:var(--sans); font-size:7pt; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); }
+.badge-meridian { background:var(--meridian); } .badge-buildlog { background:var(--buildlog); }
+.badge-public { background:var(--public); } .badge-briefing { background:var(--briefing); }
+.rec { border-left:2px solid; padding-left:4mm; margin-left:-1mm; }
+.rec-meridian { border-color:#E3CF9F; } .rec-buildlog { border-color:#BFDCCF; }
+.rec-public { border-color:#C5D3F0; } .rec-briefing { border-color:#D6CCF0; }
+
+.bookend { border:1px solid var(--rule); border-top:2px solid var(--ink); border-radius:1.5mm; padding:2mm 5mm 1mm; margin:7mm 0; font-size:9.6pt; }
+.bookend-ask-your-team { border-top-color:var(--part); }
+.bookend-open-the-repo { border-top-color:var(--ink-3); background:#FAFAF7; }
+.bookend-title { font-family:var(--sans); font-weight:600; font-size:8pt; letter-spacing:.2em; text-transform:uppercase; margin:2mm 0 3mm; }
+.bookend ul, .bookend ol { margin-bottom:2.5mm; }
 
 /* ── front and back cover (cover/cover.html) ───────────── */
 {{COVER_CSS}}
